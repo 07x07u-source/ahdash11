@@ -1,0 +1,7 @@
+reference,before_score,after_score,mean_abs_difference,rms_difference,policy
+03_sign_in_primary_390x844,94.86,67.65,82.501,127.305,safe-area + canonical keyboard normalization
+03_sign_in_compact_360x800,93.85,69.90,76.747,124.280,safe-area + canonical keyboard normalization
+03_sign_in_keyboard_390x844,89.87,82.19,45.415,91.473,safe-area + canonical keyboard normalization
+04_create_account_primary_390x844,93.52,69.09,78.809,123.136,safe-area + canonical keyboard normalization
+04_create_account_compact_360x800,94.45,72.17,70.970,116.164,safe-area + canonical keyboard normalization
+04_create_account_keyboard_390x844,88.37,90.95,23.079,60.290,safe-area + canonical keyboard normalization

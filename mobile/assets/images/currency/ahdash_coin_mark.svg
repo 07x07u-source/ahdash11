@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Ahdash Coin</title>
+  <desc id="desc">Warm gold coin with a bold number eleven and a lime rim notch.</desc>
+  <defs>
+    <linearGradient id="gold" x1="24" y1="18" x2="100" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE49A"/>
+      <stop offset="0.42" stop-color="#EAB64B"/>
+      <stop offset="1" stop-color="#A96B16"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="57" fill="#17130C" stroke="url(#gold)" stroke-width="10"/>
+  <circle cx="64" cy="64" r="43" fill="url(#gold)" stroke="#5E3A0D" stroke-width="3"/>
+  <path d="M91 13a55 55 0 0 1 16 11" fill="none" stroke="#B6FF3B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M43 39h16v52H45V54h-8V43l6-4Zm31 0h16v52H76V54h-8V43l6-4Z" fill="#17130C"/>
+  <path d="M25 64h13M90 64h13M64 25v10M64 93v10" stroke="#FFF0BC" stroke-width="3" stroke-linecap="round" opacity=".62"/>
+</svg>

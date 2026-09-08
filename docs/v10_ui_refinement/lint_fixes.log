@@ -1,0 +1,37 @@
+Computing fixes in mobile...
+Applying fixes...
+
+lib\app.dart
+  curly_braces_in_flow_control_structures - 1 fix
+
+lib\core\routing\app_router.dart
+  curly_braces_in_flow_control_structures - 1 fix
+  directives_ordering - 1 fix
+
+lib\core\services\notification_service.dart
+  curly_braces_in_flow_control_structures - 2 fixes
+
+lib\features\auth\domain\guest_capability_policy.dart
+  curly_braces_in_flow_control_structures - 3 fixes
+
+lib\features\party\presentation\party_game_screens.dart
+  directives_ordering - 1 fix
+
+lib\features\party\presentation\party_setup_screens.dart
+  directives_ordering - 1 fix
+
+lib\features\settings\presentation\settings_screen.dart
+  directives_ordering - 1 fix
+
+lib\features\support\data\question_report_repository.dart
+  curly_braces_in_flow_control_structures - 1 fix
+  directives_ordering - 1 fix
+  unnecessary_non_null_assertion - 1 fix
+
+lib\features\support\presentation\problem_report_controller.dart
+  directives_ordering - 1 fix
+
+tool\ui_refinement_capture.dart
+  directives_ordering - 1 fix
+
+16 fixes made in 10 files.

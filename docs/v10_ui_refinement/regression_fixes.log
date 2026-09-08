@@ -1,0 +1,141 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart
+00:00 +0: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Board renders six real categories and truthful cell states
+00:01 +1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category Selection shows loading, empty, and safe error states
+00:02 +2: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Board accepts only one rapid question-open request
+00:02 +3: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category search handles Arabic, no-results, and clear
+00:02 +4: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category search handles Arabic, no-results, and clear
+00:02 +5: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category search handles Arabic, no-results, and clear
+00:02 +6: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Image Question supports aspect ratio 0.72
+00:02 +7: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category Selection exposes the real selected state
+00:03 +8: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category Selection exposes the real selected state
+00:03 +9: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category Selection exposes the real selected state
+00:03 +10: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Image failure is safe, retryable, and leaks no answer semantics
+00:03 +11: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Timer is isolated and recomputes safely after pause and resume
+00:03 +12: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Category Detail uses published data without a fake trial
+00:03 +13: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: gameplay helper shows available, active, and consumed states
+00:03 +14: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Team Setup reports duplicate names inline in Arabic
+00:03 +15: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Team Setup reports duplicate names inline in Arabic
+00:03 +16: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Reveal selects then authoritatively awards Team A once
+00:03 +17: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Reveal selects then authoritatively awards Team A once
+00:03 +18: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Helpers render five real labels and distinct pictograms
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.first (dart:core/iterable.dart:663:7)
+#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1383:28)
+#3      Iterable.isEmpty (dart:core/iterable.dart:560:33)
+#4      WidgetController.dragUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2478:52)
+#7      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#8      WidgetController.dragUntilVisible (package:flutter_test/src/controller.dart:2476:27)
+#9      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2439:13)
+#12     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#13     WidgetController.scrollUntilVisible (package:flutter_test/src/controller.dart:2427:27)
+#14     main.<anonymous closure> (file:///C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart:185:20)
+<asynchronous suspension>
+#15     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#16     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 6 frames from dart:async, dart:async-patch, and package:stack_trace)
+
+The test description was:
+  Helpers render five real labels and distinct pictograms
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +18 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: No one creates the real no-score event without arbitrary award
+00:04 +18 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Helpers render five real labels and distinct pictograms [E]
+  Test failed. See exception logs above.
+  The test description was: Helpers render five real labels and distinct pictograms
+  
+00:04 +19 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready Start reflects the canonical validation result
+00:04 +20 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready Start reflects the canonical validation result
+00:04 +21 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready Start reflects the canonical validation result
+00:04 +22 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready Start reflects the canonical validation result
+00:04 +23 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: system Back preserves gameplay behind a safe exit dialog
+00:04 +24 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready exposes loading and a safe retryable error
+00:05 +25 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 360.0×800.0
+00:05 +26 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Ready success starts once and navigates to the board
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new AppDatabase (package:ahdash_11/core/storage/app_database.dart)
+#4      main.<anonymous closure> (file:///C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart:277:22)
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#7      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:05 +27 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 390.0×844.0
+00:06 +28 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 390.0×844.0
+00:06 +29 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: core setup screens fit RTL at 390.0×844.0
+00:06 +30 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 393.0×852.0
+00:06 +31 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: core setup screens fit RTL at 393.0×852.0
+00:06 +32 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 412.0×915.0
+00:07 +33 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: core setup screens fit RTL at 412.0×915.0
+00:07 +34 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: Phase 4 core screens fit RTL at 430.0×932.0
+00:07 +35 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: core setup screens fit RTL at 430.0×932.0
+00:07 +36 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: core gameplay preserves content at text scale 1.2
+00:08 +37 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: keyboard-safe Party inputs at 360.0×800.0
+00:08 +38 -1: C:/dev/ahdash11/mobile/test/features/party/party_gameplay_widget_test.dart: core gameplay preserves content at text scale 1.3
+00:08 +39 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: keyboard-safe Party inputs at 390.0×844.0
+00:08 +40 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Team Splitter supports long Arabic names at text scale 1.0
+00:08 +41 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Team Splitter supports long Arabic names at text scale 1.2
+00:09 +42 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Team Splitter supports long Arabic names at text scale 1.3
+00:09 +43 -1: C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: (tearDownAll)
+00:09 +43 -1: C:/dev/ahdash11/mobile/test/features/phase6/phase6_widgets_test.dart: profile compact RTL reduced motion scale 1.0
+00:11 +44 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:11 +45 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:11 +46 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:11 +47 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:12 +48 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:12 +49 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:12 +50 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:12 +51 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.0
+00:12 +52 -1: C:/dev/ahdash11/mobile/test/features/phase6/phase6_widgets_test.dart: football compact RTL reduced motion scale 1.0
+00:12 +53 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.2
+00:13 +54 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.2
+00:13 +55 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.2
+00:13 +56 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.2
+00:13 +57 -1: C:/dev/ahdash11/mobile/test/features/phase6/phase6_widgets_test.dart: profile unavailable never shows fixture or raw exception
+00:13 +58 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.3
+00:13 +59 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.3
+00:13 +60 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.3
+00:13 +61 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(360.0, 800.0) at text scale 1.3
+00:13 +62 -1: C:/dev/ahdash11/mobile/test/features/phase6/phase6_widgets_test.dart: report keyboard keeps input and submit reachable by scrolling
+00:13 +63 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.0
+00:14 +64 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.2
+00:14 +65 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +66 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +67 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +68 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +69 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +70 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(390.0, 844.0) at text scale 1.3
+00:14 +71 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(393.0, 852.0) at text scale 1.0
+00:15 +72 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(393.0, 852.0) at text scale 1.2
+00:15 +73 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(393.0, 852.0) at text scale 1.3
+00:16 +74 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(412.0, 915.0) at text scale 1.0
+00:16 +75 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+00:16 +76 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+00:16 +77 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+00:17 +78 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+00:17 +79 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+00:17 +80 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(430.0, 932.0) at text scale 1.3
+00:17 +81 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Phase C portrait RTL states fit Size(430.0, 932.0) at text scale 1.3
+00:17 +82 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home primary action enters the canonical category route
+00:18 +83 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home primary action enters the canonical category route
+00:18 +84 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Create Tournament stays reachable with keyboard at Size(360.0, 800.0)
+00:18 +85 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Create Tournament stays reachable with keyboard at Size(360.0, 800.0)
+00:18 +86 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Create Tournament stays reachable with keyboard at Size(390.0, 844.0)
+00:18 +87 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: Tournament rules fit compact portrait after valid name
+00:18 +88 -1: C:/dev/ahdash11/mobile/test/features/tournament/tournament_widgets_test.dart: blocked draw remains truthful and cannot report success
+00:18 +89 -1: Some tests failed.
+
+Failing tests:
+  C:/dev/ahdash11/mobile/test/features/party/party_setup_widget_test.dart: Helpers render five real labels and distinct pictograms

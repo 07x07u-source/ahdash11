@@ -1,0 +1,17 @@
+# V10 Figma corrections required
+
+The canonical PNGs are immutable in Phase H.1. This list tells Product/Figma what must be corrected before recapture.
+
+| Screen / variants | Current visual problem | Approved product truth | Figma should change | Must remain unchanged |
+|---|---|---|---|---|
+| 03 Sign In — Compact | Static card compresses footer/legal and does not survive supported text scaling. | Real provider set, validation, guest/email actions and keyboard reachability. | Add scroll/large-text/validation variants with reachable controls. | Auth behavior, 44+ px targets, safe areas. |
+| 04 Create Account — Compact | Three fields, providers and footer cannot coexist in shown fixed geometry. | Username/email/password validation and legal/footer content are required. | Make compact form scrollable and publish keyboard + validation states. | Required fields, provider truth, accessibility. |
+| 06 Category Selection — Primary/Compact/Search keyboard | Illustrative media and selection progress conflict; primary says 2/4 while product requires six categories. | Six provider-backed categories and rights-safe media fallback. | Correct count/state and use approved media; retain current grid/gutters. | Six-category requirement, search, selection CTA. |
+| 07 Category Detail — Primary/Compact | Hardcoded league copy and photograph imply fixed runtime data/media rights. | Provider-backed name/description/count and rights-safe fallback. | Specify variable content bounds and approved fallback asset. | CTA hierarchy and remote-data truth. |
+| 08 Team Setup — Primary/Compact | Reference omits player summary, colour choice and optional splitter entry. | Real team/player/colour state; splitter is optional. | Add these supported fields/states to the canonical frames. | No fake team statistics; real validation. |
+| 10 Helpers — Primary/Compact | Helper names/icons reflect stale semantics. | Exactly `two_chances`, `call_friend`, `risk`, `bench`, `pass`; `call_friend` is an internal timer. | Replace labels/descriptions/icons with approved definitions. | Five-helper limit and three-per-team selection. |
+| 11 Ready — Primary/Compact | Summary uses stale category/helper presentation. | Six selected categories, two real teams, three approved helpers each, no fake countdown. | Rebuild summary from the current Party contract. | Start action and truthful setup data. |
+| 18 Saved Games — Primary | Two illustrative sessions are presented as fixed content. | Loading, real persisted sessions, empty and error; resume uses restoration resolver. | Publish empty/error plus variable real-session card specs. | No fake sessions/counts; real resume path. |
+| 29 Solo Setup — Primary | Reference advertises question counts/difficulty/category configuration. | Solo is LIMITED and may have no published ready category. | Replace with truthful limited/empty configuration. | No XP, invented scores or unavailable modes. |
+| 33 Team Challenge — Primary | Reference invents teams, members and active settings. | Challenge data is server-derived; failure/unavailable must be truthful. | Add loading/unavailable and variable real-data frames. | No fake opponent, presence, rating or queue. |
+| 35 Friends — Primary/Search keyboard | Illustrative avatars and green presence dots imply fake online state. | Real server rows; no presence/last-seen unless supported. | Remove presence indicators; define packaged avatar fallback and empty state. | Search/actions only when backed by real behavior. |

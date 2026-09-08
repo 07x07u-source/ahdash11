@@ -1,0 +1,53 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
+00:00 +0: 360x800_scale1.3 party (setUpAll)
+00:00 +0: 360x800_scale1.3 party V10 Phase B 06_categories_390x844
+00:02 +1: 360x800_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:02 +2: 360x800_scale1.3 party V10 Phase B 07_detail_390x844
+00:02 +3: 360x800_scale1.3 party V10 Phase B 08_teams_390x844
+00:03 +4: 360x800_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:03 +5: 360x800_scale1.3 party V10 Phase B 09_splitter_390x844
+00:03 +6: 360x800_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:03 +7: 360x800_scale1.3 party V10 Phase B 10_helpers_390x844
+00:04 +8: 360x800_scale1.3 party V10 Phase B 11_ready_390x844
+00:04 +9: 360x800_scale1.3 party V10 Phase B 12_board_390x844
+00:04 +10: 360x800_scale1.3 party V10 Phase B 13_text_390x844
+00:05 +11: 360x800_scale1.3 party V10 Phase B 14_image_390x844
+00:05 +12: 360x800_scale1.3 party V10 Phase B 15_reveal_390x844
+00:05 +13: 360x800_scale1.3 party V10 Phase B 16_result_390x844
+00:05 +14: 360x800_scale1.3 party (tearDownAll)
+00:05 +14: 360x800_scale1.3 tournament (setUpAll)
+00:05 +14: 360x800_scale1.3 tournament tournament hub 360x800 light
+00:05 +15: 360x800_scale1.3 tournament tournament create 360x800 light
+00:05 +16: 360x800_scale1.3 tournament tournament teams 360x800 light
+00:05 +17: 360x800_scale1.3 tournament tournament draw 360x800 light
+00:05 +18: 360x800_scale1.3 tournament tournament bracket 360x800 light
+00:05 +19: 360x800_scale1.3 tournament tournament semifinal 360x800 light
+00:06 +20: 360x800_scale1.3 tournament tournament finalMatch 360x800 light
+00:06 +21: 360x800_scale1.3 tournament tournament match 360x800 light
+00:06 +22: 360x800_scale1.3 tournament tournament champion 360x800 light
+00:06 +23: 360x800_scale1.3 tournament tournament create keyboard 360x800
+00:06 +24: 360x800_scale1.3 tournament (tearDownAll)
+00:06 +24: 360x800_scale1.3 discovery (setUpAll)
+00:06 +24: 360x800_scale1.3 discovery phase D howTo 360x800
+00:06 +25: 360x800_scale1.3 discovery phase D savedGames 360x800
+00:06 +26: 360x800_scale1.3 discovery phase D matchSetup 360x800
+00:06 +27: 360x800_scale1.3 discovery phase D solo 360x800
+00:06 +28: 360x800_scale1.3 discovery phase D teamChallenge 360x800
+00:06 +29: 360x800_scale1.3 discovery phase D ranking 360x800
+00:07 +30: 360x800_scale1.3 discovery phase D friends 360x800
+00:07 +31: 360x800_scale1.3 discovery phase D friendsKeyboard 360x800
+00:07 +32: 360x800_scale1.3 discovery phase D blocked 360x800
+00:07 +33: 360x800_scale1.3 discovery phase D teamDetail 360x800
+00:07 +34: 360x800_scale1.3 discovery (tearDownAll)
+00:07 +34: 360x800_scale1.3 account (setUpAll)
+00:07 +34: 360x800_scale1.3 account phase E profile 360x800
+00:07 +35: 360x800_scale1.3 account phase E notifications 360x800
+00:07 +36: 360x800_scale1.3 account phase E settings 360x800
+00:07 +37: 360x800_scale1.3 account phase E report 360x800
+00:08 +38: 360x800_scale1.3 account phase E reportKeyboard 360x800
+00:08 +39: 360x800_scale1.3 account phase E football 360x800
+00:08 +40: 360x800_scale1.3 account phase E footballKeyboard 360x800
+00:08 +41: 360x800_scale1.3 account phase E premium 360x800
+00:08 +42: 360x800_scale1.3 account phase E premiumLoading 360x800
+00:08 +43: 360x800_scale1.3 account (tearDownAll)
+00:08 +43: All tests passed!

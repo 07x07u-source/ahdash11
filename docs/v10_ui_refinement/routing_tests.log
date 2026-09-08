@@ -1,0 +1,73 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart
+00:00 +0: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +1: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +2: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +3: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +4: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +5: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +6: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +7: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +8: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +9: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:00 +10: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: real router gates every private guest deep link before mounting private data
+00:03 +11: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "أنشئ بطولة": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart:29:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart line 29
+The test description was:
+  Home renders real actions without Coin or Wallet affordances
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +11 -1: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: guest signs in through gate and resumes intended destination without losing Party
+00:05 +11 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances [E]
+  Test failed. See exception logs above.
+  The test description was: Home renders real actions without Coin or Wallet affordances
+  
+00:05 +12 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home shows resume only for a real resumable Party session
+00:05 +13 -1: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: create account gate preserves intent and opens account creation mode
+00:05 +14 -1: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home primary action enters the canonical category route
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure> (file:///C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart:72:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  Home primary action enters the canonical category route
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +14 -2: C:/dev/ahdash11/mobile/test/features/auth/guest_routing_test.dart: guest can use local settings and rules without upgrading
+00:06 +14 -2: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home primary action enters the canonical category route [E]
+  Test failed. See exception logs above.
+  The test description was: Home primary action enters the canonical category route
+  
+00:06 +15 -2: C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home compact RTL composition has no overflow
+00:06 +16 -2: Some tests failed.
+
+Failing tests:
+  C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home primary action enters the canonical category route
+  C:/dev/ahdash11/mobile/test/features/home/home_screen_test.dart: Home renders real actions without Coin or Wallet affordances

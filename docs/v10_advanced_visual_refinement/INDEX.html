@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AHDASH | 11 — Advanced Visual Refinement</title>
+  <style>
+    :root { --paper:#fbf7ef; --surface:#f4ebdd; --ink:#191714; --muted:#756e63; --green:#174d3d; --lime:#b6ff3b; --gold:#ffc857; --line:#d3c6b2; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:"Segoe UI",Tahoma,sans-serif; }
+    header { padding:46px clamp(22px,5vw,72px) 34px; background:var(--green); color:var(--paper); border-bottom:5px solid var(--lime); }
+    header small { color:var(--gold); font-weight:800; letter-spacing:.08em; }
+    h1 { margin:8px 0 10px; font-size:clamp(30px,5vw,58px); line-height:1; }
+    header p { margin:0; color:#ebdfc9; max-width:760px; line-height:1.7; }
+    nav { position:sticky; top:0; z-index:2; display:flex; gap:8px; overflow:auto; padding:10px clamp(16px,4vw,60px); background:rgba(251,247,239,.96); border-bottom:1px solid var(--line); direction:ltr; }
+    nav a { white-space:nowrap; text-decoration:none; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:12px; }
+    main { padding:22px clamp(16px,4vw,60px) 80px; }
+    section { margin:0 0 44px; scroll-margin-top:70px; }
+    h2 { margin:0 0 14px; font-size:22px; text-transform:capitalize; color:var(--green); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; align-items:start; }
+    .card { overflow:hidden; margin:0; background:white; border:1px solid var(--line); border-radius:18px; box-shadow:0 7px 22px rgba(25,23,20,.06); }
+    .card a { display:block; background:#eee6d8; }
+    .card img { display:block; width:100%; height:auto; max-height:640px; object-fit:contain; background:var(--paper); }
+    .card p { margin:0; padding:11px 13px; direction:ltr; color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+    footer { padding:24px; text-align:center; color:var(--muted); border-top:1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <header><small>AHDASH | 11 · V10</small><h1>التنقيح البصري المتقدم</h1><p>معرض محلي دون اتصال لمراجعة الشاشات الكاملة، الرسوم الإجرائية الأصلية، التفاصيل، الحركة، وحالات قبل/بعد.</p></header>
+  <nav><a href="#home">home</a><a href="#premium">premium</a><a href="#settings">settings</a><a href="#party">party</a><a href="#tournament">tournament</a><a href="#social">social</a><a href="#account">account</a><a href="#empty_states">empty states</a><a href="#loading_states">loading states</a><a href="#error_states">error states</a><a href="#artwork">artwork</a><a href="#motion_keyframes">motion keyframes</a><a href="#details">details</a><a href="#before_after">before after</a></nav>
+  <main><section id="home"><h2>home</h2><div class="grid">
+            <article class="card">
+              <a href="home/01_home_primary_390x844.png">
+                <img loading="lazy" src="home/01_home_primary_390x844.png" alt="01_home_primary_390x844">
+              </a>
+              <p>01 home primary 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="home/02_home_compact_360x800.png">
+                <img loading="lazy" src="home/02_home_compact_360x800.png" alt="02_home_compact_360x800">
+              </a>
+              <p>02 home compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="home/03_home_guest_390x844.png">
+                <img loading="lazy" src="home/03_home_guest_390x844.png" alt="03_home_guest_390x844">
+              </a>
+              <p>03 home guest 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="home/04_home_text_scale_1_3_390x844.png">
+                <img loading="lazy" src="home/04_home_text_scale_1_3_390x844.png" alt="04_home_text_scale_1_3_390x844">
+              </a>
+              <p>04 home text scale 1 3 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="home/05_home_premium_entry_390x844.png">
+                <img loading="lazy" src="home/05_home_premium_entry_390x844.png" alt="05_home_premium_entry_390x844">
+              </a>
+              <p>05 home premium entry 390x844</p>
+            </article>
+            </div></section><section id="premium"><h2>premium</h2><div class="grid">
+            <article class="card">
+              <a href="premium/01_premium_monthly_390x844.png">
+                <img loading="lazy" src="premium/01_premium_monthly_390x844.png" alt="01_premium_monthly_390x844">
+              </a>
+              <p>01 premium monthly 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/02_premium_annual_390x844.png">
+                <img loading="lazy" src="premium/02_premium_annual_390x844.png" alt="02_premium_annual_390x844">
+              </a>
+              <p>02 premium annual 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/03_premium_loading_390x844.png">
+                <img loading="lazy" src="premium/03_premium_loading_390x844.png" alt="03_premium_loading_390x844">
+              </a>
+              <p>03 premium loading 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/04_premium_store_unavailable_390x844.png">
+                <img loading="lazy" src="premium/04_premium_store_unavailable_390x844.png" alt="04_premium_store_unavailable_390x844">
+              </a>
+              <p>04 premium store unavailable 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/05_premium_purchase_loading_390x844.png">
+                <img loading="lazy" src="premium/05_premium_purchase_loading_390x844.png" alt="05_premium_purchase_loading_390x844">
+              </a>
+              <p>05 premium purchase loading 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/06_premium_active_subscriber_390x844.png">
+                <img loading="lazy" src="premium/06_premium_active_subscriber_390x844.png" alt="06_premium_active_subscriber_390x844">
+              </a>
+              <p>06 premium active subscriber 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/07_premium_category_locked_390x844.png">
+                <img loading="lazy" src="premium/07_premium_category_locked_390x844.png" alt="07_premium_category_locked_390x844">
+              </a>
+              <p>07 premium category locked 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/08_premium_category_unlocked_390x844.png">
+                <img loading="lazy" src="premium/08_premium_category_unlocked_390x844.png" alt="08_premium_category_unlocked_390x844">
+              </a>
+              <p>08 premium category unlocked 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="premium/09_premium_contextual_gate_390x844.png">
+                <img loading="lazy" src="premium/09_premium_contextual_gate_390x844.png" alt="09_premium_contextual_gate_390x844">
+              </a>
+              <p>09 premium contextual gate 390x844</p>
+            </article>
+            </div></section><section id="settings"><h2>settings</h2><div class="grid">
+            <article class="card">
+              <a href="settings/01_settings_signed_in_390x844.png">
+                <img loading="lazy" src="settings/01_settings_signed_in_390x844.png" alt="01_settings_signed_in_390x844">
+              </a>
+              <p>01 settings signed in 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="settings/02_settings_guest_390x844.png">
+                <img loading="lazy" src="settings/02_settings_guest_390x844.png" alt="02_settings_guest_390x844">
+              </a>
+              <p>02 settings guest 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="settings/03_settings_subscriber_390x844.png">
+                <img loading="lazy" src="settings/03_settings_subscriber_390x844.png" alt="03_settings_subscriber_390x844">
+              </a>
+              <p>03 settings subscriber 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="settings/04_settings_compact_360x800.png">
+                <img loading="lazy" src="settings/04_settings_compact_360x800.png" alt="04_settings_compact_360x800">
+              </a>
+              <p>04 settings compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="settings/05_settings_support_session_390x844.png">
+                <img loading="lazy" src="settings/05_settings_support_session_390x844.png" alt="05_settings_support_session_390x844">
+              </a>
+              <p>05 settings support session 390x844</p>
+            </article>
+            </div></section><section id="party"><h2>party</h2><div class="grid">
+            <article class="card">
+              <a href="party/01_category_selection_390x844.png">
+                <img loading="lazy" src="party/01_category_selection_390x844.png" alt="01_category_selection_390x844">
+              </a>
+              <p>01 category selection 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/02_team_setup_390x844.png">
+                <img loading="lazy" src="party/02_team_setup_390x844.png" alt="02_team_setup_390x844">
+              </a>
+              <p>02 team setup 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/03_team_splitter_390x844.png">
+                <img loading="lazy" src="party/03_team_splitter_390x844.png" alt="03_team_splitter_390x844">
+              </a>
+              <p>03 team splitter 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/04_helpers_390x844.png">
+                <img loading="lazy" src="party/04_helpers_390x844.png" alt="04_helpers_390x844">
+              </a>
+              <p>04 helpers 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/05_ready_390x844.png">
+                <img loading="lazy" src="party/05_ready_390x844.png" alt="05_ready_390x844">
+              </a>
+              <p>05 ready 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/06_game_board_390x844.png">
+                <img loading="lazy" src="party/06_game_board_390x844.png" alt="06_game_board_390x844">
+              </a>
+              <p>06 game board 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/07_text_question_390x844.png">
+                <img loading="lazy" src="party/07_text_question_390x844.png" alt="07_text_question_390x844">
+              </a>
+              <p>07 text question 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/08_image_question_390x844.png">
+                <img loading="lazy" src="party/08_image_question_390x844.png" alt="08_image_question_390x844">
+              </a>
+              <p>08 image question 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/09_answer_reveal_390x844.png">
+                <img loading="lazy" src="party/09_answer_reveal_390x844.png" alt="09_answer_reveal_390x844">
+              </a>
+              <p>09 answer reveal 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="party/10_final_result_390x844.png">
+                <img loading="lazy" src="party/10_final_result_390x844.png" alt="10_final_result_390x844">
+              </a>
+              <p>10 final result 390x844</p>
+            </article>
+            </div></section><section id="tournament"><h2>tournament</h2><div class="grid">
+            <article class="card">
+              <a href="tournament/01_tournament_hub_390x844.png">
+                <img loading="lazy" src="tournament/01_tournament_hub_390x844.png" alt="01_tournament_hub_390x844">
+              </a>
+              <p>01 tournament hub 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/02_create_tournament_390x844.png">
+                <img loading="lazy" src="tournament/02_create_tournament_390x844.png" alt="02_create_tournament_390x844">
+              </a>
+              <p>02 create tournament 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/03_tournament_teams_390x844.png">
+                <img loading="lazy" src="tournament/03_tournament_teams_390x844.png" alt="03_tournament_teams_390x844">
+              </a>
+              <p>03 tournament teams 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/04_tournament_draw_390x844.png">
+                <img loading="lazy" src="tournament/04_tournament_draw_390x844.png" alt="04_tournament_draw_390x844">
+              </a>
+              <p>04 tournament draw 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/05_tournament_bracket_390x844.png">
+                <img loading="lazy" src="tournament/05_tournament_bracket_390x844.png" alt="05_tournament_bracket_390x844">
+              </a>
+              <p>05 tournament bracket 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/06_tournament_match_390x844.png">
+                <img loading="lazy" src="tournament/06_tournament_match_390x844.png" alt="06_tournament_match_390x844">
+              </a>
+              <p>06 tournament match 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="tournament/07_tournament_champion_390x844.png">
+                <img loading="lazy" src="tournament/07_tournament_champion_390x844.png" alt="07_tournament_champion_390x844">
+              </a>
+              <p>07 tournament champion 390x844</p>
+            </article>
+            </div></section><section id="social"><h2>social</h2><div class="grid">
+            <article class="card">
+              <a href="social/01_friends.png">
+                <img loading="lazy" src="social/01_friends.png" alt="01_friends">
+              </a>
+              <p>01 friends</p>
+            </article>
+            
+            <article class="card">
+              <a href="social/02_friends_search.png">
+                <img loading="lazy" src="social/02_friends_search.png" alt="02_friends_search">
+              </a>
+              <p>02 friends search</p>
+            </article>
+            
+            <article class="card">
+              <a href="social/03_blocked_players.png">
+                <img loading="lazy" src="social/03_blocked_players.png" alt="03_blocked_players">
+              </a>
+              <p>03 blocked players</p>
+            </article>
+            </div></section><section id="account"><h2>account</h2><div class="grid">
+            <article class="card">
+              <a href="account/01_profile_390x844.png">
+                <img loading="lazy" src="account/01_profile_390x844.png" alt="01_profile_390x844">
+              </a>
+              <p>01 profile 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="account/02_notifications_390x844.png">
+                <img loading="lazy" src="account/02_notifications_390x844.png" alt="02_notifications_390x844">
+              </a>
+              <p>02 notifications 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="account/03_report_problem_390x844.png">
+                <img loading="lazy" src="account/03_report_problem_390x844.png" alt="03_report_problem_390x844">
+              </a>
+              <p>03 report problem 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="account/04_football_preferences_390x844.png">
+                <img loading="lazy" src="account/04_football_preferences_390x844.png" alt="04_football_preferences_390x844">
+              </a>
+              <p>04 football preferences 390x844</p>
+            </article>
+            </div></section><section id="empty_states"><h2>empty states</h2><div class="grid">
+            <article class="card">
+              <a href="empty_states/01_saved_games_empty.png">
+                <img loading="lazy" src="empty_states/01_saved_games_empty.png" alt="01_saved_games_empty">
+              </a>
+              <p>01 saved games empty</p>
+            </article>
+            
+            <article class="card">
+              <a href="empty_states/02_friends_empty.png">
+                <img loading="lazy" src="empty_states/02_friends_empty.png" alt="02_friends_empty">
+              </a>
+              <p>02 friends empty</p>
+            </article>
+            
+            <article class="card">
+              <a href="empty_states/03_notifications_empty.png">
+                <img loading="lazy" src="empty_states/03_notifications_empty.png" alt="03_notifications_empty">
+              </a>
+              <p>03 notifications empty</p>
+            </article>
+            
+            <article class="card">
+              <a href="empty_states/04_ranking_empty.png">
+                <img loading="lazy" src="empty_states/04_ranking_empty.png" alt="04_ranking_empty">
+              </a>
+              <p>04 ranking empty</p>
+            </article>
+            
+            <article class="card">
+              <a href="empty_states/05_editorial_state_detail.png">
+                <img loading="lazy" src="empty_states/05_editorial_state_detail.png" alt="05_editorial_state_detail">
+              </a>
+              <p>05 editorial state detail</p>
+            </article>
+            </div></section><section id="loading_states"><h2>loading states</h2><div class="grid">
+            <article class="card">
+              <a href="loading_states/01_friends_loading.png">
+                <img loading="lazy" src="loading_states/01_friends_loading.png" alt="01_friends_loading">
+              </a>
+              <p>01 friends loading</p>
+            </article>
+            
+            <article class="card">
+              <a href="loading_states/02_notifications_loading.png">
+                <img loading="lazy" src="loading_states/02_notifications_loading.png" alt="02_notifications_loading">
+              </a>
+              <p>02 notifications loading</p>
+            </article>
+            
+            <article class="card">
+              <a href="loading_states/03_ranking_loading.png">
+                <img loading="lazy" src="loading_states/03_ranking_loading.png" alt="03_ranking_loading">
+              </a>
+              <p>03 ranking loading</p>
+            </article>
+            
+            <article class="card">
+              <a href="loading_states/04_contextual_loading_detail.png">
+                <img loading="lazy" src="loading_states/04_contextual_loading_detail.png" alt="04_contextual_loading_detail">
+              </a>
+              <p>04 contextual loading detail</p>
+            </article>
+            </div></section><section id="error_states"><h2>error states</h2><div class="grid">
+            <article class="card">
+              <a href="error_states/01_friends_error.png">
+                <img loading="lazy" src="error_states/01_friends_error.png" alt="01_friends_error">
+              </a>
+              <p>01 friends error</p>
+            </article>
+            
+            <article class="card">
+              <a href="error_states/02_notifications_error.png">
+                <img loading="lazy" src="error_states/02_notifications_error.png" alt="02_notifications_error">
+              </a>
+              <p>02 notifications error</p>
+            </article>
+            
+            <article class="card">
+              <a href="error_states/03_blocked_players_error.png">
+                <img loading="lazy" src="error_states/03_blocked_players_error.png" alt="03_blocked_players_error">
+              </a>
+              <p>03 blocked players error</p>
+            </article>
+            
+            <article class="card">
+              <a href="error_states/04_editorial_error_detail.png">
+                <img loading="lazy" src="error_states/04_editorial_error_detail.png" alt="04_editorial_error_detail">
+              </a>
+              <p>04 editorial error detail</p>
+            </article>
+            </div></section><section id="artwork"><h2>artwork</h2><div class="grid">
+            <article class="card">
+              <a href="artwork/home_hero_exploration_a_gathering.png">
+                <img loading="lazy" src="artwork/home_hero_exploration_a_gathering.png" alt="home_hero_exploration_a_gathering">
+              </a>
+              <p>home hero exploration a gathering</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/home_hero_exploration_b_tactics.png">
+                <img loading="lazy" src="artwork/home_hero_exploration_b_tactics.png" alt="home_hero_exploration_b_tactics">
+              </a>
+              <p>home hero exploration b tactics</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/home_hero_exploration_c_floodlights.png">
+                <img loading="lazy" src="artwork/home_hero_exploration_c_floodlights.png" alt="home_hero_exploration_c_floodlights">
+              </a>
+              <p>home hero exploration c floodlights</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/premium_ads_free_flow.png">
+                <img loading="lazy" src="artwork/premium_ads_free_flow.png" alt="premium_ads_free_flow">
+              </a>
+              <p>premium ads free flow</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/premium_locked_categories.png">
+                <img loading="lazy" src="artwork/premium_locked_categories.png" alt="premium_locked_categories">
+              </a>
+              <p>premium locked categories</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/premium_unlocked_categories.png">
+                <img loading="lazy" src="artwork/premium_unlocked_categories.png" alt="premium_unlocked_categories">
+              </a>
+              <p>premium unlocked categories</p>
+            </article>
+            </div></section><section id="motion_keyframes"><h2>motion keyframes</h2><div class="grid">
+            <article class="card">
+              <a href="motion_keyframes/home_full_motion_frame.png">
+                <img loading="lazy" src="motion_keyframes/home_full_motion_frame.png" alt="home_full_motion_frame">
+              </a>
+              <p>home full motion frame</p>
+            </article>
+            
+            <article class="card">
+              <a href="motion_keyframes/home_hero_00.png">
+                <img loading="lazy" src="motion_keyframes/home_hero_00.png" alt="home_hero_00">
+              </a>
+              <p>home hero 00</p>
+            </article>
+            
+            <article class="card">
+              <a href="motion_keyframes/home_hero_100.png">
+                <img loading="lazy" src="motion_keyframes/home_hero_100.png" alt="home_hero_100">
+              </a>
+              <p>home hero 100</p>
+            </article>
+            
+            <article class="card">
+              <a href="motion_keyframes/home_hero_50.png">
+                <img loading="lazy" src="motion_keyframes/home_hero_50.png" alt="home_hero_50">
+              </a>
+              <p>home hero 50</p>
+            </article>
+            </div></section><section id="details"><h2>details</h2><div class="grid">
+            <article class="card">
+              <a href="details/home_party_hero.png">
+                <img loading="lazy" src="details/home_party_hero.png" alt="home_party_hero">
+              </a>
+              <p>home party hero</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/home_premium_entry.png">
+                <img loading="lazy" src="details/home_premium_entry.png" alt="home_premium_entry">
+              </a>
+              <p>home premium entry</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/home_secondary_modes.png">
+                <img loading="lazy" src="details/home_secondary_modes.png" alt="home_secondary_modes">
+              </a>
+              <p>home secondary modes</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/premium_benefits_artwork.png">
+                <img loading="lazy" src="details/premium_benefits_artwork.png" alt="premium_benefits_artwork">
+              </a>
+              <p>premium benefits artwork</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/premium_cta.png">
+                <img loading="lazy" src="details/premium_cta.png" alt="premium_cta">
+              </a>
+              <p>premium cta</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/premium_hero_artwork.png">
+                <img loading="lazy" src="details/premium_hero_artwork.png" alt="premium_hero_artwork">
+              </a>
+              <p>premium hero artwork</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/premium_plan_selector.png">
+                <img loading="lazy" src="details/premium_plan_selector.png" alt="premium_plan_selector">
+              </a>
+              <p>premium plan selector</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/settings_account_section.png">
+                <img loading="lazy" src="details/settings_account_section.png" alt="settings_account_section">
+              </a>
+              <p>settings account section</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/settings_identity.png">
+                <img loading="lazy" src="details/settings_identity.png" alt="settings_identity">
+              </a>
+              <p>settings identity</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/settings_logout.png">
+                <img loading="lazy" src="details/settings_logout.png" alt="settings_logout">
+              </a>
+              <p>settings logout</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/settings_premium_row.png">
+                <img loading="lazy" src="details/settings_premium_row.png" alt="settings_premium_row">
+              </a>
+              <p>settings premium row</p>
+            </article>
+            
+            <article class="card">
+              <a href="details/settings_support_legal.png">
+                <img loading="lazy" src="details/settings_support_legal.png" alt="settings_support_legal">
+              </a>
+              <p>settings support legal</p>
+            </article>
+            </div></section><section id="before_after"><h2>before after</h2><div class="grid">
+            <article class="card">
+              <a href="before_after/home_after.png">
+                <img loading="lazy" src="before_after/home_after.png" alt="home_after">
+              </a>
+              <p>home after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/home_before.png">
+                <img loading="lazy" src="before_after/home_before.png" alt="home_before">
+              </a>
+              <p>home before</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/home_before_after.png">
+                <img loading="lazy" src="before_after/home_before_after.png" alt="home_before_after">
+              </a>
+              <p>home before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/premium_after.png">
+                <img loading="lazy" src="before_after/premium_after.png" alt="premium_after">
+              </a>
+              <p>premium after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/premium_before.png">
+                <img loading="lazy" src="before_after/premium_before.png" alt="premium_before">
+              </a>
+              <p>premium before</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/premium_before_after.png">
+                <img loading="lazy" src="before_after/premium_before_after.png" alt="premium_before_after">
+              </a>
+              <p>premium before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/settings_after.png">
+                <img loading="lazy" src="before_after/settings_after.png" alt="settings_after">
+              </a>
+              <p>settings after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/settings_before.png">
+                <img loading="lazy" src="before_after/settings_before.png" alt="settings_before">
+              </a>
+              <p>settings before</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/settings_before_after.png">
+                <img loading="lazy" src="before_after/settings_before_after.png" alt="settings_before_after">
+              </a>
+              <p>settings before after</p>
+            </article>
+            </div></section></main>
+  <footer>87 صورة · لا توجد تبعيات إنترنت</footer>
+</body>
+</html>

@@ -1,0 +1,462 @@
+mobile\lib\shared\presentation\app_states.dart:91:              child: Icon(icon, size: 36, color: colors.textMuted),
+mobile\lib\shared\presentation\app_shell.dart:32:      (AhdashGlyph.home, l10n.home),
+mobile\lib\shared\presentation\app_shell.dart:33:      (AhdashGlyph.play, l10n.play),
+mobile\lib\shared\presentation\app_shell.dart:34:      (AhdashGlyph.teams, l10n.social),
+mobile\lib\shared\presentation\app_shell.dart:35:      (AhdashGlyph.ranking, l10n.ranking),
+mobile\lib\shared\presentation\app_shell.dart:36:      (AhdashGlyph.profile, l10n.profile),
+mobile\lib\shared\presentation\ahdash_image.dart:88:      child: const Center(child: Icon(Icons.sports_soccer_rounded, size: 28)),
+mobile\lib\shared\presentation\ahdash_image.dart:103:        child: Icon(Icons.image_not_supported_outlined, color: color),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:62:        child: Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:63:          AhdashIcons.tournament,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:71:          Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:72:            AhdashIcons.tournament,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:86:            icon: const Icon(AhdashIcons.add),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:132:                Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:133:                  AhdashIcons.tournament,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:236:                        ? AhdashIcons.tournament
+mobile\lib\features\tournament\presentation\tournament_screens.dart:237:                        : AhdashIcons.playSelected,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:249:                    icon: const Icon(AhdashIcons.add),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:337:                  Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:338:                    AhdashIcons.tournament,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:431:                icon: AhdashIcons.forward,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:533:                      icon: const Icon(AhdashIcons.add),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:565:                    icon: AhdashIcons.forward,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:609:                          icon: const Icon(AhdashIcons.close),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:637:                      icon: const Icon(AhdashIcons.add),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:744:                Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:746:                      ? AhdashIcons.checkCircleSelected
+mobile\lib\features\tournament\presentation\tournament_screens.dart:747:                      : AhdashIcons.timer,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:906:          Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:907:            AhdashIcons.random,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:935:              icon: const Icon(AhdashIcons.random),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1034:                      icon: const Icon(AhdashIcons.back),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1041:                      icon: const Icon(AhdashIcons.forward),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1250:      Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1251:        winner ? AhdashIcons.checkCircleSelected : AhdashIcons.team,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1425:                    icon: AhdashIcons.playSelected,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1501:              icon: const Icon(AhdashIcons.check),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1548:      Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1549:        AhdashIcons.team,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1628:              Icon(
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1629:                AhdashIcons.tournament,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1686:                      icon: AhdashIcons.checkCircleSelected,
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1695:                      icon: const Icon(AhdashIcons.categories),
+mobile\lib\features\tournament\presentation\tournament_screens.dart:1725:                icon: AhdashIcons.back,
+mobile\lib\features\party\presentation\party_v2_ui.dart:70:                        icon: const Icon(AhdashIcons.back),
+mobile\lib\features\party\presentation\party_v2_ui.dart:164:    this.icon = AhdashIcons.forward,
+mobile\lib\features\party\presentation\party_v2_ui.dart:235:                      Icon(
+mobile\lib\features\support\presentation\report_problem_screen.dart:74:                                const AhdashIcon(AhdashGlyph.eagle, size: 76),
+mobile\lib\features\support\presentation\report_problem_screen.dart:121:                                    prefixIcon: Icon(Icons.category_outlined),
+mobile\lib\features\support\presentation\report_problem_screen.dart:151:                                      prefixIcon: Icon(Icons.notes_rounded),
+mobile\lib\features\support\presentation\report_problem_screen.dart:158:                                  icon: Icons.send_rounded,
+mobile\lib\features\support\presentation\report_problem_screen.dart:253:              Icon(
+mobile\lib\features\support\presentation\report_problem_screen.dart:254:                Icons.check_circle_rounded,
+mobile\lib\features\party\presentation\party_support_screens.dart:23:      AhdashIcons.categories,
+mobile\lib\features\party\presentation\party_support_screens.dart:28:      AhdashIcons.team,
+mobile\lib\features\party\presentation\party_support_screens.dart:33:      AhdashIcons.play,
+mobile\lib\features\party\presentation\party_support_screens.dart:38:      AhdashIcons.tournament,
+mobile\lib\features\party\presentation\party_support_screens.dart:51:      icon: const Icon(AhdashIcons.help),
+mobile\lib\features\party\presentation\party_support_screens.dart:142:                            Icon(
+mobile\lib\features\party\presentation\party_support_screens.dart:185:                                    icon: AhdashIcons.playSelected,
+mobile\lib\features\party\presentation\party_support_screens.dart:280:                  Icon(
+mobile\lib\features\party\presentation\party_support_screens.dart:281:                    AhdashIcons.football,
+mobile\lib\features\party\presentation\party_support_screens.dart:342:      Icon(AhdashIcons.team, color: color, size: 56),
+mobile\lib\features\party\presentation\party_support_screens.dart:422:      Icon(AhdashIcons.tournament, color: context.ahdashColors.gold, size: 68),
+mobile\lib\features\party\presentation\party_support_screens.dart:489:              const Icon(Icons.help_outline_rounded),
+mobile\lib\features\party\presentation\party_support_screens.dart:498:                icon: const Icon(Icons.close_rounded),
+mobile\lib\features\party\presentation\party_support_screens.dart:559:        icon: const Icon(Icons.add_rounded),
+mobile\lib\features\party\presentation\party_support_screens.dart:569:                  Icon(
+mobile\lib\features\party\presentation\party_support_screens.dart:570:                    Icons.sports_soccer_rounded,
+mobile\lib\features\party\presentation\party_support_screens.dart:579:                    icon: Icons.sports_soccer_rounded,
+mobile\lib\features\party\presentation\party_support_screens.dart:626:                            icon: Icons.play_arrow_rounded,
+mobile\lib\features\party\presentation\party_support_screens.dart:673:                icon: AhdashIcons.back,
+mobile\lib\features\game\presentation\game_setup_screen.dart:117:                                Icon(
+mobile\lib\features\game\presentation\game_setup_screen.dart:119:                                      ? Icons.school_rounded
+mobile\lib\features\game\presentation\game_setup_screen.dart:120:                                      : Icons.security_rounded,
+mobile\lib\features\game\presentation\game_setup_screen.dart:187:      GameType.trueFalse => AhdashGlyph.trueFalse,
+mobile\lib\features\game\presentation\game_setup_screen.dart:188:      GameType.speed => AhdashGlyph.speed,
+mobile\lib\features\game\presentation\game_setup_screen.dart:189:      GameType.ordering => AhdashGlyph.ordering,
+mobile\lib\features\game\presentation\game_setup_screen.dart:190:      _ => AhdashGlyph.classic,
+mobile\lib\features\party\presentation\party_setup_screens.dart:120:                          prefixIcon: Icon(AhdashIcons.search, size: 19),
+mobile\lib\features\party\presentation\party_setup_screens.dart:142:                      icon: const Icon(AhdashIcons.random, size: 18),
+mobile\lib\features\party\presentation\party_setup_screens.dart:173:                      icon: AhdashIcons.favorite,
+mobile\lib\features\party\presentation\party_setup_screens.dart:417:      avatar: icon == null ? null : Icon(icon, size: 15),
+mobile\lib\features\party\presentation\party_setup_screens.dart:516:                          icon: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:518:                                ? AhdashIcons.favoriteSelected
+mobile\lib\features\party\presentation\party_setup_screens.dart:519:                                : AhdashIcons.favorite,
+mobile\lib\features\party\presentation\party_setup_screens.dart:537:                        icon: const Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:538:                          AhdashIcons.info,
+mobile\lib\features\party\presentation\party_setup_screens.dart:842:                icon: Icons.visibility_outlined,
+mobile\lib\features\party\presentation\party_setup_screens.dart:877:            icon: const Icon(Icons.arrow_forward_rounded),
+mobile\lib\features\party\presentation\party_setup_screens.dart:936:          icon: revealed ? Icons.arrow_forward_rounded : Icons.visibility,
+mobile\lib\features\party\presentation\party_setup_screens.dart:985:            icon: const Icon(AhdashIcons.random),
+mobile\lib\features\party\presentation\party_setup_screens.dart:1092:                child: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:1093:                  AhdashIcons.team,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1167:                prefixIcon: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:1168:                  AhdashIcons.team,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1221:              Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:1222:                AhdashIcons.team,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1287:                  const Icon(Icons.shuffle_rounded),
+mobile\lib\features\party\presentation\party_setup_screens.dart:1299:                    icon: const Icon(Icons.close_rounded),
+mobile\lib\features\party\presentation\party_setup_screens.dart:1390:                  icon: Icons.shuffle_rounded,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1672:              child: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:1771:                child: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:1800:      'looks_two' => AhdashIcons.twoChances,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1801:      'phone' => AhdashIcons.call,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1802:      'trending_up' => AhdashIcons.risk,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1803:      'event_seat' => AhdashIcons.bench,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1804:      'redo' => AhdashIcons.pass,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1806:        PartyHelperId.twoChances => AhdashIcons.twoChances,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1807:        PartyHelperId.callFriend => AhdashIcons.call,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1808:        PartyHelperId.risk => AhdashIcons.risk,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1809:        PartyHelperId.bench => AhdashIcons.bench,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1810:        PartyHelperId.pass => AhdashIcons.pass,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1859:            icon: AhdashIcons.playSelected,
+mobile\lib\features\party\presentation\party_setup_screens.dart:1947:              const Icon(AhdashIcons.categories, size: 17),
+mobile\lib\features\party\presentation\party_setup_screens.dart:2034:        Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:2035:          AhdashIcons.team,
+mobile\lib\features\party\presentation\party_setup_screens.dart:2075:                    child: Icon(
+mobile\lib\features\party\presentation\party_setup_screens.dart:2105:        const Icon(Icons.cloud_off_rounded, size: 38),
+mobile\lib\features\party\presentation\party_game_screens.dart:82:                      icon: const Icon(AhdashIcons.undo, size: 20),
+mobile\lib\features\party\presentation\party_game_screens.dart:91:                      icon: const Icon(AhdashIcons.close, size: 20),
+mobile\lib\features\party\presentation\party_game_screens.dart:248:        child: const Center(child: Icon(AhdashIcons.football, size: 20)),
+mobile\lib\features\party\presentation\party_game_screens.dart:257:            errorWidget: (_, _, _) => const Icon(AhdashIcons.image, size: 15),
+mobile\lib\features\party\presentation\party_game_screens.dart:455:            icon: const Icon(AhdashIcons.flag, size: 17),
+mobile\lib\features\party\presentation\party_game_screens.dart:461:            icon: AhdashIcons.visibility,
+mobile\lib\features\party\presentation\party_game_screens.dart:811:        Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:812:          AhdashIcons.image,
+mobile\lib\features\party\presentation\party_game_screens.dart:857:            icon: const Icon(AhdashIcons.flag, size: 17),
+mobile\lib\features\party\presentation\party_game_screens.dart:1111:            icon: const Icon(AhdashIcons.home),
+mobile\lib\features\party\presentation\party_game_screens.dart:1120:            icon: const Icon(AhdashIcons.refresh),
+mobile\lib\features\party\presentation\party_game_screens.dart:1127:              icon: AhdashIcons.tournament,
+mobile\lib\features\party\presentation\party_game_screens.dart:1161:              icon: AhdashIcons.guest,
+mobile\lib\features\party\presentation\party_game_screens.dart:1172:              icon: AhdashIcons.add,
+mobile\lib\features\party\presentation\party_game_screens.dart:1199:                      child: Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:1200:                        tied ? AhdashIcons.team : AhdashIcons.tournament,
+mobile\lib\features\party\presentation\party_game_screens.dart:1380:        Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:1381:          AhdashIcons.premiumSelected,
+mobile\lib\features\party\presentation\party_game_screens.dart:1556:        icon: Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:1558:              ? Icons.check_rounded
+mobile\lib\features\party\presentation\party_game_screens.dart:1684:                  Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:1685:                    Icons.check_circle_rounded,
+mobile\lib\features\party\presentation\party_game_screens.dart:1730:                                  leading: Icon(
+mobile\lib\features\party\presentation\party_game_screens.dart:1732:                                        ? Icons.radio_button_checked_rounded
+mobile\lib\features\party\presentation\party_game_screens.dart:1733:                                        : Icons.radio_button_off_rounded,
+mobile\lib\features\party\presentation\party_game_screens.dart:1774:                        icon: Icons.send_rounded,
+mobile\lib\features\store\presentation\wallet_screen.dart:82:            icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\store\presentation\wallet_screen.dart:114:                                icon: Icons.account_balance_wallet_outlined,
+mobile\lib\features\store\presentation\wallet_screen.dart:126:                                  icon: Icons.receipt_long_outlined,
+mobile\lib\features\store\presentation\store_screen.dart:80:                      AhdashIcon(AhdashGlyph.premium, size: 52),
+mobile\lib\features\store\presentation\store_screen.dart:133:                                  icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\store\presentation\store_screen.dart:320:            AhdashIcon(AhdashGlyph.premium),
+mobile\lib\features\store\presentation\store_screen.dart:325:          AhdashGlyph.profile,
+mobile\lib\features\football\presentation\football_preferences_screen.dart:68:                    icon: AhdashIcons.back,
+mobile\lib\features\football\presentation\football_preferences_screen.dart:201:                        Icon(
+mobile\lib\features\football\presentation\football_preferences_screen.dart:202:                          AhdashIcons.checkCircleSelected,
+mobile\lib\features\football\presentation\football_preferences_screen.dart:274:                  prefixIcon: const Icon(Icons.search_rounded),
+mobile\lib\features\football\presentation\football_preferences_screen.dart:363:                      icon: AhdashIcons.checkCircleSelected,
+mobile\lib\features\football\presentation\football_preferences_screen.dart:486:          AhdashGlyph.club,
+mobile\lib\features\football\presentation\football_preferences_screen.dart:638:              icon: const Icon(Icons.chevron_right_rounded, size: 18),
+mobile\lib\features\football\presentation\football_preferences_screen.dart:652:              icon: const Icon(Icons.chevron_left_rounded, size: 18),
+mobile\lib\features\football\presentation\football_preferences_screen.dart:672:          const AhdashIcon(AhdashGlyph.club, size: 54),
+mobile\lib\features\football\presentation\football_preferences_screen.dart:680:            icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\onboarding\presentation\onboarding_screen.dart:106:                        icon: Icons.sports_soccer_rounded,
+mobile\lib\features\onboarding\presentation\onboarding_screen.dart:148:            Icon(
+mobile\lib\features\onboarding\presentation\onboarding_screen.dart:149:              Icons.stadium_rounded,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:44:                icon: AhdashIcons.back,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:51:                  icon: AhdashIcons.refresh,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:66:                      icon: AhdashIcons.audioMuted,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:76:                      icon: AhdashIcons.notifications,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:128:          child: Icon(_icon(type)),
+mobile\lib\features\notifications\presentation\notifications_screen.dart:165:            : const Icon(AhdashIcons.forward, size: 16),
+mobile\lib\features\notifications\presentation\notifications_screen.dart:248:    'friend_request' => AhdashIcons.add,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:249:    'match_invite' => AhdashIcons.play,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:250:    'reward' => AhdashIcons.premium,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:251:    'season' => AhdashIcons.tournament,
+mobile\lib\features\notifications\presentation\notifications_screen.dart:252:    _ => AhdashIcons.notifications,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:101:                      icon: const Icon(Icons.arrow_forward_rounded),
+mobile\lib\features\social\presentation\team_challenge_screen.dart:127:        icon: Icons.sports_score_outlined,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:219:                            const AhdashIcon(AhdashGlyph.club, size: 48),
+mobile\lib\features\social\presentation\team_challenge_screen.dart:286:                              const Icon(Icons.sync_problem_rounded, size: 18),
+mobile\lib\features\social\presentation\team_challenge_screen.dart:534:                  const Icon(
+mobile\lib\features\social\presentation\team_challenge_screen.dart:535:                    Icons.check_circle_rounded,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:539:                  const Icon(Icons.cancel_rounded, color: AppColors.danger),
+mobile\lib\features\social\presentation\team_challenge_screen.dart:569:                  Icon(
+mobile\lib\features\social\presentation\team_challenge_screen.dart:570:                    Icons.emoji_events_rounded,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:581:                    icon: Icons.bolt_rounded,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:588:                    icon: Icons.leaderboard_rounded,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:595:                    icon: Icons.check_rounded,
+mobile\lib\features\social\presentation\team_challenge_screen.dart:603:                    icon: const Icon(Icons.groups_3_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:36:                icon: Icons.groups_3_outlined,
+mobile\lib\features\social\presentation\social_team_screen.dart:53:                        icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:97:                                            icon: const Icon(Icons.add_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:108:                                        icon: Icons.sports_score_outlined,
+mobile\lib\features\social\presentation\social_team_screen.dart:219:              icon: const Icon(Icons.vpn_key_outlined),
+mobile\lib\features\social\presentation\social_team_screen.dart:229:            icon: const Icon(Icons.person_add_alt_1_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:238:            icon: const Icon(Icons.logout_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:274:              icon: const Icon(Icons.copy_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:408:                child: Icon(
+mobile\lib\features\social\presentation\social_team_screen.dart:409:                  Icons.workspace_premium_rounded,
+mobile\lib\features\social\presentation\social_team_screen.dart:429:            icon: Icons.bolt_rounded,
+mobile\lib\features\social\presentation\social_team_screen.dart:463:            child: const Icon(Icons.sports_score_rounded),
+mobile\lib\features\social\presentation\social_team_screen.dart:492:          Icon(
+mobile\lib\features\social\presentation\social_team_screen.dart:494:                ? Icons.play_circle_fill_rounded
+mobile\lib\features\social\presentation\social_team_screen.dart:495:                : Icons.schedule_rounded,
+mobile\lib\features\social\presentation\social_team_screen.dart:574:          const Icon(Icons.more_vert_rounded, size: 18),
+mobile\lib\features\social\presentation\social_team_screen.dart:633:                    icon: Icons.history_rounded,
+mobile\lib\features\social\presentation\social_team_screen.dart:658:      'team_created' => (Icons.flag_rounded, 'أسس الفريق'),
+mobile\lib\features\social\presentation\social_team_screen.dart:659:      'member_joined' => (Icons.person_add_alt_1_rounded, 'انضم إلى الفريق'),
+mobile\lib\features\social\presentation\social_team_screen.dart:660:      'member_left' => (Icons.person_remove_outlined, 'غادر الفريق'),
+mobile\lib\features\social\presentation\social_team_screen.dart:661:      'challenge_created' => (Icons.sports_score_rounded, 'نشر تحديًا جديدًا'),
+mobile\lib\features\social\presentation\social_team_screen.dart:662:      _ => (Icons.bolt_rounded, 'سجّل نشاطًا جديدًا'),
+mobile\lib\features\social\presentation\social_team_screen.dart:665:      leading: Icon(icon, color: context.ahdashColors.primary),
+mobile\lib\features\social\presentation\social_team_screen.dart:683:          Icon(icon, color: context.ahdashColors.textMuted),
+mobile\lib\features\social\presentation\social_hub_screen.dart:34:                icon: Icons.groups_3_outlined,
+mobile\lib\features\social\presentation\social_hub_screen.dart:51:                            icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\social\presentation\social_hub_screen.dart:61:                            icon: const Icon(Icons.people_alt_outlined),
+mobile\lib\features\social\presentation\social_hub_screen.dart:135:            AhdashGlyph.teams,
+mobile\lib\features\social\presentation\social_hub_screen.dart:162:              Icon(Icons.lock_outline_rounded, size: 16),
+mobile\lib\features\social\presentation\social_hub_screen.dart:226:              const Icon(Icons.arrow_back_ios_new_rounded, size: 17),
+mobile\lib\features\social\presentation\social_hub_screen.dart:238:              icon: const Icon(Icons.sports_esports_rounded),
+mobile\lib\features\social\presentation\social_hub_screen.dart:292:            child: Center(child: Icon(Icons.lock_outline_rounded, size: 46)),
+mobile\lib\features\social\presentation\social_hub_screen.dart:359:              icon: const Icon(Icons.close_rounded),
+mobile\lib\features\social\presentation\social_hub_screen.dart:419:          const Center(child: AhdashIcon(AhdashGlyph.club, size: 62)),
+mobile\lib\features\social\presentation\social_hub_screen.dart:425:              icon: const Icon(Icons.add_rounded),
+mobile\lib\features\social\presentation\social_hub_screen.dart:434:              icon: const Icon(Icons.vpn_key_outlined),
+mobile\lib\features\social\presentation\social_hub_screen.dart:507:              icon: const Icon(Icons.copy_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:65:            icon: const Icon(Icons.groups_3_outlined),
+mobile\lib\features\social\presentation\friends_screen.dart:83:                      const Icon(Icons.groups_3_rounded, size: 32),
+mobile\lib\features\social\presentation\friends_screen.dart:105:                      const Icon(Icons.arrow_back_ios_new_rounded, size: 17),
+mobile\lib\features\social\presentation\friends_screen.dart:117:                    prefixIcon: const Icon(Icons.person_search_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:126:                          : const Icon(Icons.search_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:134:                      leading: Icon(Icons.cloud_off_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:151:                      icon: Icons.search_off_rounded,
+mobile\lib\features\social\presentation\friends_screen.dart:166:                        icon: Icons.people_outline_rounded,
+mobile\lib\features\social\presentation\friends_screen.dart:205:                            icon: Icons.group_add_outlined,
+mobile\lib\features\social\presentation\friends_screen.dart:232:            icon: const Icon(Icons.groups_3_outlined),
+mobile\lib\features\social\presentation\friends_screen.dart:237:            icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:258:                          prefixIcon: const Icon(Icons.person_search_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:269:                                : const Icon(Icons.search_rounded),
+mobile\lib\features\social\presentation\friends_screen.dart:299:                          icon: Icons.people_outline_rounded,
+mobile\lib\features\social\presentation\friends_screen.dart:341:                                      ? Icons.search_off_rounded
+mobile\lib\features\social\presentation\friends_screen.dart:342:                                      : Icons.group_add_outlined,
+mobile\lib\features\social\presentation\friends_screen.dart:384:          icon: const Icon(Icons.person_add_alt_1_rounded, size: 18),
+mobile\lib\features\social\presentation\friends_screen.dart:404:            icon: const Icon(Icons.close_rounded, color: AppColors.danger),
+mobile\lib\features\social\presentation\friends_screen.dart:733:                child: Icon(icon, color: context.ahdashColors.textMuted),
+mobile\lib\features\social\presentation\blocked_players_screen.dart:37:                icon: Icons.block_rounded,
+mobile\lib\features\social\presentation\blocked_players_screen.dart:45:                      icon: Icons.verified_user_outlined,
+mobile\lib\features\social\presentation\blocked_players_screen.dart:99:        Icon(
+mobile\lib\features\social\presentation\blocked_players_screen.dart:100:          Icons.shield_outlined,
+mobile\lib\features\match\presentation\solo_setup_screen.dart:108:                  icon: Icons.error_outline_rounded,
+mobile\lib\features\match\presentation\solo_setup_screen.dart:183:              const Icon(Icons.quiz_outlined, size: 18),
+mobile\lib\features\match\presentation\solo_setup_screen.dart:206:          icon: const Icon(Icons.sports_soccer_rounded),
+mobile\lib\features\match\presentation\solo_setup_screen.dart:261:        Icon(
+mobile\lib\features\match\presentation\solo_setup_screen.dart:275:        Icon(
+mobile\lib\features\match\presentation\solo_setup_screen.dart:276:          selected ? Icons.check_circle_rounded : Icons.circle_outlined,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:242:          icon: const Icon(Icons.close_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:305:                                    icon: Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:307:                                          ? Icons.check_circle_rounded
+mobile\lib\features\match\presentation\room_lobby_screen.dart:308:                                          : Icons.copy_rounded,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:351:                                  child: Icon(Icons.hourglass_empty_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:368:                            icon: Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:370:                                  ? Icons.undo_rounded
+mobile\lib\features\match\presentation\room_lobby_screen.dart:371:                                  : Icons.check_circle_rounded,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:381:                              icon: const Icon(Icons.play_arrow_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:388:                            icon: const Icon(Icons.sync_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:407:          icon: const Icon(Icons.close_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:432:                                      AhdashGlyph.teams,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:457:                                      icon: Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:459:                                            ? Icons.check_circle_rounded
+mobile\lib\features\match\presentation\room_lobby_screen.dart:460:                                            : Icons.copy_rounded,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:526:                                                    Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:554:                                            icon: Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:556:                                                  ? Icons.undo_rounded
+mobile\lib\features\match\presentation\room_lobby_screen.dart:557:                                                  : Icons.check_circle_rounded,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:573:                                              icon: const Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:574:                                                Icons.play_arrow_rounded,
+mobile\lib\features\match\presentation\room_lobby_screen.dart:587:                                          icon: const Icon(Icons.sync_rounded),
+mobile\lib\features\match\presentation\room_lobby_screen.dart:680:            Icon(
+mobile\lib\features\match\presentation\room_lobby_screen.dart:682:                  ? Icons.check_circle_rounded
+mobile\lib\features\match\presentation\room_lobby_screen.dart:683:                  : Icons.radio_button_unchecked_rounded,
+mobile\lib\features\settings\presentation\settings_screen.dart:58:                    icon: AhdashIcons.back,
+mobile\lib\features\settings\presentation\settings_screen.dart:179:                          const Icon(AhdashIcons.forward),
+mobile\lib\features\settings\presentation\settings_screen.dart:188:          icon: AhdashIcons.error,
+mobile\lib\features\settings\presentation\settings_screen.dart:194:          icon: AhdashIcons.back,
+mobile\lib\features\settings\presentation\settings_screen.dart:202:          icon: AhdashIcons.delete,
+mobile\lib\features\settings\presentation\settings_screen.dart:224:                    icon: AhdashIcons.audio,
+mobile\lib\features\settings\presentation\settings_screen.dart:242:                    icon: AhdashIcons.guest,
+mobile\lib\features\settings\presentation\settings_screen.dart:260:                    icon: AhdashIcons.timer,
+mobile\lib\features\settings\presentation\settings_screen.dart:294:            icon: const Icon(Icons.notifications_active_outlined),
+mobile\lib\features\settings\presentation\settings_screen.dart:319:                  Icons.sports_esports_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:325:                  Icons.person_add_alt_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:331:                  Icons.groups_3_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:337:                  Icons.redeem_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:343:                  Icons.campaign_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:349:                  Icons.local_offer_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:404:              child: Icon(
+mobile\lib\features\settings\presentation\settings_screen.dart:405:                Icons.contrast_rounded,
+mobile\lib\features\settings\presentation\settings_screen.dart:444:                glyph: AhdashGlyph.club,
+mobile\lib\features\settings\presentation\settings_screen.dart:453:                glyph: AhdashGlyph.premium,
+mobile\lib\features\settings\presentation\settings_screen.dart:480:                icon: Icons.bug_report_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:489:                icon: Icons.policy_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:495:                icon: Icons.description_outlined,
+mobile\lib\features\settings\presentation\settings_screen.dart:585:      (_SettingsPage.account, AhdashIcons.profile, 'الحساب'),
+mobile\lib\features\settings\presentation\settings_screen.dart:586:      (_SettingsPage.gameplay, AhdashIcons.settings, 'اللعب'),
+mobile\lib\features\settings\presentation\settings_screen.dart:587:      (_SettingsPage.notifications, AhdashIcons.notifications, 'الإشعارات'),
+mobile\lib\features\settings\presentation\settings_screen.dart:588:      (_SettingsPage.appearance, AhdashIcons.themeSystem, 'المظهر'),
+mobile\lib\features\settings\presentation\settings_screen.dart:589:      (_SettingsPage.football, AhdashIcons.football, 'كرة القدم'),
+mobile\lib\features\settings\presentation\settings_screen.dart:590:      (_SettingsPage.support, AhdashIcons.help, 'المساعدة'),
+mobile\lib\features\settings\presentation\settings_screen.dart:646:            Icon(
+mobile\lib\features\settings\presentation\settings_screen.dart:670:              Icon(
+mobile\lib\features\settings\presentation\settings_screen.dart:671:                AhdashIcons.forward,
+mobile\lib\features\settings\presentation\settings_screen.dart:700:      Icon(icon, size: 20),
+mobile\lib\features\settings\presentation\settings_screen.dart:749:                            AhdashGlyph.profile,
+mobile\lib\features\settings\presentation\settings_screen.dart:782:            icon: Icon(AhdashIcons.themeSystem),
+mobile\lib\features\settings\presentation\settings_screen.dart:787:            icon: Icon(AhdashIcons.themeLight),
+mobile\lib\features\settings\presentation\settings_screen.dart:792:            icon: Icon(AhdashIcons.themeDark),
+mobile\lib\features\settings\presentation\settings_screen.dart:824:      leading: Icon(icon, color: danger ? context.ahdashColors.error : null),
+mobile\lib\features\settings\presentation\settings_screen.dart:836:      trailing: const Icon(AhdashIcons.forward),
+mobile\lib\features\match\presentation\results_screen.dart:151:          won ? AhdashGlyph.premium : AhdashGlyph.classic,
+mobile\lib\features\match\presentation\results_screen.dart:333:              icon: const Icon(Icons.share_outlined),
+mobile\lib\features\match\presentation\results_screen.dart:338:              icon: const Icon(Icons.home_outlined),
+mobile\lib\features\match\presentation\question_screen.dart:128:        icon: Icons.error_outline_rounded,
+mobile\lib\features\match\presentation\question_screen.dart:160:                  icon: const Icon(Icons.close_rounded),
+mobile\lib\features\match\presentation\question_screen.dart:558:            Icon(
+mobile\lib\features\match\presentation\question_screen.dart:559:              correct ? Icons.check_circle_outline : Icons.cancel_rounded,
+mobile\lib\features\categories\presentation\categories_screen.dart:28:              icon: Icons.cloud_off_rounded,
+mobile\lib\features\categories\presentation\categories_screen.dart:37:                  icon: Icons.category_outlined,
+mobile\lib\features\categories\presentation\categories_screen.dart:64:                        icon: const Icon(Icons.arrow_forward_rounded),
+mobile\lib\features\categories\presentation\categories_screen.dart:71:                          icon: const Icon(Icons.refresh_rounded),
+mobile\lib\features\categories\presentation\categories_screen.dart:218:                  Icon(
+mobile\lib\features\categories\presentation\categories_screen.dart:219:                    Icons.arrow_back_rounded,
+mobile\lib\features\categories\presentation\categories_screen.dart:288:          child: Icon(
+mobile\lib\features\categories\presentation\categories_screen.dart:289:            Icons.arrow_back_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:183:          icon: const Icon(Icons.close_rounded),
+mobile\lib\features\match\presentation\online_match_screen.dart:257:              Icon(Icons.cloud_off_rounded, size: 54, color: colors.textMuted),
+mobile\lib\features\match\presentation\online_match_screen.dart:266:                icon: const Icon(Icons.sync_rounded),
+mobile\lib\features\match\presentation\online_match_screen.dart:414:          icon: const Icon(Icons.arrow_back_rounded),
+mobile\lib\features\match\presentation\online_match_screen.dart:427:        icon: Icons.lock_clock_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:475:              child: Icon(switch (question.gameType) {
+mobile\lib\features\match\presentation\online_match_screen.dart:476:                'speed' => Icons.bolt_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:477:                'true-false' => Icons.rule_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:478:                _ => Icons.grid_view_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:664:            Icon(Icons.sync_problem_rounded, color: colors.warning),
+mobile\lib\features\match\presentation\online_match_screen.dart:703:                    Icon(
+mobile\lib\features\match\presentation\online_match_screen.dart:704:                      Icons.emoji_events_rounded,
+mobile\lib\features\match\presentation\online_match_screen.dart:770:                            icon: const Icon(Icons.replay_rounded),
+mobile\lib\features\ranking\presentation\ranking_screen.dart:37:                    icon: AhdashIcons.refresh,
+mobile\lib\features\ranking\presentation\ranking_screen.dart:47:                    icon: AhdashIcons.error,
+mobile\lib\features\ranking\presentation\ranking_screen.dart:59:                        icon: AhdashIcons.chart,
+mobile\lib\features\ranking\presentation\ranking_screen.dart:70:                            const Icon(AhdashIcons.chart, size: 72),
+mobile\lib\features\profile\presentation\profile_screen.dart:41:              icon: AhdashIcons.profile,
+mobile\lib\features\profile\presentation\profile_screen.dart:84:            icon: AhdashIcons.back,
+mobile\lib\features\profile\presentation\profile_screen.dart:90:              icon: AhdashIcons.refresh,
+mobile\lib\features\profile\presentation\profile_screen.dart:95:              icon: AhdashIcons.settings,
+mobile\lib\features\profile\presentation\profile_screen.dart:235:                            icon: const Icon(AhdashIcons.upload),
+mobile\lib\features\profile\presentation\profile_screen.dart:242:                              const Icon(
+mobile\lib\features\profile\presentation\profile_screen.dart:243:                                AhdashIcons.checkCircle,
+mobile\lib\features\profile\presentation\profile_screen.dart:271:                  icon: const Icon(AhdashIcons.tournament),
+mobile\lib\features\profile\presentation\profile_screen.dart:277:                  icon: const Icon(AhdashIcons.edit),
+mobile\lib\features\profile\presentation\profile_screen.dart:370:                icon: const Icon(AhdashIcons.edit, size: 18),
+mobile\lib\features\profile\presentation\profile_screen.dart:404:              const Icon(AhdashIcons.favorite, size: 18),
+mobile\lib\features\match\presentation\online_lobby_screen.dart:61:                    icon: Icons.lock_person_rounded,
+mobile\lib\features\match\presentation\online_lobby_screen.dart:89:                                        AhdashGlyph.speed,
+mobile\lib\features\match\presentation\online_lobby_screen.dart:111:                                          icon: const Icon(Icons.bolt_rounded),
+mobile\lib\features\match\presentation\online_lobby_screen.dart:206:                                const Icon(
+mobile\lib\features\match\presentation\online_lobby_screen.dart:207:                                  Icons.info_outline_rounded,
+mobile\lib\features\auth\presentation\auth_screen.dart:221:                    prefixIcon: Icon(AhdashIcons.profile),
+mobile\lib\features\auth\presentation\auth_screen.dart:236:                  prefixIcon: Icon(AhdashIcons.email),
+mobile\lib\features\auth\presentation\auth_screen.dart:250:                  prefixIcon: Icon(AhdashIcons.lock),
+mobile\lib\features\auth\presentation\auth_screen.dart:273:                          Icon(
+mobile\lib\features\auth\presentation\auth_screen.dart:274:                            AhdashIcons.error,
+mobile\lib\features\auth\presentation\auth_screen.dart:302:                    : const Icon(AhdashIcons.forward),
+mobile\lib\features\auth\presentation\auth_screen.dart:335:                icon: const Icon(AhdashIcons.guest),
+mobile\lib\features\auth\presentation\auth_screen.dart:355:                              : const Icon(Icons.g_mobiledata_rounded),
+mobile\lib\features\auth\presentation\auth_screen.dart:366:                          icon: const Icon(Icons.apple_rounded),
+mobile\lib\features\auth\presentation\auth_screen.dart:460:                      : const Icon(AhdashIcons.forward),
+mobile\lib\features\auth\presentation\auth_screen.dart:468:                  icon: const Icon(AhdashIcons.guest),
+mobile\lib\features\auth\presentation\auth_screen.dart:499:                    icon: const Icon(Icons.g_mobiledata_rounded),
+mobile\lib\features\auth\presentation\auth_screen.dart:510:                    icon: const Icon(Icons.apple_rounded),
+mobile\lib\features\match\presentation\game_widgets.dart:132:        Icons.check_circle_rounded,
+mobile\lib\features\match\presentation\game_widgets.dart:138:        Icons.cancel_rounded,
+mobile\lib\features\match\presentation\game_widgets.dart:144:        Icons.lock_clock_rounded,
+mobile\lib\features\match\presentation\game_widgets.dart:150:        Icons.lock_outline_rounded,
+mobile\lib\features\match\presentation\game_widgets.dart:237:                      Icon(icon, color: accent, size: 21),
+mobile\lib\features\match\presentation\game_widgets.dart:280:          Icon(
+mobile\lib\features\match\presentation\game_widgets.dart:281:            correct ? Icons.check_circle_rounded : Icons.cancel_rounded,
+mobile\lib\features\premium\presentation\premium_screen.dart:59:                  icon: AhdashIcons.back,
+mobile\lib\features\premium\presentation\premium_screen.dart:67:                    icon: const Icon(AhdashIcons.refresh),
+mobile\lib\features\premium\presentation\premium_screen.dart:140:              : const Icon(AhdashIcons.premiumSelected),
+mobile\lib\features\premium\presentation\premium_screen.dart:237:    (AhdashIcons.close, 'إزالة الإعلانات'),
+mobile\lib\features\premium\presentation\premium_screen.dart:238:    (AhdashIcons.image, 'ستايلات Player11'),
+mobile\lib\features\premium\presentation\premium_screen.dart:239:    (AhdashIcons.team, 'تخصيص الفريق'),
+mobile\lib\features\premium\presentation\premium_screen.dart:240:    (AhdashIcons.chart, 'إحصائيات متقدمة'),
+mobile\lib\features\premium\presentation\premium_screen.dart:241:    (AhdashIcons.tournament, 'احتفالات حصرية'),
+mobile\lib\features\premium\presentation\premium_screen.dart:242:    (AhdashIcons.football, 'تدريب غير مصنّف'),
+mobile\lib\features\premium\presentation\premium_screen.dart:255:              Icon(
+mobile\lib\features\premium\presentation\premium_screen.dart:256:                AhdashIcons.premiumSelected,
+mobile\lib\features\premium\presentation\premium_screen.dart:306:                    Icon(
+mobile\lib\features\premium\presentation\premium_screen.dart:447:        Icon(
+mobile\lib\features\premium\presentation\premium_screen.dart:449:              ? AhdashIcons.checkCircleSelected
+mobile\lib\features\premium\presentation\premium_screen.dart:450:              : AhdashIcons.premium,
+mobile\lib\features\play\presentation\play_screen.dart:228:              AhdashGlyph.play,
+mobile\lib\features\play\presentation\play_screen.dart:272:  GameType.classic => AhdashGlyph.classic,
+mobile\lib\features\play\presentation\play_screen.dart:273:  GameType.trueFalse => AhdashGlyph.trueFalse,
+mobile\lib\features\play\presentation\play_screen.dart:274:  GameType.speed => AhdashGlyph.speed,
+mobile\lib\features\play\presentation\play_screen.dart:275:  GameType.ordering => AhdashGlyph.ordering,
+mobile\lib\features\play\presentation\play_screen.dart:276:  GameType.clubGuess => AhdashGlyph.club,
+mobile\lib\features\play\presentation\play_screen.dart:277:  GameType.eagleEye => AhdashGlyph.eagle,
+mobile\lib\features\home\presentation\home_screen.dart:68:                      icon: AhdashIcons.premium,
+mobile\lib\features\home\presentation\home_screen.dart:74:                      icon: AhdashIcons.profile,
+mobile\lib\features\home\presentation\home_screen.dart:79:                      icon: AhdashIcons.settings,
+mobile\lib\features\home\presentation\home_screen.dart:196:    icon: Icon(icon, size: 17, color: color),
+mobile\lib\features\home\presentation\home_screen.dart:311:              icon: const Icon(AhdashIcons.refresh, size: 20),
+mobile\lib\features\home\presentation\home_screen.dart:347:                  icon: AhdashIcons.playSelected,
+mobile\lib\features\home\presentation\home_screen.dart:356:                  icon: Icon(
+mobile\lib\features\home\presentation\home_screen.dart:357:                    AhdashIcons.tournament,
+mobile\lib\features\home\presentation\home_screen.dart:381:                icon: const Icon(AhdashIcons.forward, size: 16),
+mobile\lib\features\home\presentation\home_screen.dart:400:                      avatar: const Icon(AhdashIcons.categories, size: 16),
+mobile\lib\shared\presentation\connectivity_status_banner.dart:112:                  Icon(
+mobile\lib\shared\presentation\connectivity_status_banner.dart:114:                        ? Icons.cloud_off_rounded
+mobile\lib\shared\presentation\connectivity_status_banner.dart:115:                        : Icons.cloud_done_rounded,
+mobile\lib\shared\presentation\components.dart:224:                Icon(icon, size: 20),
+mobile\lib\shared\presentation\components.dart:270:            Icon(icon, size: 16, color: resolvedColor),
+mobile\lib\shared\presentation\components.dart:321:            child: Icon(icon, color: resolvedAccent),
+mobile\lib\shared\presentation\components.dart:359:          Icon(
+mobile\lib\shared\presentation\components.dart:360:            Icons.arrow_back_ios_new_rounded,
+mobile\lib\shared\presentation\components.dart:420:            child: Icon(Icons.person_rounded, color: colors.primary),
+mobile\lib\shared\presentation\editorial_v6.dart:259:            Icon(icon, size: 20),
+mobile\lib\shared\presentation\editorial_v6.dart:379:                Icon(
+mobile\lib\shared\presentation\editorial_v6.dart:381:                      ? Icons.check_rounded
+mobile\lib\shared\presentation\editorial_v6.dart:383:                      ? Icons.close_rounded
+mobile\lib\shared\presentation\editorial_v6.dart:384:                      : Icons.arrow_back_rounded,
+mobile\lib\shared\presentation\editorial_v7.dart:211:    this.icon = AhdashIcons.forward,
+mobile\lib\shared\presentation\editorial_v7.dart:229:      icon: icon == null ? const SizedBox.shrink() : Icon(icon, size: 20),
+mobile\lib\shared\presentation\editorial_v7.dart:267:      icon: Icon(icon, size: 21),
+mobile\lib\shared\presentation\game_ui.dart:329:                  icon: const Icon(Icons.chevron_right_rounded, size: 18),
+mobile\lib\shared\presentation\game_ui.dart:348:                  icon: const Icon(Icons.chevron_left_rounded, size: 18),
+mobile\lib\shared\presentation\game_ui.dart:557:      case AhdashGlyph.home:
+mobile\lib\shared\presentation\game_ui.dart:570:      case AhdashGlyph.play:
+mobile\lib\shared\presentation\game_ui.dart:579:      case AhdashGlyph.teams:
+mobile\lib\shared\presentation\game_ui.dart:589:      case AhdashGlyph.ranking:
+mobile\lib\shared\presentation\game_ui.dart:605:      case AhdashGlyph.profile:
+mobile\lib\shared\presentation\game_ui.dart:614:      case AhdashGlyph.trueFalse:
+mobile\lib\shared\presentation\game_ui.dart:625:      case AhdashGlyph.speed:
+mobile\lib\shared\presentation\game_ui.dart:638:      case AhdashGlyph.ordering:
+mobile\lib\shared\presentation\game_ui.dart:643:      case AhdashGlyph.club:
+mobile\lib\shared\presentation\game_ui.dart:655:      case AhdashGlyph.eagle:
+mobile\lib\shared\presentation\game_ui.dart:664:      case AhdashGlyph.premium:
+mobile\lib\shared\presentation\game_ui.dart:677:      case AhdashGlyph.classic:
+mobile\lib\shared\presentation\icon_registry.dart:4:  'visibility' => Icons.visibility_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:5:  'swap_horiz' => Icons.swap_horiz_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:6:  'emoji_events' => Icons.emoji_events_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:7:  'groups' => Icons.groups_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:8:  'stadium' => Icons.stadium_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:9:  'workspace_premium' => Icons.workspace_premium_rounded,
+mobile\lib\shared\presentation\icon_registry.dart:10:  _ => Icons.sports_soccer_rounded,
+mobile\lib\shared\presentation\measured_v8.dart:210:      icon: Icon(icon, size: 20),
+mobile\lib\shared\presentation\measured_v8.dart:219:    this.icon = AhdashIcons.forward,
+mobile\lib\shared\presentation\measured_v8.dart:238:      icon: icon == null ? const SizedBox.shrink() : Icon(icon, size: 20),
+mobile\lib\shared\presentation\social_identity.dart:128:              errorBuilder: (_, _, _) => Icon(
+mobile\lib\shared\presentation\social_identity.dart:129:                Icons.sports_soccer_rounded,
+mobile\lib\shared\presentation\social_identity.dart:138:                  Icon(Icons.person_rounded, size: size * 0.56),

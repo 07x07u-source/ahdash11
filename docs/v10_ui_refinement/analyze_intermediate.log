@@ -1,0 +1,27 @@
+Analyzing mobile...                                             
+
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\app.dart:54:9 - curly_braces_in_flow_control_structures
+   info - Sort directive sections alphabetically. Try sorting the directives - lib\core\routing\app_router.dart:6:1 - directives_ordering
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\core\routing\app_router.dart:131:9 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\core\services\notification_service.dart:209:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\core\services\notification_service.dart:229:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\features\auth\domain\guest_capability_policy.dart:61:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\features\auth\domain\guest_capability_policy.dart:78:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\features\auth\domain\guest_capability_policy.dart:82:7 - curly_braces_in_flow_control_structures
+   info - Sort directive sections alphabetically. Try sorting the directives - lib\features\party\presentation\party_game_screens.dart:22:1 - directives_ordering
+  error - Undefined name 'actions'. Try correcting the name to one that is defined, or defining the name - lib\features\party\presentation\party_game_screens.dart:361:23 - undefined_identifier
+warning - The value of the local variable 'hintHelper' isn't used. Try removing the variable or using it - lib\features\party\presentation\party_game_screens.dart:813:13 - unused_local_variable
+  error - The method 'AhdashV10Panel' isn't defined for the type '_ReadySummaryCard'. Try correcting the name to the name of an existing method, or defining a method named 'AhdashV10Panel' - lib\features\party\presentation\party_setup_screens.dart:2319:41 - undefined_method
+warning - Unused import: '../../../core/theme/ahdash_icons.dart'. Try removing the import directive - lib\features\party\presentation\party_v2_ui.dart:5:8 - unused_import
+   info - Sort directive sections alphabetically. Try sorting the directives - lib\features\settings\presentation\settings_screen.dart:11:1 - directives_ordering
+   info - Missing an 'await' for the 'Future' computed by this expression. Try adding an 'await' or wrapping the expression with 'unawaited' - lib\features\settings\presentation\settings_screen.dart:209:15 - unawaited_futures
+   info - Sort directive sections alphabetically. Try sorting the directives - lib\features\support\data\question_report_repository.dart:11:1 - directives_ordering
+  error - The name 'AuthUser' is defined in the libraries 'package:ahdash_11/features/auth/domain/auth_user.dart' and 'package:supabase/src/auth_user.dart (via package:supabase_flutter/supabase_flutter.dart)'. Try using 'as prefix' for one of the import directives, or hiding the name from all but one of the imports - lib\features\support\data\question_report_repository.dart:31:5 - ambiguous_import
+  error - The name 'AuthUser' is defined in the libraries 'package:ahdash_11/features/auth/domain/auth_user.dart' and 'package:supabase/src/auth_user.dart (via package:supabase_flutter/supabase_flutter.dart)'. Try using 'as prefix' for one of the import directives, or hiding the name from all but one of the imports - lib\features\support\data\question_report_repository.dart:41:9 - ambiguous_import
+  error - The name 'AuthUser' is defined in the libraries 'package:ahdash_11/features/auth/domain/auth_user.dart' and 'package:supabase/src/auth_user.dart (via package:supabase_flutter/supabase_flutter.dart)'. Try using 'as prefix' for one of the import directives, or hiding the name from all but one of the imports - lib\features\support\data\question_report_repository.dart:42:3 - ambiguous_import
+warning - The '!' will have no effect because the receiver can't be null. Try removing the '!' operator - lib\features\support\data\question_report_repository.dart:43:24 - unnecessary_non_null_assertion
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\features\support\data\question_report_repository.dart:89:7 - curly_braces_in_flow_control_structures
+   info - Sort directive sections alphabetically. Try sorting the directives - lib\features\support\presentation\problem_report_controller.dart:7:1 - directives_ordering
+   info - Sort directive sections alphabetically. Try sorting the directives - tool\ui_refinement_capture.dart:5:1 - directives_ordering
+
+23 issues found. (ran in 15.8s)

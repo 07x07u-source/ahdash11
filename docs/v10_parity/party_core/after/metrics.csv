@@ -1,0 +1,11 @@
+screen,viewport,mean_abs_difference,rms_difference,changed_pixels_percent,parity_score
+12_game_board,390x844,8.611,30.356,35.505,96.62
+12_game_board,360x800,10.916,35.750,41.023,95.72
+13_text_question,390x844,11.017,42.156,30.303,95.68
+13_text_question,360x800,12.243,43.167,38.177,95.20
+14_image_question,390x844,9.414,37.258,37.456,96.31
+14_image_question,360x800,10.814,39.038,45.472,95.76
+15_answer_reveal,390x844,6.176,25.423,31.499,97.58
+15_answer_reveal,360x800,7.279,27.397,36.361,97.15
+16_final_result,390x844,7.476,32.100,34.817,97.07
+16_final_result,360x800,8.462,33.368,42.772,96.68

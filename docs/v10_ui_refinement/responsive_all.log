@@ -1,0 +1,767 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
+00:00 +0: 360x800_scale1.0 party (setUpAll)
+00:00 +0: 360x800_scale1.0 party V10 Phase B 06_categories_390x844
+00:02 +1: 360x800_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:03 +2: 360x800_scale1.0 party V10 Phase B 07_detail_390x844
+00:03 +3: 360x800_scale1.0 party V10 Phase B 08_teams_390x844
+00:03 +4: 360x800_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:03 +5: 360x800_scale1.0 party V10 Phase B 09_splitter_390x844
+00:03 +6: 360x800_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:04 +7: 360x800_scale1.0 party V10 Phase B 10_helpers_390x844
+00:04 +8: 360x800_scale1.0 party V10 Phase B 11_ready_390x844
+00:04 +9: 360x800_scale1.0 party V10 Phase B 12_board_390x844
+00:04 +10: 360x800_scale1.0 party V10 Phase B 13_text_390x844
+00:05 +11: 360x800_scale1.0 party V10 Phase B 14_image_390x844
+00:05 +12: 360x800_scale1.0 party V10 Phase B 15_reveal_390x844
+00:05 +13: 360x800_scale1.0 party V10 Phase B 16_result_390x844
+00:05 +14: 360x800_scale1.0 party (tearDownAll)
+00:05 +14: 360x800_scale1.0 tournament (setUpAll)
+00:05 +14: 360x800_scale1.0 tournament tournament hub 360x800 light
+00:05 +15: 360x800_scale1.0 tournament tournament create 360x800 light
+00:05 +16: 360x800_scale1.0 tournament tournament teams 360x800 light
+00:05 +17: 360x800_scale1.0 tournament tournament draw 360x800 light
+00:05 +18: 360x800_scale1.0 tournament tournament bracket 360x800 light
+00:05 +19: 360x800_scale1.0 tournament tournament semifinal 360x800 light
+00:05 +20: 360x800_scale1.0 tournament tournament finalMatch 360x800 light
+00:05 +21: 360x800_scale1.0 tournament tournament match 360x800 light
+00:06 +22: 360x800_scale1.0 tournament tournament champion 360x800 light
+00:06 +23: 360x800_scale1.0 tournament tournament create keyboard 360x800
+00:06 +24: 360x800_scale1.0 tournament (tearDownAll)
+00:06 +24: 360x800_scale1.0 discovery (setUpAll)
+00:06 +24: 360x800_scale1.0 discovery phase D howTo 360x800
+00:06 +25: 360x800_scale1.0 discovery phase D savedGames 360x800
+00:06 +26: 360x800_scale1.0 discovery phase D matchSetup 360x800
+00:06 +27: 360x800_scale1.0 discovery phase D solo 360x800
+00:06 +28: 360x800_scale1.0 discovery phase D teamChallenge 360x800
+00:06 +29: 360x800_scale1.0 discovery phase D ranking 360x800
+00:06 +30: 360x800_scale1.0 discovery phase D friends 360x800
+00:07 +31: 360x800_scale1.0 discovery phase D friendsKeyboard 360x800
+00:07 +32: 360x800_scale1.0 discovery phase D blocked 360x800
+00:07 +33: 360x800_scale1.0 discovery phase D teamDetail 360x800
+00:07 +34: 360x800_scale1.0 discovery (tearDownAll)
+00:07 +34: 360x800_scale1.0 account (setUpAll)
+00:07 +34: 360x800_scale1.0 account phase E profile 360x800
+00:07 +35: 360x800_scale1.0 account phase E notifications 360x800
+00:07 +36: 360x800_scale1.0 account phase E settings 360x800
+00:07 +37: 360x800_scale1.0 account phase E report 360x800
+00:08 +38: 360x800_scale1.0 account phase E reportKeyboard 360x800
+00:08 +39: 360x800_scale1.0 account phase E football 360x800
+00:08 +40: 360x800_scale1.0 account phase E footballKeyboard 360x800
+00:08 +41: 360x800_scale1.0 account phase E premium 360x800
+00:08 +42: 360x800_scale1.0 account phase E premiumLoading 360x800
+00:08 +43: 360x800_scale1.0 account (tearDownAll)
+00:08 +43: 360x800_scale1.2 party (setUpAll)
+00:08 +43: 360x800_scale1.2 party V10 Phase B 06_categories_390x844
+00:08 +44: 360x800_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:08 +45: 360x800_scale1.2 party V10 Phase B 07_detail_390x844
+00:09 +46: 360x800_scale1.2 party V10 Phase B 08_teams_390x844
+00:09 +47: 360x800_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:09 +48: 360x800_scale1.2 party V10 Phase B 09_splitter_390x844
+00:09 +49: 360x800_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:09 +50: 360x800_scale1.2 party V10 Phase B 10_helpers_390x844
+00:09 +51: 360x800_scale1.2 party V10 Phase B 11_ready_390x844
+00:10 +52: 360x800_scale1.2 party V10 Phase B 12_board_390x844
+00:10 +53: 360x800_scale1.2 party V10 Phase B 13_text_390x844
+00:10 +54: 360x800_scale1.2 party V10 Phase B 14_image_390x844
+00:10 +55: 360x800_scale1.2 party V10 Phase B 15_reveal_390x844
+00:10 +56: 360x800_scale1.2 party V10 Phase B 16_result_390x844
+00:10 +57: 360x800_scale1.2 party (tearDownAll)
+00:10 +57: 360x800_scale1.2 tournament (setUpAll)
+00:10 +57: 360x800_scale1.2 tournament tournament hub 360x800 light
+00:10 +58: 360x800_scale1.2 tournament tournament create 360x800 light
+00:10 +59: 360x800_scale1.2 tournament tournament teams 360x800 light
+00:10 +60: 360x800_scale1.2 tournament tournament draw 360x800 light
+00:10 +61: 360x800_scale1.2 tournament tournament bracket 360x800 light
+00:10 +62: 360x800_scale1.2 tournament tournament semifinal 360x800 light
+00:11 +63: 360x800_scale1.2 tournament tournament finalMatch 360x800 light
+00:11 +64: 360x800_scale1.2 tournament tournament match 360x800 light
+00:11 +65: 360x800_scale1.2 tournament tournament champion 360x800 light
+00:11 +66: 360x800_scale1.2 tournament tournament create keyboard 360x800
+00:11 +67: 360x800_scale1.2 tournament (tearDownAll)
+00:11 +67: 360x800_scale1.2 discovery (setUpAll)
+00:11 +67: 360x800_scale1.2 discovery phase D howTo 360x800
+00:11 +68: 360x800_scale1.2 discovery phase D savedGames 360x800
+00:11 +69: 360x800_scale1.2 discovery phase D matchSetup 360x800
+00:11 +70: 360x800_scale1.2 discovery phase D solo 360x800
+00:11 +71: 360x800_scale1.2 discovery phase D teamChallenge 360x800
+00:11 +72: 360x800_scale1.2 discovery phase D ranking 360x800
+00:11 +73: 360x800_scale1.2 discovery phase D friends 360x800
+00:11 +74: 360x800_scale1.2 discovery phase D friendsKeyboard 360x800
+00:11 +75: 360x800_scale1.2 discovery phase D blocked 360x800
+00:11 +76: 360x800_scale1.2 discovery phase D teamDetail 360x800
+00:12 +77: 360x800_scale1.2 discovery (tearDownAll)
+00:12 +77: 360x800_scale1.2 account (setUpAll)
+00:12 +77: 360x800_scale1.2 account phase E profile 360x800
+00:12 +78: 360x800_scale1.2 account phase E notifications 360x800
+00:12 +79: 360x800_scale1.2 account phase E settings 360x800
+00:12 +80: 360x800_scale1.2 account phase E report 360x800
+00:12 +81: 360x800_scale1.2 account phase E reportKeyboard 360x800
+00:12 +82: 360x800_scale1.2 account phase E football 360x800
+00:12 +83: 360x800_scale1.2 account phase E footballKeyboard 360x800
+00:13 +84: 360x800_scale1.2 account phase E premium 360x800
+00:13 +85: 360x800_scale1.2 account phase E premiumLoading 360x800
+00:13 +86: 360x800_scale1.2 account (tearDownAll)
+00:13 +86: 360x800_scale1.3 party (setUpAll)
+00:13 +86: 360x800_scale1.3 party V10 Phase B 06_categories_390x844
+00:13 +87: 360x800_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:13 +88: 360x800_scale1.3 party V10 Phase B 07_detail_390x844
+00:13 +89: 360x800_scale1.3 party V10 Phase B 08_teams_390x844
+00:13 +90: 360x800_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:13 +91: 360x800_scale1.3 party V10 Phase B 09_splitter_390x844
+00:14 +92: 360x800_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:14 +93: 360x800_scale1.3 party V10 Phase B 10_helpers_390x844
+00:14 +94: 360x800_scale1.3 party V10 Phase B 11_ready_390x844
+00:14 +95: 360x800_scale1.3 party V10 Phase B 12_board_390x844
+00:14 +96: 360x800_scale1.3 party V10 Phase B 13_text_390x844
+00:14 +97: 360x800_scale1.3 party V10 Phase B 14_image_390x844
+00:14 +98: 360x800_scale1.3 party V10 Phase B 15_reveal_390x844
+00:14 +99: 360x800_scale1.3 party V10 Phase B 16_result_390x844
+00:14 +100: 360x800_scale1.3 party (tearDownAll)
+00:14 +100: 360x800_scale1.3 tournament (setUpAll)
+00:14 +100: 360x800_scale1.3 tournament tournament hub 360x800 light
+00:14 +101: 360x800_scale1.3 tournament tournament create 360x800 light
+00:14 +102: 360x800_scale1.3 tournament tournament teams 360x800 light
+00:14 +103: 360x800_scale1.3 tournament tournament draw 360x800 light
+00:14 +104: 360x800_scale1.3 tournament tournament bracket 360x800 light
+00:15 +105: 360x800_scale1.3 tournament tournament semifinal 360x800 light
+00:15 +106: 360x800_scale1.3 tournament tournament finalMatch 360x800 light
+00:15 +107: 360x800_scale1.3 tournament tournament match 360x800 light
+00:15 +108: 360x800_scale1.3 tournament tournament champion 360x800 light
+00:15 +109: 360x800_scale1.3 tournament tournament create keyboard 360x800
+00:15 +110: 360x800_scale1.3 tournament (tearDownAll)
+00:15 +110: 360x800_scale1.3 discovery (setUpAll)
+00:15 +110: 360x800_scale1.3 discovery phase D howTo 360x800
+00:15 +111: 360x800_scale1.3 discovery phase D savedGames 360x800
+00:15 +112: 360x800_scale1.3 discovery phase D matchSetup 360x800
+00:15 +113: 360x800_scale1.3 discovery phase D solo 360x800
+00:15 +114: 360x800_scale1.3 discovery phase D teamChallenge 360x800
+00:15 +115: 360x800_scale1.3 discovery phase D ranking 360x800
+00:15 +116: 360x800_scale1.3 discovery phase D friends 360x800
+00:15 +117: 360x800_scale1.3 discovery phase D friendsKeyboard 360x800
+00:15 +118: 360x800_scale1.3 discovery phase D blocked 360x800
+00:15 +119: 360x800_scale1.3 discovery phase D teamDetail 360x800
+00:15 +120: 360x800_scale1.3 discovery (tearDownAll)
+00:15 +120: 360x800_scale1.3 account (setUpAll)
+00:15 +120: 360x800_scale1.3 account phase E profile 360x800
+00:16 +121: 360x800_scale1.3 account phase E notifications 360x800
+00:16 +122: 360x800_scale1.3 account phase E settings 360x800
+00:16 +123: 360x800_scale1.3 account phase E report 360x800
+00:16 +124: 360x800_scale1.3 account phase E reportKeyboard 360x800
+00:16 +125: 360x800_scale1.3 account phase E football 360x800
+00:16 +126: 360x800_scale1.3 account phase E footballKeyboard 360x800
+00:16 +127: 360x800_scale1.3 account phase E premium 360x800
+00:16 +128: 360x800_scale1.3 account phase E premiumLoading 360x800
+00:16 +129: 360x800_scale1.3 account (tearDownAll)
+00:16 +129: 390x844_scale1.0 party (setUpAll)
+00:16 +129: 390x844_scale1.0 party V10 Phase B 06_categories_390x844
+00:16 +130: 390x844_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:16 +131: 390x844_scale1.0 party V10 Phase B 07_detail_390x844
+00:16 +132: 390x844_scale1.0 party V10 Phase B 08_teams_390x844
+00:16 +133: 390x844_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:17 +134: 390x844_scale1.0 party V10 Phase B 09_splitter_390x844
+00:17 +135: 390x844_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:17 +136: 390x844_scale1.0 party V10 Phase B 10_helpers_390x844
+00:17 +137: 390x844_scale1.0 party V10 Phase B 11_ready_390x844
+00:17 +138: 390x844_scale1.0 party V10 Phase B 12_board_390x844
+00:17 +139: 390x844_scale1.0 party V10 Phase B 13_text_390x844
+00:17 +140: 390x844_scale1.0 party V10 Phase B 14_image_390x844
+00:17 +141: 390x844_scale1.0 party V10 Phase B 15_reveal_390x844
+00:17 +142: 390x844_scale1.0 party V10 Phase B 16_result_390x844
+00:17 +143: 390x844_scale1.0 party (tearDownAll)
+00:17 +143: 390x844_scale1.0 tournament (setUpAll)
+00:17 +143: 390x844_scale1.0 tournament tournament hub 390x844 light
+00:17 +144: 390x844_scale1.0 tournament tournament create 390x844 light
+00:17 +145: 390x844_scale1.0 tournament tournament teams 390x844 light
+00:17 +146: 390x844_scale1.0 tournament tournament draw 390x844 light
+00:17 +147: 390x844_scale1.0 tournament tournament bracket 390x844 light
+00:18 +148: 390x844_scale1.0 tournament tournament semifinal 390x844 light
+00:18 +149: 390x844_scale1.0 tournament tournament finalMatch 390x844 light
+00:18 +150: 390x844_scale1.0 tournament tournament match 390x844 light
+00:18 +151: 390x844_scale1.0 tournament tournament champion 390x844 light
+00:18 +152: 390x844_scale1.0 tournament tournament create keyboard 390x844
+00:18 +153: 390x844_scale1.0 tournament (tearDownAll)
+00:18 +153: 390x844_scale1.0 discovery (setUpAll)
+00:18 +153: 390x844_scale1.0 discovery phase D howTo 390x844
+00:18 +154: 390x844_scale1.0 discovery phase D savedGames 390x844
+00:18 +155: 390x844_scale1.0 discovery phase D matchSetup 390x844
+00:18 +156: 390x844_scale1.0 discovery phase D solo 390x844
+00:18 +157: 390x844_scale1.0 discovery phase D teamChallenge 390x844
+00:18 +158: 390x844_scale1.0 discovery phase D ranking 390x844
+00:18 +159: 390x844_scale1.0 discovery phase D friends 390x844
+00:18 +160: 390x844_scale1.0 discovery phase D friendsKeyboard 390x844
+00:18 +161: 390x844_scale1.0 discovery phase D blocked 390x844
+00:18 +162: 390x844_scale1.0 discovery phase D teamDetail 390x844
+00:18 +163: 390x844_scale1.0 discovery (tearDownAll)
+00:18 +163: 390x844_scale1.0 account (setUpAll)
+00:18 +163: 390x844_scale1.0 account phase E profile 390x844
+00:18 +164: 390x844_scale1.0 account phase E notifications 390x844
+00:19 +165: 390x844_scale1.0 account phase E settings 390x844
+00:19 +166: 390x844_scale1.0 account phase E report 390x844
+00:19 +167: 390x844_scale1.0 account phase E reportKeyboard 390x844
+00:19 +168: 390x844_scale1.0 account phase E football 390x844
+00:19 +169: 390x844_scale1.0 account phase E footballKeyboard 390x844
+00:19 +170: 390x844_scale1.0 account phase E premium 390x844
+00:19 +171: 390x844_scale1.0 account phase E premiumLoading 390x844
+00:19 +172: 390x844_scale1.0 account (tearDownAll)
+00:19 +172: 390x844_scale1.2 party (setUpAll)
+00:19 +172: 390x844_scale1.2 party V10 Phase B 06_categories_390x844
+00:19 +173: 390x844_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:19 +174: 390x844_scale1.2 party V10 Phase B 07_detail_390x844
+00:19 +175: 390x844_scale1.2 party V10 Phase B 08_teams_390x844
+00:19 +176: 390x844_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:19 +177: 390x844_scale1.2 party V10 Phase B 09_splitter_390x844
+00:19 +178: 390x844_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:20 +179: 390x844_scale1.2 party V10 Phase B 10_helpers_390x844
+00:20 +180: 390x844_scale1.2 party V10 Phase B 11_ready_390x844
+00:20 +181: 390x844_scale1.2 party V10 Phase B 12_board_390x844
+00:20 +182: 390x844_scale1.2 party V10 Phase B 13_text_390x844
+00:20 +183: 390x844_scale1.2 party V10 Phase B 14_image_390x844
+00:20 +184: 390x844_scale1.2 party V10 Phase B 15_reveal_390x844
+00:20 +185: 390x844_scale1.2 party V10 Phase B 16_result_390x844
+00:20 +186: 390x844_scale1.2 party (tearDownAll)
+00:20 +186: 390x844_scale1.2 tournament (setUpAll)
+00:20 +186: 390x844_scale1.2 tournament tournament hub 390x844 light
+00:20 +187: 390x844_scale1.2 tournament tournament create 390x844 light
+00:20 +188: 390x844_scale1.2 tournament tournament teams 390x844 light
+00:20 +189: 390x844_scale1.2 tournament tournament draw 390x844 light
+00:20 +190: 390x844_scale1.2 tournament tournament bracket 390x844 light
+00:20 +191: 390x844_scale1.2 tournament tournament semifinal 390x844 light
+00:20 +192: 390x844_scale1.2 tournament tournament finalMatch 390x844 light
+00:20 +193: 390x844_scale1.2 tournament tournament match 390x844 light
+00:20 +194: 390x844_scale1.2 tournament tournament champion 390x844 light
+00:20 +195: 390x844_scale1.2 tournament tournament create keyboard 390x844
+00:20 +196: 390x844_scale1.2 tournament (tearDownAll)
+00:20 +196: 390x844_scale1.2 discovery (setUpAll)
+00:20 +196: 390x844_scale1.2 discovery phase D howTo 390x844
+00:20 +197: 390x844_scale1.2 discovery phase D savedGames 390x844
+00:20 +198: 390x844_scale1.2 discovery phase D matchSetup 390x844
+00:21 +199: 390x844_scale1.2 discovery phase D solo 390x844
+00:21 +200: 390x844_scale1.2 discovery phase D teamChallenge 390x844
+00:21 +201: 390x844_scale1.2 discovery phase D ranking 390x844
+00:21 +202: 390x844_scale1.2 discovery phase D friends 390x844
+00:21 +203: 390x844_scale1.2 discovery phase D friendsKeyboard 390x844
+00:21 +204: 390x844_scale1.2 discovery phase D blocked 390x844
+00:21 +205: 390x844_scale1.2 discovery phase D teamDetail 390x844
+00:21 +206: 390x844_scale1.2 discovery (tearDownAll)
+00:21 +206: 390x844_scale1.2 account (setUpAll)
+00:21 +206: 390x844_scale1.2 account phase E profile 390x844
+00:21 +207: 390x844_scale1.2 account phase E notifications 390x844
+00:21 +208: 390x844_scale1.2 account phase E settings 390x844
+00:21 +209: 390x844_scale1.2 account phase E report 390x844
+00:21 +210: 390x844_scale1.2 account phase E reportKeyboard 390x844
+00:21 +211: 390x844_scale1.2 account phase E football 390x844
+00:21 +212: 390x844_scale1.2 account phase E footballKeyboard 390x844
+00:21 +213: 390x844_scale1.2 account phase E premium 390x844
+00:21 +214: 390x844_scale1.2 account phase E premiumLoading 390x844
+00:21 +215: 390x844_scale1.2 account (tearDownAll)
+00:21 +215: 390x844_scale1.3 party (setUpAll)
+00:21 +215: 390x844_scale1.3 party V10 Phase B 06_categories_390x844
+00:21 +216: 390x844_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:22 +217: 390x844_scale1.3 party V10 Phase B 07_detail_390x844
+00:22 +218: 390x844_scale1.3 party V10 Phase B 08_teams_390x844
+00:22 +219: 390x844_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:22 +220: 390x844_scale1.3 party V10 Phase B 09_splitter_390x844
+00:22 +221: 390x844_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:22 +222: 390x844_scale1.3 party V10 Phase B 10_helpers_390x844
+00:22 +223: 390x844_scale1.3 party V10 Phase B 11_ready_390x844
+00:22 +224: 390x844_scale1.3 party V10 Phase B 12_board_390x844
+00:22 +225: 390x844_scale1.3 party V10 Phase B 13_text_390x844
+00:22 +226: 390x844_scale1.3 party V10 Phase B 14_image_390x844
+00:22 +227: 390x844_scale1.3 party V10 Phase B 15_reveal_390x844
+00:22 +228: 390x844_scale1.3 party V10 Phase B 16_result_390x844
+00:23 +229: 390x844_scale1.3 party (tearDownAll)
+00:23 +229: 390x844_scale1.3 tournament (setUpAll)
+00:23 +229: 390x844_scale1.3 tournament tournament hub 390x844 light
+00:23 +230: 390x844_scale1.3 tournament tournament create 390x844 light
+00:23 +231: 390x844_scale1.3 tournament tournament teams 390x844 light
+00:23 +232: 390x844_scale1.3 tournament tournament draw 390x844 light
+00:23 +233: 390x844_scale1.3 tournament tournament bracket 390x844 light
+00:23 +234: 390x844_scale1.3 tournament tournament semifinal 390x844 light
+00:23 +235: 390x844_scale1.3 tournament tournament finalMatch 390x844 light
+00:23 +236: 390x844_scale1.3 tournament tournament match 390x844 light
+00:23 +237: 390x844_scale1.3 tournament tournament champion 390x844 light
+00:23 +238: 390x844_scale1.3 tournament tournament create keyboard 390x844
+00:23 +239: 390x844_scale1.3 tournament (tearDownAll)
+00:23 +239: 390x844_scale1.3 discovery (setUpAll)
+00:23 +239: 390x844_scale1.3 discovery phase D howTo 390x844
+00:23 +240: 390x844_scale1.3 discovery phase D savedGames 390x844
+00:23 +241: 390x844_scale1.3 discovery phase D matchSetup 390x844
+00:23 +242: 390x844_scale1.3 discovery phase D solo 390x844
+00:23 +243: 390x844_scale1.3 discovery phase D teamChallenge 390x844
+00:23 +244: 390x844_scale1.3 discovery phase D ranking 390x844
+00:23 +245: 390x844_scale1.3 discovery phase D friends 390x844
+00:23 +246: 390x844_scale1.3 discovery phase D friendsKeyboard 390x844
+00:23 +247: 390x844_scale1.3 discovery phase D blocked 390x844
+00:23 +248: 390x844_scale1.3 discovery phase D teamDetail 390x844
+00:24 +249: 390x844_scale1.3 discovery (tearDownAll)
+00:24 +249: 390x844_scale1.3 account (setUpAll)
+00:24 +249: 390x844_scale1.3 account phase E profile 390x844
+00:24 +250: 390x844_scale1.3 account phase E notifications 390x844
+00:24 +251: 390x844_scale1.3 account phase E settings 390x844
+00:24 +252: 390x844_scale1.3 account phase E report 390x844
+00:24 +253: 390x844_scale1.3 account phase E reportKeyboard 390x844
+00:24 +254: 390x844_scale1.3 account phase E football 390x844
+00:24 +255: 390x844_scale1.3 account phase E footballKeyboard 390x844
+00:24 +256: 390x844_scale1.3 account phase E premium 390x844
+00:24 +257: 390x844_scale1.3 account phase E premiumLoading 390x844
+00:24 +258: 390x844_scale1.3 account (tearDownAll)
+00:24 +258: 393x852_scale1.0 party (setUpAll)
+00:24 +258: 393x852_scale1.0 party V10 Phase B 06_categories_390x844
+00:24 +259: 393x852_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:25 +260: 393x852_scale1.0 party V10 Phase B 07_detail_390x844
+00:25 +261: 393x852_scale1.0 party V10 Phase B 08_teams_390x844
+00:25 +262: 393x852_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:25 +263: 393x852_scale1.0 party V10 Phase B 09_splitter_390x844
+00:25 +264: 393x852_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:25 +265: 393x852_scale1.0 party V10 Phase B 10_helpers_390x844
+00:25 +266: 393x852_scale1.0 party V10 Phase B 11_ready_390x844
+00:25 +267: 393x852_scale1.0 party V10 Phase B 12_board_390x844
+00:25 +268: 393x852_scale1.0 party V10 Phase B 13_text_390x844
+00:25 +269: 393x852_scale1.0 party V10 Phase B 14_image_390x844
+00:25 +270: 393x852_scale1.0 party V10 Phase B 15_reveal_390x844
+00:25 +271: 393x852_scale1.0 party V10 Phase B 16_result_390x844
+00:25 +272: 393x852_scale1.0 party (tearDownAll)
+00:25 +272: 393x852_scale1.0 tournament (setUpAll)
+00:25 +272: 393x852_scale1.0 tournament tournament hub 393x852 light
+00:25 +273: 393x852_scale1.0 tournament tournament create 393x852 light
+00:25 +274: 393x852_scale1.0 tournament tournament teams 393x852 light
+00:25 +275: 393x852_scale1.0 tournament tournament draw 393x852 light
+00:25 +276: 393x852_scale1.0 tournament tournament bracket 393x852 light
+00:26 +277: 393x852_scale1.0 tournament tournament semifinal 393x852 light
+00:26 +278: 393x852_scale1.0 tournament tournament finalMatch 393x852 light
+00:26 +279: 393x852_scale1.0 tournament tournament match 393x852 light
+00:26 +280: 393x852_scale1.0 tournament tournament champion 393x852 light
+00:26 +281: 393x852_scale1.0 tournament tournament create keyboard 393x852
+00:26 +282: 393x852_scale1.0 tournament (tearDownAll)
+00:26 +282: 393x852_scale1.0 discovery (setUpAll)
+00:26 +282: 393x852_scale1.0 discovery phase D howTo 393x852
+00:26 +283: 393x852_scale1.0 discovery phase D savedGames 393x852
+00:26 +284: 393x852_scale1.0 discovery phase D matchSetup 393x852
+00:26 +285: 393x852_scale1.0 discovery phase D solo 393x852
+00:26 +286: 393x852_scale1.0 discovery phase D teamChallenge 393x852
+00:26 +287: 393x852_scale1.0 discovery phase D ranking 393x852
+00:26 +288: 393x852_scale1.0 discovery phase D friends 393x852
+00:26 +289: 393x852_scale1.0 discovery phase D friendsKeyboard 393x852
+00:26 +290: 393x852_scale1.0 discovery phase D blocked 393x852
+00:26 +291: 393x852_scale1.0 discovery phase D teamDetail 393x852
+00:26 +292: 393x852_scale1.0 discovery (tearDownAll)
+00:26 +292: 393x852_scale1.0 account (setUpAll)
+00:26 +292: 393x852_scale1.0 account phase E profile 393x852
+00:26 +293: 393x852_scale1.0 account phase E notifications 393x852
+00:26 +294: 393x852_scale1.0 account phase E settings 393x852
+00:26 +295: 393x852_scale1.0 account phase E report 393x852
+00:26 +296: 393x852_scale1.0 account phase E reportKeyboard 393x852
+00:27 +297: 393x852_scale1.0 account phase E football 393x852
+00:27 +298: 393x852_scale1.0 account phase E footballKeyboard 393x852
+00:27 +299: 393x852_scale1.0 account phase E premium 393x852
+00:27 +300: 393x852_scale1.0 account phase E premiumLoading 393x852
+00:27 +301: 393x852_scale1.0 account (tearDownAll)
+00:27 +301: 393x852_scale1.2 party (setUpAll)
+00:27 +301: 393x852_scale1.2 party V10 Phase B 06_categories_390x844
+00:27 +302: 393x852_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:27 +303: 393x852_scale1.2 party V10 Phase B 07_detail_390x844
+00:27 +304: 393x852_scale1.2 party V10 Phase B 08_teams_390x844
+00:27 +305: 393x852_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:27 +306: 393x852_scale1.2 party V10 Phase B 09_splitter_390x844
+00:27 +307: 393x852_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:27 +308: 393x852_scale1.2 party V10 Phase B 10_helpers_390x844
+00:27 +309: 393x852_scale1.2 party V10 Phase B 11_ready_390x844
+00:27 +310: 393x852_scale1.2 party V10 Phase B 12_board_390x844
+00:27 +311: 393x852_scale1.2 party V10 Phase B 13_text_390x844
+00:27 +312: 393x852_scale1.2 party V10 Phase B 14_image_390x844
+00:28 +313: 393x852_scale1.2 party V10 Phase B 15_reveal_390x844
+00:28 +314: 393x852_scale1.2 party V10 Phase B 16_result_390x844
+00:28 +315: 393x852_scale1.2 party (tearDownAll)
+00:28 +315: 393x852_scale1.2 tournament (setUpAll)
+00:28 +315: 393x852_scale1.2 tournament tournament hub 393x852 light
+00:28 +316: 393x852_scale1.2 tournament tournament create 393x852 light
+00:28 +317: 393x852_scale1.2 tournament tournament teams 393x852 light
+00:28 +318: 393x852_scale1.2 tournament tournament draw 393x852 light
+00:28 +319: 393x852_scale1.2 tournament tournament bracket 393x852 light
+00:28 +320: 393x852_scale1.2 tournament tournament semifinal 393x852 light
+00:28 +321: 393x852_scale1.2 tournament tournament finalMatch 393x852 light
+00:28 +322: 393x852_scale1.2 tournament tournament match 393x852 light
+00:28 +323: 393x852_scale1.2 tournament tournament champion 393x852 light
+00:28 +324: 393x852_scale1.2 tournament tournament create keyboard 393x852
+00:28 +325: 393x852_scale1.2 tournament (tearDownAll)
+00:28 +325: 393x852_scale1.2 discovery (setUpAll)
+00:28 +325: 393x852_scale1.2 discovery phase D howTo 393x852
+00:28 +326: 393x852_scale1.2 discovery phase D savedGames 393x852
+00:28 +327: 393x852_scale1.2 discovery phase D matchSetup 393x852
+00:28 +328: 393x852_scale1.2 discovery phase D solo 393x852
+00:28 +329: 393x852_scale1.2 discovery phase D teamChallenge 393x852
+00:28 +330: 393x852_scale1.2 discovery phase D ranking 393x852
+00:28 +331: 393x852_scale1.2 discovery phase D friends 393x852
+00:28 +332: 393x852_scale1.2 discovery phase D friendsKeyboard 393x852
+00:29 +333: 393x852_scale1.2 discovery phase D blocked 393x852
+00:29 +334: 393x852_scale1.2 discovery phase D teamDetail 393x852
+00:29 +335: 393x852_scale1.2 discovery (tearDownAll)
+00:29 +335: 393x852_scale1.2 account (setUpAll)
+00:29 +335: 393x852_scale1.2 account phase E profile 393x852
+00:29 +336: 393x852_scale1.2 account phase E notifications 393x852
+00:29 +337: 393x852_scale1.2 account phase E settings 393x852
+00:29 +338: 393x852_scale1.2 account phase E report 393x852
+00:29 +339: 393x852_scale1.2 account phase E reportKeyboard 393x852
+00:29 +340: 393x852_scale1.2 account phase E football 393x852
+00:29 +341: 393x852_scale1.2 account phase E footballKeyboard 393x852
+00:29 +342: 393x852_scale1.2 account phase E premium 393x852
+00:29 +343: 393x852_scale1.2 account phase E premiumLoading 393x852
+00:29 +344: 393x852_scale1.2 account (tearDownAll)
+00:29 +344: 393x852_scale1.3 party (setUpAll)
+00:29 +344: 393x852_scale1.3 party V10 Phase B 06_categories_390x844
+00:29 +345: 393x852_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:29 +346: 393x852_scale1.3 party V10 Phase B 07_detail_390x844
+00:29 +347: 393x852_scale1.3 party V10 Phase B 08_teams_390x844
+00:29 +348: 393x852_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:30 +349: 393x852_scale1.3 party V10 Phase B 09_splitter_390x844
+00:30 +350: 393x852_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:30 +351: 393x852_scale1.3 party V10 Phase B 10_helpers_390x844
+00:30 +352: 393x852_scale1.3 party V10 Phase B 11_ready_390x844
+00:30 +353: 393x852_scale1.3 party V10 Phase B 12_board_390x844
+00:30 +354: 393x852_scale1.3 party V10 Phase B 13_text_390x844
+00:30 +355: 393x852_scale1.3 party V10 Phase B 14_image_390x844
+00:30 +356: 393x852_scale1.3 party V10 Phase B 15_reveal_390x844
+00:30 +357: 393x852_scale1.3 party V10 Phase B 16_result_390x844
+00:30 +358: 393x852_scale1.3 party (tearDownAll)
+00:30 +358: 393x852_scale1.3 tournament (setUpAll)
+00:30 +358: 393x852_scale1.3 tournament tournament hub 393x852 light
+00:30 +359: 393x852_scale1.3 tournament tournament create 393x852 light
+00:30 +360: 393x852_scale1.3 tournament tournament teams 393x852 light
+00:30 +361: 393x852_scale1.3 tournament tournament draw 393x852 light
+00:30 +362: 393x852_scale1.3 tournament tournament bracket 393x852 light
+00:30 +363: 393x852_scale1.3 tournament tournament semifinal 393x852 light
+00:30 +364: 393x852_scale1.3 tournament tournament finalMatch 393x852 light
+00:30 +365: 393x852_scale1.3 tournament tournament match 393x852 light
+00:31 +366: 393x852_scale1.3 tournament tournament champion 393x852 light
+00:31 +367: 393x852_scale1.3 tournament tournament create keyboard 393x852
+00:31 +368: 393x852_scale1.3 tournament (tearDownAll)
+00:31 +368: 393x852_scale1.3 discovery (setUpAll)
+00:31 +368: 393x852_scale1.3 discovery phase D howTo 393x852
+00:31 +369: 393x852_scale1.3 discovery phase D savedGames 393x852
+00:31 +370: 393x852_scale1.3 discovery phase D matchSetup 393x852
+00:31 +371: 393x852_scale1.3 discovery phase D solo 393x852
+00:31 +372: 393x852_scale1.3 discovery phase D teamChallenge 393x852
+00:31 +373: 393x852_scale1.3 discovery phase D ranking 393x852
+00:31 +374: 393x852_scale1.3 discovery phase D friends 393x852
+00:31 +375: 393x852_scale1.3 discovery phase D friendsKeyboard 393x852
+00:31 +376: 393x852_scale1.3 discovery phase D blocked 393x852
+00:31 +377: 393x852_scale1.3 discovery phase D teamDetail 393x852
+00:31 +378: 393x852_scale1.3 discovery (tearDownAll)
+00:31 +378: 393x852_scale1.3 account (setUpAll)
+00:31 +378: 393x852_scale1.3 account phase E profile 393x852
+00:31 +379: 393x852_scale1.3 account phase E notifications 393x852
+00:31 +380: 393x852_scale1.3 account phase E settings 393x852
+00:31 +381: 393x852_scale1.3 account phase E report 393x852
+00:32 +382: 393x852_scale1.3 account phase E reportKeyboard 393x852
+00:32 +383: 393x852_scale1.3 account phase E football 393x852
+00:32 +384: 393x852_scale1.3 account phase E footballKeyboard 393x852
+00:32 +385: 393x852_scale1.3 account phase E premium 393x852
+00:32 +386: 393x852_scale1.3 account phase E premiumLoading 393x852
+00:32 +387: 393x852_scale1.3 account (tearDownAll)
+00:32 +387: 412x915_scale1.0 party (setUpAll)
+00:32 +387: 412x915_scale1.0 party V10 Phase B 06_categories_390x844
+00:32 +388: 412x915_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:32 +389: 412x915_scale1.0 party V10 Phase B 07_detail_390x844
+00:32 +390: 412x915_scale1.0 party V10 Phase B 08_teams_390x844
+00:32 +391: 412x915_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:33 +392: 412x915_scale1.0 party V10 Phase B 09_splitter_390x844
+00:33 +393: 412x915_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:33 +394: 412x915_scale1.0 party V10 Phase B 10_helpers_390x844
+00:33 +395: 412x915_scale1.0 party V10 Phase B 11_ready_390x844
+00:33 +396: 412x915_scale1.0 party V10 Phase B 12_board_390x844
+00:33 +397: 412x915_scale1.0 party V10 Phase B 13_text_390x844
+00:33 +398: 412x915_scale1.0 party V10 Phase B 14_image_390x844
+00:33 +399: 412x915_scale1.0 party V10 Phase B 15_reveal_390x844
+00:33 +400: 412x915_scale1.0 party V10 Phase B 16_result_390x844
+00:33 +401: 412x915_scale1.0 party (tearDownAll)
+00:33 +401: 412x915_scale1.0 tournament (setUpAll)
+00:33 +401: 412x915_scale1.0 tournament tournament hub 412x915 light
+00:33 +402: 412x915_scale1.0 tournament tournament create 412x915 light
+00:33 +403: 412x915_scale1.0 tournament tournament teams 412x915 light
+00:33 +404: 412x915_scale1.0 tournament tournament draw 412x915 light
+00:33 +405: 412x915_scale1.0 tournament tournament bracket 412x915 light
+00:33 +406: 412x915_scale1.0 tournament tournament semifinal 412x915 light
+00:33 +407: 412x915_scale1.0 tournament tournament finalMatch 412x915 light
+00:33 +408: 412x915_scale1.0 tournament tournament match 412x915 light
+00:33 +409: 412x915_scale1.0 tournament tournament champion 412x915 light
+00:33 +410: 412x915_scale1.0 tournament tournament create keyboard 412x915
+00:33 +411: 412x915_scale1.0 tournament (tearDownAll)
+00:33 +411: 412x915_scale1.0 discovery (setUpAll)
+00:33 +411: 412x915_scale1.0 discovery phase D howTo 412x915
+00:33 +412: 412x915_scale1.0 discovery phase D savedGames 412x915
+00:34 +413: 412x915_scale1.0 discovery phase D matchSetup 412x915
+00:34 +414: 412x915_scale1.0 discovery phase D solo 412x915
+00:34 +415: 412x915_scale1.0 discovery phase D teamChallenge 412x915
+00:34 +416: 412x915_scale1.0 discovery phase D ranking 412x915
+00:34 +417: 412x915_scale1.0 discovery phase D friends 412x915
+00:34 +418: 412x915_scale1.0 discovery phase D friendsKeyboard 412x915
+00:34 +419: 412x915_scale1.0 discovery phase D blocked 412x915
+00:34 +420: 412x915_scale1.0 discovery phase D teamDetail 412x915
+00:34 +421: 412x915_scale1.0 discovery (tearDownAll)
+00:34 +421: 412x915_scale1.0 account (setUpAll)
+00:34 +421: 412x915_scale1.0 account phase E profile 412x915
+00:34 +422: 412x915_scale1.0 account phase E notifications 412x915
+00:34 +423: 412x915_scale1.0 account phase E settings 412x915
+00:34 +424: 412x915_scale1.0 account phase E report 412x915
+00:34 +425: 412x915_scale1.0 account phase E reportKeyboard 412x915
+00:34 +426: 412x915_scale1.0 account phase E football 412x915
+00:34 +427: 412x915_scale1.0 account phase E footballKeyboard 412x915
+00:34 +428: 412x915_scale1.0 account phase E premium 412x915
+00:34 +429: 412x915_scale1.0 account phase E premiumLoading 412x915
+00:34 +430: 412x915_scale1.0 account (tearDownAll)
+00:34 +430: 412x915_scale1.2 party (setUpAll)
+00:34 +430: 412x915_scale1.2 party V10 Phase B 06_categories_390x844
+00:34 +431: 412x915_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:35 +432: 412x915_scale1.2 party V10 Phase B 07_detail_390x844
+00:35 +433: 412x915_scale1.2 party V10 Phase B 08_teams_390x844
+00:35 +434: 412x915_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:35 +435: 412x915_scale1.2 party V10 Phase B 09_splitter_390x844
+00:35 +436: 412x915_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:35 +437: 412x915_scale1.2 party V10 Phase B 10_helpers_390x844
+00:35 +438: 412x915_scale1.2 party V10 Phase B 11_ready_390x844
+00:35 +439: 412x915_scale1.2 party V10 Phase B 12_board_390x844
+00:35 +440: 412x915_scale1.2 party V10 Phase B 13_text_390x844
+00:35 +441: 412x915_scale1.2 party V10 Phase B 14_image_390x844
+00:35 +442: 412x915_scale1.2 party V10 Phase B 15_reveal_390x844
+00:35 +443: 412x915_scale1.2 party V10 Phase B 16_result_390x844
+00:35 +444: 412x915_scale1.2 party (tearDownAll)
+00:35 +444: 412x915_scale1.2 tournament (setUpAll)
+00:35 +444: 412x915_scale1.2 tournament tournament hub 412x915 light
+00:35 +445: 412x915_scale1.2 tournament tournament create 412x915 light
+00:35 +446: 412x915_scale1.2 tournament tournament teams 412x915 light
+00:35 +447: 412x915_scale1.2 tournament tournament draw 412x915 light
+00:35 +448: 412x915_scale1.2 tournament tournament bracket 412x915 light
+00:36 +449: 412x915_scale1.2 tournament tournament semifinal 412x915 light
+00:36 +450: 412x915_scale1.2 tournament tournament finalMatch 412x915 light
+00:36 +451: 412x915_scale1.2 tournament tournament match 412x915 light
+00:36 +452: 412x915_scale1.2 tournament tournament champion 412x915 light
+00:36 +453: 412x915_scale1.2 tournament tournament create keyboard 412x915
+00:36 +454: 412x915_scale1.2 tournament (tearDownAll)
+00:36 +454: 412x915_scale1.2 discovery (setUpAll)
+00:36 +454: 412x915_scale1.2 discovery phase D howTo 412x915
+00:36 +455: 412x915_scale1.2 discovery phase D savedGames 412x915
+00:36 +456: 412x915_scale1.2 discovery phase D matchSetup 412x915
+00:36 +457: 412x915_scale1.2 discovery phase D solo 412x915
+00:36 +458: 412x915_scale1.2 discovery phase D teamChallenge 412x915
+00:36 +459: 412x915_scale1.2 discovery phase D ranking 412x915
+00:36 +460: 412x915_scale1.2 discovery phase D friends 412x915
+00:36 +461: 412x915_scale1.2 discovery phase D friendsKeyboard 412x915
+00:36 +462: 412x915_scale1.2 discovery phase D blocked 412x915
+00:36 +463: 412x915_scale1.2 discovery phase D teamDetail 412x915
+00:36 +464: 412x915_scale1.2 discovery (tearDownAll)
+00:36 +464: 412x915_scale1.2 account (setUpAll)
+00:36 +464: 412x915_scale1.2 account phase E profile 412x915
+00:36 +465: 412x915_scale1.2 account phase E notifications 412x915
+00:36 +466: 412x915_scale1.2 account phase E settings 412x915
+00:36 +467: 412x915_scale1.2 account phase E report 412x915
+00:37 +468: 412x915_scale1.2 account phase E reportKeyboard 412x915
+00:37 +469: 412x915_scale1.2 account phase E football 412x915
+00:37 +470: 412x915_scale1.2 account phase E footballKeyboard 412x915
+00:37 +471: 412x915_scale1.2 account phase E premium 412x915
+00:37 +472: 412x915_scale1.2 account phase E premiumLoading 412x915
+00:37 +473: 412x915_scale1.2 account (tearDownAll)
+00:37 +473: 412x915_scale1.3 party (setUpAll)
+00:37 +473: 412x915_scale1.3 party V10 Phase B 06_categories_390x844
+00:37 +474: 412x915_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:37 +475: 412x915_scale1.3 party V10 Phase B 07_detail_390x844
+00:37 +476: 412x915_scale1.3 party V10 Phase B 08_teams_390x844
+00:37 +477: 412x915_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:37 +478: 412x915_scale1.3 party V10 Phase B 09_splitter_390x844
+00:37 +479: 412x915_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:37 +480: 412x915_scale1.3 party V10 Phase B 10_helpers_390x844
+00:37 +481: 412x915_scale1.3 party V10 Phase B 11_ready_390x844
+00:38 +482: 412x915_scale1.3 party V10 Phase B 12_board_390x844
+00:38 +483: 412x915_scale1.3 party V10 Phase B 13_text_390x844
+00:38 +484: 412x915_scale1.3 party V10 Phase B 14_image_390x844
+00:38 +485: 412x915_scale1.3 party V10 Phase B 15_reveal_390x844
+00:38 +486: 412x915_scale1.3 party V10 Phase B 16_result_390x844
+00:38 +487: 412x915_scale1.3 party (tearDownAll)
+00:38 +487: 412x915_scale1.3 tournament (setUpAll)
+00:38 +487: 412x915_scale1.3 tournament tournament hub 412x915 light
+00:38 +488: 412x915_scale1.3 tournament tournament create 412x915 light
+00:38 +489: 412x915_scale1.3 tournament tournament teams 412x915 light
+00:38 +490: 412x915_scale1.3 tournament tournament draw 412x915 light
+00:38 +491: 412x915_scale1.3 tournament tournament bracket 412x915 light
+00:38 +492: 412x915_scale1.3 tournament tournament semifinal 412x915 light
+00:38 +493: 412x915_scale1.3 tournament tournament finalMatch 412x915 light
+00:38 +494: 412x915_scale1.3 tournament tournament match 412x915 light
+00:38 +495: 412x915_scale1.3 tournament tournament champion 412x915 light
+00:38 +496: 412x915_scale1.3 tournament tournament create keyboard 412x915
+00:38 +497: 412x915_scale1.3 tournament (tearDownAll)
+00:38 +497: 412x915_scale1.3 discovery (setUpAll)
+00:38 +497: 412x915_scale1.3 discovery phase D howTo 412x915
+00:38 +498: 412x915_scale1.3 discovery phase D savedGames 412x915
+00:38 +499: 412x915_scale1.3 discovery phase D matchSetup 412x915
+00:38 +500: 412x915_scale1.3 discovery phase D solo 412x915
+00:39 +501: 412x915_scale1.3 discovery phase D teamChallenge 412x915
+00:39 +502: 412x915_scale1.3 discovery phase D ranking 412x915
+00:39 +503: 412x915_scale1.3 discovery phase D friends 412x915
+00:39 +504: 412x915_scale1.3 discovery phase D friendsKeyboard 412x915
+00:39 +505: 412x915_scale1.3 discovery phase D blocked 412x915
+00:39 +506: 412x915_scale1.3 discovery phase D teamDetail 412x915
+00:39 +507: 412x915_scale1.3 discovery (tearDownAll)
+00:39 +507: 412x915_scale1.3 account (setUpAll)
+00:39 +507: 412x915_scale1.3 account phase E profile 412x915
+00:39 +508: 412x915_scale1.3 account phase E notifications 412x915
+00:39 +509: 412x915_scale1.3 account phase E settings 412x915
+00:39 +510: 412x915_scale1.3 account phase E report 412x915
+00:39 +511: 412x915_scale1.3 account phase E reportKeyboard 412x915
+00:39 +512: 412x915_scale1.3 account phase E football 412x915
+00:39 +513: 412x915_scale1.3 account phase E footballKeyboard 412x915
+00:40 +514: 412x915_scale1.3 account phase E premium 412x915
+00:40 +515: 412x915_scale1.3 account phase E premiumLoading 412x915
+00:40 +516: 412x915_scale1.3 account (tearDownAll)
+00:40 +516: 430x932_scale1.0 party (setUpAll)
+00:40 +516: 430x932_scale1.0 party V10 Phase B 06_categories_390x844
+00:40 +517: 430x932_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:40 +518: 430x932_scale1.0 party V10 Phase B 07_detail_390x844
+00:40 +519: 430x932_scale1.0 party V10 Phase B 08_teams_390x844
+00:40 +520: 430x932_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:40 +521: 430x932_scale1.0 party V10 Phase B 09_splitter_390x844
+00:40 +522: 430x932_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:40 +523: 430x932_scale1.0 party V10 Phase B 10_helpers_390x844
+00:40 +524: 430x932_scale1.0 party V10 Phase B 11_ready_390x844
+00:40 +525: 430x932_scale1.0 party V10 Phase B 12_board_390x844
+00:41 +526: 430x932_scale1.0 party V10 Phase B 13_text_390x844
+00:41 +527: 430x932_scale1.0 party V10 Phase B 14_image_390x844
+00:41 +528: 430x932_scale1.0 party V10 Phase B 15_reveal_390x844
+00:41 +529: 430x932_scale1.0 party V10 Phase B 16_result_390x844
+00:41 +530: 430x932_scale1.0 party (tearDownAll)
+00:41 +530: 430x932_scale1.0 tournament (setUpAll)
+00:41 +530: 430x932_scale1.0 tournament tournament hub 430x932 light
+00:41 +531: 430x932_scale1.0 tournament tournament create 430x932 light
+00:41 +532: 430x932_scale1.0 tournament tournament teams 430x932 light
+00:41 +533: 430x932_scale1.0 tournament tournament draw 430x932 light
+00:42 +534: 430x932_scale1.0 tournament tournament bracket 430x932 light
+00:42 +535: 430x932_scale1.0 tournament tournament semifinal 430x932 light
+00:42 +536: 430x932_scale1.0 tournament tournament finalMatch 430x932 light
+00:42 +537: 430x932_scale1.0 tournament tournament match 430x932 light
+00:42 +538: 430x932_scale1.0 tournament tournament champion 430x932 light
+00:42 +539: 430x932_scale1.0 tournament tournament create keyboard 430x932
+00:42 +540: 430x932_scale1.0 tournament (tearDownAll)
+00:42 +540: 430x932_scale1.0 discovery (setUpAll)
+00:42 +540: 430x932_scale1.0 discovery phase D howTo 430x932
+00:42 +541: 430x932_scale1.0 discovery phase D savedGames 430x932
+00:42 +542: 430x932_scale1.0 discovery phase D matchSetup 430x932
+00:42 +543: 430x932_scale1.0 discovery phase D solo 430x932
+00:42 +544: 430x932_scale1.0 discovery phase D teamChallenge 430x932
+00:42 +545: 430x932_scale1.0 discovery phase D ranking 430x932
+00:42 +546: 430x932_scale1.0 discovery phase D friends 430x932
+00:42 +547: 430x932_scale1.0 discovery phase D friendsKeyboard 430x932
+00:42 +548: 430x932_scale1.0 discovery phase D blocked 430x932
+00:42 +549: 430x932_scale1.0 discovery phase D teamDetail 430x932
+00:43 +550: 430x932_scale1.0 discovery (tearDownAll)
+00:43 +550: 430x932_scale1.0 account (setUpAll)
+00:43 +550: 430x932_scale1.0 account phase E profile 430x932
+00:43 +551: 430x932_scale1.0 account phase E notifications 430x932
+00:43 +552: 430x932_scale1.0 account phase E settings 430x932
+00:43 +553: 430x932_scale1.0 account phase E report 430x932
+00:43 +554: 430x932_scale1.0 account phase E reportKeyboard 430x932
+00:43 +555: 430x932_scale1.0 account phase E football 430x932
+00:43 +556: 430x932_scale1.0 account phase E footballKeyboard 430x932
+00:43 +557: 430x932_scale1.0 account phase E premium 430x932
+00:43 +558: 430x932_scale1.0 account phase E premiumLoading 430x932
+00:43 +559: 430x932_scale1.0 account (tearDownAll)
+00:43 +559: 430x932_scale1.2 party (setUpAll)
+00:43 +559: 430x932_scale1.2 party V10 Phase B 06_categories_390x844
+00:43 +560: 430x932_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:43 +561: 430x932_scale1.2 party V10 Phase B 07_detail_390x844
+00:43 +562: 430x932_scale1.2 party V10 Phase B 08_teams_390x844
+00:43 +563: 430x932_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:44 +564: 430x932_scale1.2 party V10 Phase B 09_splitter_390x844
+00:44 +565: 430x932_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:44 +566: 430x932_scale1.2 party V10 Phase B 10_helpers_390x844
+00:44 +567: 430x932_scale1.2 party V10 Phase B 11_ready_390x844
+00:44 +568: 430x932_scale1.2 party V10 Phase B 12_board_390x844
+00:44 +569: 430x932_scale1.2 party V10 Phase B 13_text_390x844
+00:44 +570: 430x932_scale1.2 party V10 Phase B 14_image_390x844
+00:44 +571: 430x932_scale1.2 party V10 Phase B 15_reveal_390x844
+00:44 +572: 430x932_scale1.2 party V10 Phase B 16_result_390x844
+00:44 +573: 430x932_scale1.2 party (tearDownAll)
+00:44 +573: 430x932_scale1.2 tournament (setUpAll)
+00:44 +573: 430x932_scale1.2 tournament tournament hub 430x932 light
+00:44 +574: 430x932_scale1.2 tournament tournament create 430x932 light
+00:44 +575: 430x932_scale1.2 tournament tournament teams 430x932 light
+00:44 +576: 430x932_scale1.2 tournament tournament draw 430x932 light
+00:44 +577: 430x932_scale1.2 tournament tournament bracket 430x932 light
+00:44 +578: 430x932_scale1.2 tournament tournament semifinal 430x932 light
+00:44 +579: 430x932_scale1.2 tournament tournament finalMatch 430x932 light
+00:44 +580: 430x932_scale1.2 tournament tournament match 430x932 light
+00:44 +581: 430x932_scale1.2 tournament tournament champion 430x932 light
+00:45 +582: 430x932_scale1.2 tournament tournament create keyboard 430x932
+00:45 +583: 430x932_scale1.2 tournament (tearDownAll)
+00:45 +583: 430x932_scale1.2 discovery (setUpAll)
+00:45 +583: 430x932_scale1.2 discovery phase D howTo 430x932
+00:45 +584: 430x932_scale1.2 discovery phase D savedGames 430x932
+00:45 +585: 430x932_scale1.2 discovery phase D matchSetup 430x932
+00:45 +586: 430x932_scale1.2 discovery phase D solo 430x932
+00:45 +587: 430x932_scale1.2 discovery phase D teamChallenge 430x932
+00:45 +588: 430x932_scale1.2 discovery phase D ranking 430x932
+00:45 +589: 430x932_scale1.2 discovery phase D friends 430x932
+00:45 +590: 430x932_scale1.2 discovery phase D friendsKeyboard 430x932
+00:45 +591: 430x932_scale1.2 discovery phase D blocked 430x932
+00:45 +592: 430x932_scale1.2 discovery phase D teamDetail 430x932
+00:45 +593: 430x932_scale1.2 discovery (tearDownAll)
+00:45 +593: 430x932_scale1.2 account (setUpAll)
+00:45 +593: 430x932_scale1.2 account phase E profile 430x932
+00:45 +594: 430x932_scale1.2 account phase E notifications 430x932
+00:45 +595: 430x932_scale1.2 account phase E settings 430x932
+00:45 +596: 430x932_scale1.2 account phase E report 430x932
+00:45 +597: 430x932_scale1.2 account phase E reportKeyboard 430x932
+00:45 +598: 430x932_scale1.2 account phase E football 430x932
+00:46 +599: 430x932_scale1.2 account phase E footballKeyboard 430x932
+00:46 +600: 430x932_scale1.2 account phase E premium 430x932
+00:46 +601: 430x932_scale1.2 account phase E premiumLoading 430x932
+00:46 +602: 430x932_scale1.2 account (tearDownAll)
+00:46 +602: 430x932_scale1.3 party (setUpAll)
+00:46 +602: 430x932_scale1.3 party V10 Phase B 06_categories_390x844
+00:46 +603: 430x932_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:46 +604: 430x932_scale1.3 party V10 Phase B 07_detail_390x844
+00:46 +605: 430x932_scale1.3 party V10 Phase B 08_teams_390x844
+00:46 +606: 430x932_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:46 +607: 430x932_scale1.3 party V10 Phase B 09_splitter_390x844
+00:46 +608: 430x932_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:46 +609: 430x932_scale1.3 party V10 Phase B 10_helpers_390x844
+00:46 +610: 430x932_scale1.3 party V10 Phase B 11_ready_390x844
+00:46 +611: 430x932_scale1.3 party V10 Phase B 12_board_390x844
+00:46 +612: 430x932_scale1.3 party V10 Phase B 13_text_390x844
+00:47 +613: 430x932_scale1.3 party V10 Phase B 14_image_390x844
+00:47 +614: 430x932_scale1.3 party V10 Phase B 15_reveal_390x844
+00:47 +615: 430x932_scale1.3 party V10 Phase B 16_result_390x844
+00:47 +616: 430x932_scale1.3 party (tearDownAll)
+00:47 +616: 430x932_scale1.3 tournament (setUpAll)
+00:47 +616: 430x932_scale1.3 tournament tournament hub 430x932 light
+00:47 +617: 430x932_scale1.3 tournament tournament create 430x932 light
+00:47 +618: 430x932_scale1.3 tournament tournament teams 430x932 light
+00:47 +619: 430x932_scale1.3 tournament tournament draw 430x932 light
+00:47 +620: 430x932_scale1.3 tournament tournament bracket 430x932 light
+00:47 +621: 430x932_scale1.3 tournament tournament semifinal 430x932 light
+00:47 +622: 430x932_scale1.3 tournament tournament finalMatch 430x932 light
+00:47 +623: 430x932_scale1.3 tournament tournament match 430x932 light
+00:47 +624: 430x932_scale1.3 tournament tournament champion 430x932 light
+00:47 +625: 430x932_scale1.3 tournament tournament create keyboard 430x932
+00:47 +626: 430x932_scale1.3 tournament (tearDownAll)
+00:47 +626: 430x932_scale1.3 discovery (setUpAll)
+00:47 +626: 430x932_scale1.3 discovery phase D howTo 430x932
+00:47 +627: 430x932_scale1.3 discovery phase D savedGames 430x932
+00:47 +628: 430x932_scale1.3 discovery phase D matchSetup 430x932
+00:47 +629: 430x932_scale1.3 discovery phase D solo 430x932
+00:47 +630: 430x932_scale1.3 discovery phase D teamChallenge 430x932
+00:47 +631: 430x932_scale1.3 discovery phase D ranking 430x932
+00:47 +632: 430x932_scale1.3 discovery phase D friends 430x932
+00:47 +633: 430x932_scale1.3 discovery phase D friendsKeyboard 430x932
+00:48 +634: 430x932_scale1.3 discovery phase D blocked 430x932
+00:48 +635: 430x932_scale1.3 discovery phase D teamDetail 430x932
+00:48 +636: 430x932_scale1.3 discovery (tearDownAll)
+00:48 +636: 430x932_scale1.3 account (setUpAll)
+00:48 +636: 430x932_scale1.3 account phase E profile 430x932
+00:48 +637: 430x932_scale1.3 account phase E notifications 430x932
+00:48 +638: 430x932_scale1.3 account phase E settings 430x932
+00:48 +639: 430x932_scale1.3 account phase E report 430x932
+00:48 +640: 430x932_scale1.3 account phase E reportKeyboard 430x932
+00:48 +641: 430x932_scale1.3 account phase E football 430x932
+00:48 +642: 430x932_scale1.3 account phase E footballKeyboard 430x932
+00:48 +643: 430x932_scale1.3 account phase E premium 430x932
+00:48 +644: 430x932_scale1.3 account phase E premiumLoading 430x932
+00:48 +645: 430x932_scale1.3 account (tearDownAll)
+00:48 +645: All tests passed!

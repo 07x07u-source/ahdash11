@@ -1,0 +1,25 @@
+reference,before_score,after_score,mean_abs_difference,rms_difference,policy
+03_sign_in_compact_360x800,89.08,93.85,15.678,45.942,safe-area + canonical keyboard normalization
+04_create_account_compact_360x800,77.31,94.45,14.158,40.543,safe-area + canonical keyboard normalization
+06_category_search_keyboard_390x844,83.74,85.18,37.783,74.219,safe-area + canonical keyboard normalization
+06_category_selection_compact_360x800,78.44,89.76,26.102,57.421,safe-area + canonical keyboard normalization
+06_category_selection_primary_390x844,84.12,95.21,12.225,39.933,safe-area + canonical keyboard normalization
+07_category_detail_compact_360x800,81.07,88.59,29.098,62.807,safe-area + canonical keyboard normalization
+07_category_detail_primary_390x844,82.11,92.75,18.495,46.096,safe-area + canonical keyboard normalization
+08_team_setup_compact_360x800,92.32,96.53,8.840,30.394,safe-area + canonical keyboard normalization
+08_team_setup_primary_390x844,94.04,96.83,8.073,29.115,safe-area + canonical keyboard normalization
+10_helpers_compact_360x800,91.09,95.61,11.196,37.316,safe-area + canonical keyboard normalization
+10_helpers_primary_390x844,92.69,95.06,12.590,37.645,safe-area + canonical keyboard normalization
+11_ready_compact_360x800,90.57,96.24,9.600,34.949,safe-area + canonical keyboard normalization
+11_ready_primary_390x844,92.29,95.10,12.499,42.161,safe-area + canonical keyboard normalization
+18_saved_games_primary_390x844,90.87,94.17,14.862,45.160,safe-area + canonical keyboard normalization
+29_solo_setup_primary_390x844,96.81,96.81,8.146,33.343,safe-area + canonical keyboard normalization
+33_team_challenge_primary_390x844,96.80,96.80,8.162,32.883,safe-area + canonical keyboard normalization
+35_friends_primary_390x844,92.65,92.65,18.738,45.937,safe-area + canonical keyboard normalization
+35_friends_search_keyboard_390x844,93.03,93.03,17.763,46.187,safe-area + canonical keyboard normalization
+12_game_board_primary_390x844,96.61,96.78,8.208,30.359,safe-area + canonical keyboard normalization
+12_game_board_compact_360x800,95.67,95.87,10.532,36.001,safe-area + canonical keyboard normalization
+13_text_question_primary_390x844,95.64,95.83,10.641,42.256,safe-area + canonical keyboard normalization
+13_text_question_compact_360x800,95.14,95.35,11.868,43.350,safe-area + canonical keyboard normalization
+14_image_question_primary_390x844,96.27,96.44,9.078,37.381,safe-area + canonical keyboard normalization
+14_image_question_compact_360x800,95.70,95.89,10.483,39.256,safe-area + canonical keyboard normalization

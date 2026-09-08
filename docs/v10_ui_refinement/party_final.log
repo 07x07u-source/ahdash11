@@ -1,0 +1,242 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
+00:00 +0: 360x800_scale1.0 party (setUpAll)
+00:00 +0: 360x800_scale1.0 party V10 Phase B 06_categories_390x844
+00:02 +1: 360x800_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:02 +2: 360x800_scale1.0 party V10 Phase B 07_detail_390x844
+00:02 +3: 360x800_scale1.0 party V10 Phase B 08_teams_390x844
+00:03 +4: 360x800_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:03 +5: 360x800_scale1.0 party V10 Phase B 09_splitter_390x844
+00:03 +6: 360x800_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:04 +7: 360x800_scale1.0 party V10 Phase B 10_helpers_390x844
+00:04 +8: 360x800_scale1.0 party V10 Phase B 11_ready_390x844
+00:04 +9: 360x800_scale1.0 party V10 Phase B 12_board_390x844
+00:05 +10: 360x800_scale1.0 party V10 Phase B 13_text_390x844
+00:05 +11: 360x800_scale1.0 party V10 Phase B 14_image_390x844
+00:05 +12: 360x800_scale1.0 party V10 Phase B 15_reveal_390x844
+00:06 +13: 360x800_scale1.0 party V10 Phase B 16_result_390x844
+00:06 +14: 360x800_scale1.0 party (tearDownAll)
+00:06 +14: 360x800_scale1.2 party (setUpAll)
+00:06 +14: 360x800_scale1.2 party V10 Phase B 06_categories_390x844
+00:06 +15: 360x800_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:07 +16: 360x800_scale1.2 party V10 Phase B 07_detail_390x844
+00:07 +17: 360x800_scale1.2 party V10 Phase B 08_teams_390x844
+00:07 +18: 360x800_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:07 +19: 360x800_scale1.2 party V10 Phase B 09_splitter_390x844
+00:08 +20: 360x800_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:08 +21: 360x800_scale1.2 party V10 Phase B 10_helpers_390x844
+00:08 +22: 360x800_scale1.2 party V10 Phase B 11_ready_390x844
+00:09 +23: 360x800_scale1.2 party V10 Phase B 12_board_390x844
+00:10 +24: 360x800_scale1.2 party V10 Phase B 13_text_390x844
+00:11 +25: 360x800_scale1.2 party V10 Phase B 14_image_390x844
+00:12 +26: 360x800_scale1.2 party V10 Phase B 15_reveal_390x844
+00:12 +27: 360x800_scale1.2 party V10 Phase B 16_result_390x844
+00:12 +28: 360x800_scale1.2 party (tearDownAll)
+00:12 +28: 360x800_scale1.3 party (setUpAll)
+00:12 +28: 360x800_scale1.3 party V10 Phase B 06_categories_390x844
+00:13 +29: 360x800_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:14 +30: 360x800_scale1.3 party V10 Phase B 07_detail_390x844
+00:14 +31: 360x800_scale1.3 party V10 Phase B 08_teams_390x844
+00:14 +32: 360x800_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:15 +33: 360x800_scale1.3 party V10 Phase B 09_splitter_390x844
+00:16 +34: 360x800_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:16 +35: 360x800_scale1.3 party V10 Phase B 10_helpers_390x844
+00:16 +36: 360x800_scale1.3 party V10 Phase B 11_ready_390x844
+00:17 +37: 360x800_scale1.3 party V10 Phase B 12_board_390x844
+00:17 +38: 360x800_scale1.3 party V10 Phase B 13_text_390x844
+00:18 +39: 360x800_scale1.3 party V10 Phase B 14_image_390x844
+00:18 +40: 360x800_scale1.3 party V10 Phase B 15_reveal_390x844
+00:18 +41: 360x800_scale1.3 party V10 Phase B 16_result_390x844
+00:19 +42: 360x800_scale1.3 party (tearDownAll)
+00:19 +42: 390x844_scale1.0 party (setUpAll)
+00:19 +42: 390x844_scale1.0 party V10 Phase B 06_categories_390x844
+00:19 +43: 390x844_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:20 +44: 390x844_scale1.0 party V10 Phase B 07_detail_390x844
+00:21 +45: 390x844_scale1.0 party V10 Phase B 08_teams_390x844
+00:21 +46: 390x844_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:22 +47: 390x844_scale1.0 party V10 Phase B 09_splitter_390x844
+00:23 +48: 390x844_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:23 +49: 390x844_scale1.0 party V10 Phase B 10_helpers_390x844
+00:23 +50: 390x844_scale1.0 party V10 Phase B 11_ready_390x844
+00:25 +51: 390x844_scale1.0 party V10 Phase B 12_board_390x844
+00:25 +52: 390x844_scale1.0 party V10 Phase B 13_text_390x844
+00:26 +53: 390x844_scale1.0 party V10 Phase B 14_image_390x844
+00:26 +54: 390x844_scale1.0 party V10 Phase B 15_reveal_390x844
+00:27 +55: 390x844_scale1.0 party V10 Phase B 16_result_390x844
+00:28 +56: 390x844_scale1.0 party (tearDownAll)
+00:28 +56: 390x844_scale1.2 party (setUpAll)
+00:28 +56: 390x844_scale1.2 party V10 Phase B 06_categories_390x844
+00:28 +57: 390x844_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:29 +58: 390x844_scale1.2 party V10 Phase B 07_detail_390x844
+00:29 +59: 390x844_scale1.2 party V10 Phase B 08_teams_390x844
+00:30 +60: 390x844_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:30 +61: 390x844_scale1.2 party V10 Phase B 09_splitter_390x844
+00:30 +62: 390x844_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:31 +63: 390x844_scale1.2 party V10 Phase B 10_helpers_390x844
+00:31 +64: 390x844_scale1.2 party V10 Phase B 11_ready_390x844
+00:32 +65: 390x844_scale1.2 party V10 Phase B 12_board_390x844
+00:32 +66: 390x844_scale1.2 party V10 Phase B 13_text_390x844
+00:32 +67: 390x844_scale1.2 party V10 Phase B 14_image_390x844
+00:33 +68: 390x844_scale1.2 party V10 Phase B 15_reveal_390x844
+00:33 +69: 390x844_scale1.2 party V10 Phase B 16_result_390x844
+00:33 +70: 390x844_scale1.2 party (tearDownAll)
+00:33 +70: 390x844_scale1.3 party (setUpAll)
+00:33 +70: 390x844_scale1.3 party V10 Phase B 06_categories_390x844
+00:34 +71: 390x844_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:34 +72: 390x844_scale1.3 party V10 Phase B 07_detail_390x844
+00:35 +73: 390x844_scale1.3 party V10 Phase B 08_teams_390x844
+00:35 +74: 390x844_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:35 +75: 390x844_scale1.3 party V10 Phase B 09_splitter_390x844
+00:36 +76: 390x844_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:36 +77: 390x844_scale1.3 party V10 Phase B 10_helpers_390x844
+00:36 +78: 390x844_scale1.3 party V10 Phase B 11_ready_390x844
+00:37 +79: 390x844_scale1.3 party V10 Phase B 12_board_390x844
+00:37 +80: 390x844_scale1.3 party V10 Phase B 13_text_390x844
+00:37 +81: 390x844_scale1.3 party V10 Phase B 14_image_390x844
+00:38 +82: 390x844_scale1.3 party V10 Phase B 15_reveal_390x844
+00:39 +83: 390x844_scale1.3 party V10 Phase B 16_result_390x844
+00:39 +84: 390x844_scale1.3 party (tearDownAll)
+00:39 +84: 393x852_scale1.0 party (setUpAll)
+00:39 +84: 393x852_scale1.0 party V10 Phase B 06_categories_390x844
+00:39 +85: 393x852_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+00:40 +86: 393x852_scale1.0 party V10 Phase B 07_detail_390x844
+00:40 +87: 393x852_scale1.0 party V10 Phase B 08_teams_390x844
+00:41 +88: 393x852_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+00:41 +89: 393x852_scale1.0 party V10 Phase B 09_splitter_390x844
+00:41 +90: 393x852_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+00:42 +91: 393x852_scale1.0 party V10 Phase B 10_helpers_390x844
+00:42 +92: 393x852_scale1.0 party V10 Phase B 11_ready_390x844
+00:43 +93: 393x852_scale1.0 party V10 Phase B 12_board_390x844
+00:43 +94: 393x852_scale1.0 party V10 Phase B 13_text_390x844
+00:45 +95: 393x852_scale1.0 party V10 Phase B 14_image_390x844
+00:46 +96: 393x852_scale1.0 party V10 Phase B 15_reveal_390x844
+00:47 +97: 393x852_scale1.0 party V10 Phase B 16_result_390x844
+00:48 +98: 393x852_scale1.0 party (tearDownAll)
+00:48 +98: 393x852_scale1.2 party (setUpAll)
+00:48 +98: 393x852_scale1.2 party V10 Phase B 06_categories_390x844
+00:49 +99: 393x852_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+00:50 +100: 393x852_scale1.2 party V10 Phase B 07_detail_390x844
+00:51 +101: 393x852_scale1.2 party V10 Phase B 08_teams_390x844
+00:51 +102: 393x852_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+00:52 +103: 393x852_scale1.2 party V10 Phase B 09_splitter_390x844
+00:52 +104: 393x852_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+00:52 +105: 393x852_scale1.2 party V10 Phase B 10_helpers_390x844
+00:53 +106: 393x852_scale1.2 party V10 Phase B 11_ready_390x844
+00:53 +107: 393x852_scale1.2 party V10 Phase B 12_board_390x844
+00:53 +108: 393x852_scale1.2 party V10 Phase B 13_text_390x844
+00:54 +109: 393x852_scale1.2 party V10 Phase B 14_image_390x844
+00:54 +110: 393x852_scale1.2 party V10 Phase B 15_reveal_390x844
+00:54 +111: 393x852_scale1.2 party V10 Phase B 16_result_390x844
+00:55 +112: 393x852_scale1.2 party (tearDownAll)
+00:55 +112: 393x852_scale1.3 party (setUpAll)
+00:55 +112: 393x852_scale1.3 party V10 Phase B 06_categories_390x844
+00:56 +113: 393x852_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+00:56 +114: 393x852_scale1.3 party V10 Phase B 07_detail_390x844
+00:56 +115: 393x852_scale1.3 party V10 Phase B 08_teams_390x844
+00:57 +116: 393x852_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+00:57 +117: 393x852_scale1.3 party V10 Phase B 09_splitter_390x844
+00:57 +118: 393x852_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+00:57 +119: 393x852_scale1.3 party V10 Phase B 10_helpers_390x844
+00:58 +120: 393x852_scale1.3 party V10 Phase B 11_ready_390x844
+00:58 +121: 393x852_scale1.3 party V10 Phase B 12_board_390x844
+00:58 +122: 393x852_scale1.3 party V10 Phase B 13_text_390x844
+00:59 +123: 393x852_scale1.3 party V10 Phase B 14_image_390x844
+00:59 +124: 393x852_scale1.3 party V10 Phase B 15_reveal_390x844
+00:59 +125: 393x852_scale1.3 party V10 Phase B 16_result_390x844
+00:59 +126: 393x852_scale1.3 party (tearDownAll)
+00:59 +126: 412x915_scale1.0 party (setUpAll)
+00:59 +126: 412x915_scale1.0 party V10 Phase B 06_categories_390x844
+01:00 +127: 412x915_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+01:00 +128: 412x915_scale1.0 party V10 Phase B 07_detail_390x844
+01:01 +129: 412x915_scale1.0 party V10 Phase B 08_teams_390x844
+01:01 +130: 412x915_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+01:01 +131: 412x915_scale1.0 party V10 Phase B 09_splitter_390x844
+01:01 +132: 412x915_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+01:02 +133: 412x915_scale1.0 party V10 Phase B 10_helpers_390x844
+01:02 +134: 412x915_scale1.0 party V10 Phase B 11_ready_390x844
+01:02 +135: 412x915_scale1.0 party V10 Phase B 12_board_390x844
+01:03 +136: 412x915_scale1.0 party V10 Phase B 13_text_390x844
+01:03 +137: 412x915_scale1.0 party V10 Phase B 14_image_390x844
+01:03 +138: 412x915_scale1.0 party V10 Phase B 15_reveal_390x844
+01:04 +139: 412x915_scale1.0 party V10 Phase B 16_result_390x844
+01:04 +140: 412x915_scale1.0 party (tearDownAll)
+01:04 +140: 412x915_scale1.2 party (setUpAll)
+01:04 +140: 412x915_scale1.2 party V10 Phase B 06_categories_390x844
+01:04 +141: 412x915_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+01:04 +142: 412x915_scale1.2 party V10 Phase B 07_detail_390x844
+01:05 +143: 412x915_scale1.2 party V10 Phase B 08_teams_390x844
+01:05 +144: 412x915_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+01:06 +145: 412x915_scale1.2 party V10 Phase B 09_splitter_390x844
+01:06 +146: 412x915_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+01:06 +147: 412x915_scale1.2 party V10 Phase B 10_helpers_390x844
+01:06 +148: 412x915_scale1.2 party V10 Phase B 11_ready_390x844
+01:07 +149: 412x915_scale1.2 party V10 Phase B 12_board_390x844
+01:08 +150: 412x915_scale1.2 party V10 Phase B 13_text_390x844
+01:09 +151: 412x915_scale1.2 party V10 Phase B 14_image_390x844
+01:09 +152: 412x915_scale1.2 party V10 Phase B 15_reveal_390x844
+01:09 +153: 412x915_scale1.2 party V10 Phase B 16_result_390x844
+01:10 +154: 412x915_scale1.2 party (tearDownAll)
+01:10 +154: 412x915_scale1.3 party (setUpAll)
+01:10 +154: 412x915_scale1.3 party V10 Phase B 06_categories_390x844
+01:11 +155: 412x915_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+01:11 +156: 412x915_scale1.3 party V10 Phase B 07_detail_390x844
+01:12 +157: 412x915_scale1.3 party V10 Phase B 08_teams_390x844
+01:12 +158: 412x915_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+01:13 +159: 412x915_scale1.3 party V10 Phase B 09_splitter_390x844
+01:13 +160: 412x915_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+01:13 +161: 412x915_scale1.3 party V10 Phase B 10_helpers_390x844
+01:14 +162: 412x915_scale1.3 party V10 Phase B 11_ready_390x844
+01:14 +163: 412x915_scale1.3 party V10 Phase B 12_board_390x844
+01:14 +164: 412x915_scale1.3 party V10 Phase B 13_text_390x844
+01:15 +165: 412x915_scale1.3 party V10 Phase B 14_image_390x844
+01:16 +166: 412x915_scale1.3 party V10 Phase B 15_reveal_390x844
+01:16 +167: 412x915_scale1.3 party V10 Phase B 16_result_390x844
+01:16 +168: 412x915_scale1.3 party (tearDownAll)
+01:16 +168: 430x932_scale1.0 party (setUpAll)
+01:16 +168: 430x932_scale1.0 party V10 Phase B 06_categories_390x844
+01:17 +169: 430x932_scale1.0 party V10 Phase B 06_search_keyboard_390x844
+01:17 +170: 430x932_scale1.0 party V10 Phase B 07_detail_390x844
+01:18 +171: 430x932_scale1.0 party V10 Phase B 08_teams_390x844
+01:18 +172: 430x932_scale1.0 party V10 Phase B 08_teams_keyboard_390x844
+01:18 +173: 430x932_scale1.0 party V10 Phase B 09_splitter_390x844
+01:18 +174: 430x932_scale1.0 party V10 Phase B 09_splitter_keyboard_390x844
+01:18 +175: 430x932_scale1.0 party V10 Phase B 10_helpers_390x844
+01:19 +176: 430x932_scale1.0 party V10 Phase B 11_ready_390x844
+01:19 +177: 430x932_scale1.0 party V10 Phase B 12_board_390x844
+01:19 +178: 430x932_scale1.0 party V10 Phase B 13_text_390x844
+01:19 +179: 430x932_scale1.0 party V10 Phase B 14_image_390x844
+01:20 +180: 430x932_scale1.0 party V10 Phase B 15_reveal_390x844
+01:20 +181: 430x932_scale1.0 party V10 Phase B 16_result_390x844
+01:20 +182: 430x932_scale1.0 party (tearDownAll)
+01:20 +182: 430x932_scale1.2 party (setUpAll)
+01:20 +182: 430x932_scale1.2 party V10 Phase B 06_categories_390x844
+01:20 +183: 430x932_scale1.2 party V10 Phase B 06_search_keyboard_390x844
+01:21 +184: 430x932_scale1.2 party V10 Phase B 07_detail_390x844
+01:21 +185: 430x932_scale1.2 party V10 Phase B 08_teams_390x844
+01:22 +186: 430x932_scale1.2 party V10 Phase B 08_teams_keyboard_390x844
+01:22 +187: 430x932_scale1.2 party V10 Phase B 09_splitter_390x844
+01:22 +188: 430x932_scale1.2 party V10 Phase B 09_splitter_keyboard_390x844
+01:22 +189: 430x932_scale1.2 party V10 Phase B 10_helpers_390x844
+01:23 +190: 430x932_scale1.2 party V10 Phase B 11_ready_390x844
+01:23 +191: 430x932_scale1.2 party V10 Phase B 12_board_390x844
+01:23 +192: 430x932_scale1.2 party V10 Phase B 13_text_390x844
+01:23 +193: 430x932_scale1.2 party V10 Phase B 14_image_390x844
+01:24 +194: 430x932_scale1.2 party V10 Phase B 15_reveal_390x844
+01:24 +195: 430x932_scale1.2 party V10 Phase B 16_result_390x844
+01:25 +196: 430x932_scale1.2 party (tearDownAll)
+01:25 +196: 430x932_scale1.3 party (setUpAll)
+01:25 +196: 430x932_scale1.3 party V10 Phase B 06_categories_390x844
+01:26 +197: 430x932_scale1.3 party V10 Phase B 06_search_keyboard_390x844
+01:26 +198: 430x932_scale1.3 party V10 Phase B 07_detail_390x844
+01:26 +199: 430x932_scale1.3 party V10 Phase B 08_teams_390x844
+01:26 +200: 430x932_scale1.3 party V10 Phase B 08_teams_keyboard_390x844
+01:27 +201: 430x932_scale1.3 party V10 Phase B 09_splitter_390x844
+01:27 +202: 430x932_scale1.3 party V10 Phase B 09_splitter_keyboard_390x844
+01:27 +203: 430x932_scale1.3 party V10 Phase B 10_helpers_390x844
+01:27 +204: 430x932_scale1.3 party V10 Phase B 11_ready_390x844
+01:28 +205: 430x932_scale1.3 party V10 Phase B 12_board_390x844
+01:28 +206: 430x932_scale1.3 party V10 Phase B 13_text_390x844
+01:28 +207: 430x932_scale1.3 party V10 Phase B 14_image_390x844
+01:28 +208: 430x932_scale1.3 party V10 Phase B 15_reveal_390x844
+01:29 +209: 430x932_scale1.3 party V10 Phase B 16_result_390x844
+01:29 +210: 430x932_scale1.3 party (tearDownAll)
+01:29 +210: All tests passed!

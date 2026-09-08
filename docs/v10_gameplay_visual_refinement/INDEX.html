@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AHDASH | 11 — V10 Gameplay Visual Refinement</title>
+  <style>
+    :root { --paper:#fbf7ef; --surface:#f4ebdd; --ink:#191714; --muted:#756e63; --green:#b6ff3b; --deep:#174d3d; --gold:#ffc857; --line:#d3c6b2; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:"Segoe UI",Tahoma,sans-serif; }
+    header { padding:46px clamp(22px,5vw,72px) 34px; background:var(--deep); color:var(--paper); border-bottom:5px solid var(--green); }
+    header small { color:var(--gold); font-weight:900; letter-spacing:.08em; }
+    h1 { margin:8px 0 10px; font-size:clamp(30px,5vw,58px); line-height:1.05; }
+    header p { margin:0; color:#ebdfc9; max-width:780px; line-height:1.7; }
+    nav { position:sticky; top:0; z-index:2; display:flex; gap:8px; overflow:auto; padding:10px clamp(16px,4vw,60px); background:rgba(251,247,239,.96); border-bottom:1px solid var(--line); direction:ltr; }
+    nav a { white-space:nowrap; text-decoration:none; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:12px; }
+    main { padding:22px clamp(16px,4vw,60px) 80px; }
+    section { margin:0 0 44px; scroll-margin-top:70px; }
+    h2 { margin:0 0 14px; font-size:22px; text-transform:capitalize; color:var(--deep); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; align-items:start; }
+    .card { overflow:hidden; background:white; border:1px solid var(--line); border-radius:18px; box-shadow:0 7px 22px rgba(25,23,20,.06); }
+    .card a { display:block; background:#eee6d8; }
+    .card img { display:block; width:100%; height:auto; max-height:680px; object-fit:contain; background:var(--paper); }
+    .card p { margin:0; padding:11px 13px; direction:ltr; color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+    footer { padding:24px; text-align:center; color:var(--muted); border-top:1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <header><small>AHDASH | 11 · V10</small><h1>تنقيح تجربة اللعب</h1><p>معرض محلي دون اتصال للفئات، المساعدات، الاستعداد، لوحة اللعب، الأسئلة، كشف الإجابة، والنتيجة النهائية.</p></header>
+  <nav><a href="#categories">categories</a><a href="#helpers">helpers</a><a href="#ready">ready</a><a href="#board">board</a><a href="#questions">questions</a><a href="#reveal">reveal</a><a href="#result">result</a><a href="#artwork">artwork</a><a href="#motion_keyframes">motion keyframes</a><a href="#details">details</a><a href="#before_after">before after</a></nav>
+  <main><section id="categories"><h2>categories</h2><div class="grid">
+            <article class="card">
+              <a href="categories/category_card_detail.png">
+                <img loading="lazy" src="categories/category_card_detail.png" alt="category_card_detail">
+              </a>
+              <p>category card detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_detail_media_fallback_390x844.png">
+                <img loading="lazy" src="categories/category_detail_media_fallback_390x844.png" alt="category_detail_media_fallback_390x844">
+              </a>
+              <p>category detail media fallback 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_detail_normal_390x844.png">
+                <img loading="lazy" src="categories/category_detail_normal_390x844.png" alt="category_detail_normal_390x844">
+              </a>
+              <p>category detail normal 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_detail_premium_390x844.png">
+                <img loading="lazy" src="categories/category_detail_premium_390x844.png" alt="category_detail_premium_390x844">
+              </a>
+              <p>category detail premium 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_selection_6_selected_390x844.png">
+                <img loading="lazy" src="categories/category_selection_6_selected_390x844.png" alt="category_selection_6_selected_390x844">
+              </a>
+              <p>category selection 6 selected 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_selection_compact_360x800.png">
+                <img loading="lazy" src="categories/category_selection_compact_360x800.png" alt="category_selection_compact_360x800">
+              </a>
+              <p>category selection compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_selection_premium_locked_390x844.png">
+                <img loading="lazy" src="categories/category_selection_premium_locked_390x844.png" alt="category_selection_premium_locked_390x844">
+              </a>
+              <p>category selection premium locked 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_selection_primary_390x844.png">
+                <img loading="lazy" src="categories/category_selection_primary_390x844.png" alt="category_selection_primary_390x844">
+              </a>
+              <p>category selection primary 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="categories/category_selection_search_390x844.png">
+                <img loading="lazy" src="categories/category_selection_search_390x844.png" alt="category_selection_search_390x844">
+              </a>
+              <p>category selection search 390x844</p>
+            </article>
+            </div></section><section id="helpers"><h2>helpers</h2><div class="grid">
+            <article class="card">
+              <a href="helpers/helper_card_detail.png">
+                <img loading="lazy" src="helpers/helper_card_detail.png" alt="helper_card_detail">
+              </a>
+              <p>helper card detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="helpers/helpers_default_390x844.png">
+                <img loading="lazy" src="helpers/helpers_default_390x844.png" alt="helpers_default_390x844">
+              </a>
+              <p>helpers default 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="helpers/helpers_selected_390x844.png">
+                <img loading="lazy" src="helpers/helpers_selected_390x844.png" alt="helpers_selected_390x844">
+              </a>
+              <p>helpers selected 390x844</p>
+            </article>
+            </div></section><section id="ready"><h2>ready</h2><div class="grid">
+            <article class="card">
+              <a href="ready/ready_compact_360x800.png">
+                <img loading="lazy" src="ready/ready_compact_360x800.png" alt="ready_compact_360x800">
+              </a>
+              <p>ready compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="ready/ready_primary_390x844.png">
+                <img loading="lazy" src="ready/ready_primary_390x844.png" alt="ready_primary_390x844">
+              </a>
+              <p>ready primary 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="ready/start_cta_detail.png">
+                <img loading="lazy" src="ready/start_cta_detail.png" alt="start_cta_detail">
+              </a>
+              <p>start cta detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="ready/teams_detail.png">
+                <img loading="lazy" src="ready/teams_detail.png" alt="teams_detail">
+              </a>
+              <p>teams detail</p>
+            </article>
+            </div></section><section id="board"><h2>board</h2><div class="grid">
+            <article class="card">
+              <a href="board/board_compact_360x800.png">
+                <img loading="lazy" src="board/board_compact_360x800.png" alt="board_compact_360x800">
+              </a>
+              <p>board compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="board/board_detail.png">
+                <img loading="lazy" src="board/board_detail.png" alt="board_detail">
+              </a>
+              <p>board detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="board/board_fresh_390x844.png">
+                <img loading="lazy" src="board/board_fresh_390x844.png" alt="board_fresh_390x844">
+              </a>
+              <p>board fresh 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="board/board_mid_game_390x844.png">
+                <img loading="lazy" src="board/board_mid_game_390x844.png" alt="board_mid_game_390x844">
+              </a>
+              <p>board mid game 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="board/board_near_complete_390x844.png">
+                <img loading="lazy" src="board/board_near_complete_390x844.png" alt="board_near_complete_390x844">
+              </a>
+              <p>board near complete 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="board/scoreboard_detail.png">
+                <img loading="lazy" src="board/scoreboard_detail.png" alt="scoreboard_detail">
+              </a>
+              <p>scoreboard detail</p>
+            </article>
+            </div></section><section id="questions"><h2>questions</h2><div class="grid">
+            <article class="card">
+              <a href="questions/image_question_compact_360x800.png">
+                <img loading="lazy" src="questions/image_question_compact_360x800.png" alt="image_question_compact_360x800">
+              </a>
+              <p>image question compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/image_question_fallback_390x844.png">
+                <img loading="lazy" src="questions/image_question_fallback_390x844.png" alt="image_question_fallback_390x844">
+              </a>
+              <p>image question fallback 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/image_question_loaded_390x844.png">
+                <img loading="lazy" src="questions/image_question_loaded_390x844.png" alt="image_question_loaded_390x844">
+              </a>
+              <p>image question loaded 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/image_question_primary_390x844.png">
+                <img loading="lazy" src="questions/image_question_primary_390x844.png" alt="image_question_primary_390x844">
+              </a>
+              <p>image question primary 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/question_card_detail.png">
+                <img loading="lazy" src="questions/question_card_detail.png" alt="question_card_detail">
+              </a>
+              <p>question card detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/text_question_compact_360x800.png">
+                <img loading="lazy" src="questions/text_question_compact_360x800.png" alt="text_question_compact_360x800">
+              </a>
+              <p>text question compact 360x800</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/text_question_helper_active_390x844.png">
+                <img loading="lazy" src="questions/text_question_helper_active_390x844.png" alt="text_question_helper_active_390x844">
+              </a>
+              <p>text question helper active 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="questions/text_question_primary_390x844.png">
+                <img loading="lazy" src="questions/text_question_primary_390x844.png" alt="text_question_primary_390x844">
+              </a>
+              <p>text question primary 390x844</p>
+            </article>
+            </div></section><section id="reveal"><h2>reveal</h2><div class="grid">
+            <article class="card">
+              <a href="reveal/answer_detail.png">
+                <img loading="lazy" src="reveal/answer_detail.png" alt="answer_detail">
+              </a>
+              <p>answer detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="reveal/answer_reveal_390x844.png">
+                <img loading="lazy" src="reveal/answer_reveal_390x844.png" alt="answer_reveal_390x844">
+              </a>
+              <p>answer reveal 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="reveal/score_state_390x844.png">
+                <img loading="lazy" src="reveal/score_state_390x844.png" alt="score_state_390x844">
+              </a>
+              <p>score state 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="reveal/score_state_detail.png">
+                <img loading="lazy" src="reveal/score_state_detail.png" alt="score_state_detail">
+              </a>
+              <p>score state detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="reveal/scoring_controls_detail.png">
+                <img loading="lazy" src="reveal/scoring_controls_detail.png" alt="scoring_controls_detail">
+              </a>
+              <p>scoring controls detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="reveal/scoring_selected_390x844.png">
+                <img loading="lazy" src="reveal/scoring_selected_390x844.png" alt="scoring_selected_390x844">
+              </a>
+              <p>scoring selected 390x844</p>
+            </article>
+            </div></section><section id="result"><h2>result</h2><div class="grid">
+            <article class="card">
+              <a href="result/final_result_winner_390x844.png">
+                <img loading="lazy" src="result/final_result_winner_390x844.png" alt="final_result_winner_390x844">
+              </a>
+              <p>final result winner 390x844</p>
+            </article>
+            
+            <article class="card">
+              <a href="result/result_artwork_detail.png">
+                <img loading="lazy" src="result/result_artwork_detail.png" alt="result_artwork_detail">
+              </a>
+              <p>result artwork detail</p>
+            </article>
+            
+            <article class="card">
+              <a href="result/result_cta_area.png">
+                <img loading="lazy" src="result/result_cta_area.png" alt="result_cta_area">
+              </a>
+              <p>result cta area</p>
+            </article>
+            </div></section><section id="artwork"><h2>artwork</h2><div class="grid">
+            <article class="card">
+              <a href="artwork/category_pitch.png">
+                <img loading="lazy" src="artwork/category_pitch.png" alt="category_pitch">
+              </a>
+              <p>category pitch</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/final_result_trophy.png">
+                <img loading="lazy" src="artwork/final_result_trophy.png" alt="final_result_trophy">
+              </a>
+              <p>final result trophy</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/image_question_fallback.png">
+                <img loading="lazy" src="artwork/image_question_fallback.png" alt="image_question_fallback">
+              </a>
+              <p>image question fallback</p>
+            </article>
+            
+            <article class="card">
+              <a href="artwork/ready_floodlights.png">
+                <img loading="lazy" src="artwork/ready_floodlights.png" alt="ready_floodlights">
+              </a>
+              <p>ready floodlights</p>
+            </article>
+            </div></section><section id="motion_keyframes"><h2>motion keyframes</h2><div class="grid">
+            <article class="card">
+              <a href="motion_keyframes/reveal_00.png">
+                <img loading="lazy" src="motion_keyframes/reveal_00.png" alt="reveal_00">
+              </a>
+              <p>reveal 00</p>
+            </article>
+            
+            <article class="card">
+              <a href="motion_keyframes/reveal_100.png">
+                <img loading="lazy" src="motion_keyframes/reveal_100.png" alt="reveal_100">
+              </a>
+              <p>reveal 100</p>
+            </article>
+            
+            <article class="card">
+              <a href="motion_keyframes/reveal_50.png">
+                <img loading="lazy" src="motion_keyframes/reveal_50.png" alt="reveal_50">
+              </a>
+              <p>reveal 50</p>
+            </article>
+            </div></section><section id="details"><h2>details</h2><div class="grid">
+            <article class="card">
+              <a href="details/primary_green_button_states.png">
+                <img loading="lazy" src="details/primary_green_button_states.png" alt="primary_green_button_states">
+              </a>
+              <p>primary green button states</p>
+            </article>
+            </div></section><section id="before_after"><h2>before after</h2><div class="grid">
+            <article class="card">
+              <a href="before_after/answer_reveal_before_after.png">
+                <img loading="lazy" src="before_after/answer_reveal_before_after.png" alt="answer_reveal_before_after">
+              </a>
+              <p>answer reveal before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/category_selection_before_after.png">
+                <img loading="lazy" src="before_after/category_selection_before_after.png" alt="category_selection_before_after">
+              </a>
+              <p>category selection before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/final_result_before_after.png">
+                <img loading="lazy" src="before_after/final_result_before_after.png" alt="final_result_before_after">
+              </a>
+              <p>final result before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/game_board_before_after.png">
+                <img loading="lazy" src="before_after/game_board_before_after.png" alt="game_board_before_after">
+              </a>
+              <p>game board before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/helpers_before_after.png">
+                <img loading="lazy" src="before_after/helpers_before_after.png" alt="helpers_before_after">
+              </a>
+              <p>helpers before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/image_question_before_after.png">
+                <img loading="lazy" src="before_after/image_question_before_after.png" alt="image_question_before_after">
+              </a>
+              <p>image question before after</p>
+            </article>
+            
+            <article class="card">
+              <a href="before_after/text_question_before_after.png">
+                <img loading="lazy" src="before_after/text_question_before_after.png" alt="text_question_before_after">
+              </a>
+              <p>text question before after</p>
+            </article>
+            </div></section></main>
+  <footer>54 صورة · مولّدة من كود Flutter الحالي · دون تبعيات إنترنت</footer>
+</body>
+</html>

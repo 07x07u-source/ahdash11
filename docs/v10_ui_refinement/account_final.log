@@ -1,0 +1,167 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
+00:00 +0: 360x800_scale1.0 account (setUpAll)
+00:00 +0: 360x800_scale1.0 account phase E profile 360x800
+00:02 +1: 360x800_scale1.0 account phase E notifications 360x800
+00:02 +2: 360x800_scale1.0 account phase E settings 360x800
+00:03 +3: 360x800_scale1.0 account phase E report 360x800
+00:04 +4: 360x800_scale1.0 account phase E reportKeyboard 360x800
+00:05 +5: 360x800_scale1.0 account phase E football 360x800
+00:05 +6: 360x800_scale1.0 account phase E footballKeyboard 360x800
+00:06 +7: 360x800_scale1.0 account phase E premium 360x800
+00:06 +8: 360x800_scale1.0 account phase E premiumLoading 360x800
+00:06 +9: 360x800_scale1.0 account (tearDownAll)
+00:06 +9: 360x800_scale1.2 account (setUpAll)
+00:06 +9: 360x800_scale1.2 account phase E profile 360x800
+00:07 +10: 360x800_scale1.2 account phase E notifications 360x800
+00:07 +11: 360x800_scale1.2 account phase E settings 360x800
+00:08 +12: 360x800_scale1.2 account phase E report 360x800
+00:08 +13: 360x800_scale1.2 account phase E reportKeyboard 360x800
+00:09 +14: 360x800_scale1.2 account phase E football 360x800
+00:09 +15: 360x800_scale1.2 account phase E footballKeyboard 360x800
+00:10 +16: 360x800_scale1.2 account phase E premium 360x800
+00:10 +17: 360x800_scale1.2 account phase E premiumLoading 360x800
+00:11 +18: 360x800_scale1.2 account (tearDownAll)
+00:11 +18: 360x800_scale1.3 account (setUpAll)
+00:11 +18: 360x800_scale1.3 account phase E profile 360x800
+00:12 +19: 360x800_scale1.3 account phase E notifications 360x800
+00:12 +20: 360x800_scale1.3 account phase E settings 360x800
+00:12 +21: 360x800_scale1.3 account phase E report 360x800
+00:13 +22: 360x800_scale1.3 account phase E reportKeyboard 360x800
+00:14 +23: 360x800_scale1.3 account phase E football 360x800
+00:14 +24: 360x800_scale1.3 account phase E footballKeyboard 360x800
+00:15 +25: 360x800_scale1.3 account phase E premium 360x800
+00:15 +26: 360x800_scale1.3 account phase E premiumLoading 360x800
+00:15 +27: 360x800_scale1.3 account (tearDownAll)
+00:15 +27: 390x844_scale1.0 account (setUpAll)
+00:15 +27: 390x844_scale1.0 account phase E profile 390x844
+00:16 +28: 390x844_scale1.0 account phase E notifications 390x844
+00:16 +29: 390x844_scale1.0 account phase E settings 390x844
+00:17 +30: 390x844_scale1.0 account phase E report 390x844
+00:17 +31: 390x844_scale1.0 account phase E reportKeyboard 390x844
+00:18 +32: 390x844_scale1.0 account phase E football 390x844
+00:18 +33: 390x844_scale1.0 account phase E footballKeyboard 390x844
+00:18 +34: 390x844_scale1.0 account phase E premium 390x844
+00:19 +35: 390x844_scale1.0 account phase E premiumLoading 390x844
+00:19 +36: 390x844_scale1.0 account (tearDownAll)
+00:19 +36: 390x844_scale1.2 account (setUpAll)
+00:19 +36: 390x844_scale1.2 account phase E profile 390x844
+00:19 +37: 390x844_scale1.2 account phase E notifications 390x844
+00:20 +38: 390x844_scale1.2 account phase E settings 390x844
+00:20 +39: 390x844_scale1.2 account phase E report 390x844
+00:20 +40: 390x844_scale1.2 account phase E reportKeyboard 390x844
+00:21 +41: 390x844_scale1.2 account phase E football 390x844
+00:21 +42: 390x844_scale1.2 account phase E footballKeyboard 390x844
+00:21 +43: 390x844_scale1.2 account phase E premium 390x844
+00:21 +44: 390x844_scale1.2 account phase E premiumLoading 390x844
+00:22 +45: 390x844_scale1.2 account (tearDownAll)
+00:22 +45: 390x844_scale1.3 account (setUpAll)
+00:22 +45: 390x844_scale1.3 account phase E profile 390x844
+00:22 +46: 390x844_scale1.3 account phase E notifications 390x844
+00:22 +47: 390x844_scale1.3 account phase E settings 390x844
+00:22 +48: 390x844_scale1.3 account phase E report 390x844
+00:23 +49: 390x844_scale1.3 account phase E reportKeyboard 390x844
+00:23 +50: 390x844_scale1.3 account phase E football 390x844
+00:24 +51: 390x844_scale1.3 account phase E footballKeyboard 390x844
+00:24 +52: 390x844_scale1.3 account phase E premium 390x844
+00:24 +53: 390x844_scale1.3 account phase E premiumLoading 390x844
+00:24 +54: 390x844_scale1.3 account (tearDownAll)
+00:24 +54: 393x852_scale1.0 account (setUpAll)
+00:24 +54: 393x852_scale1.0 account phase E profile 393x852
+00:25 +55: 393x852_scale1.0 account phase E notifications 393x852
+00:25 +56: 393x852_scale1.0 account phase E settings 393x852
+00:25 +57: 393x852_scale1.0 account phase E report 393x852
+00:25 +58: 393x852_scale1.0 account phase E reportKeyboard 393x852
+00:26 +59: 393x852_scale1.0 account phase E football 393x852
+00:26 +60: 393x852_scale1.0 account phase E footballKeyboard 393x852
+00:26 +61: 393x852_scale1.0 account phase E premium 393x852
+00:27 +62: 393x852_scale1.0 account phase E premiumLoading 393x852
+00:27 +63: 393x852_scale1.0 account (tearDownAll)
+00:27 +63: 393x852_scale1.2 account (setUpAll)
+00:27 +63: 393x852_scale1.2 account phase E profile 393x852
+00:27 +64: 393x852_scale1.2 account phase E notifications 393x852
+00:28 +65: 393x852_scale1.2 account phase E settings 393x852
+00:28 +66: 393x852_scale1.2 account phase E report 393x852
+00:28 +67: 393x852_scale1.2 account phase E reportKeyboard 393x852
+00:29 +68: 393x852_scale1.2 account phase E football 393x852
+00:29 +69: 393x852_scale1.2 account phase E footballKeyboard 393x852
+00:29 +70: 393x852_scale1.2 account phase E premium 393x852
+00:29 +71: 393x852_scale1.2 account phase E premiumLoading 393x852
+00:30 +72: 393x852_scale1.2 account (tearDownAll)
+00:30 +72: 393x852_scale1.3 account (setUpAll)
+00:30 +72: 393x852_scale1.3 account phase E profile 393x852
+00:30 +73: 393x852_scale1.3 account phase E notifications 393x852
+00:31 +74: 393x852_scale1.3 account phase E settings 393x852
+00:31 +75: 393x852_scale1.3 account phase E report 393x852
+00:31 +76: 393x852_scale1.3 account phase E reportKeyboard 393x852
+00:32 +77: 393x852_scale1.3 account phase E football 393x852
+00:32 +78: 393x852_scale1.3 account phase E footballKeyboard 393x852
+00:32 +79: 393x852_scale1.3 account phase E premium 393x852
+00:34 +80: 393x852_scale1.3 account phase E premiumLoading 393x852
+00:34 +81: 393x852_scale1.3 account (tearDownAll)
+00:35 +81: 412x915_scale1.0 account (setUpAll)
+00:35 +81: 412x915_scale1.0 account phase E profile 412x915
+00:35 +82: 412x915_scale1.0 account phase E notifications 412x915
+00:36 +83: 412x915_scale1.0 account phase E settings 412x915
+00:37 +84: 412x915_scale1.0 account phase E report 412x915
+00:38 +85: 412x915_scale1.0 account phase E reportKeyboard 412x915
+00:38 +86: 412x915_scale1.0 account phase E football 412x915
+00:39 +87: 412x915_scale1.0 account phase E footballKeyboard 412x915
+00:40 +88: 412x915_scale1.0 account phase E premium 412x915
+00:40 +89: 412x915_scale1.0 account phase E premiumLoading 412x915
+00:40 +90: 412x915_scale1.0 account (tearDownAll)
+00:40 +90: 412x915_scale1.2 account (setUpAll)
+00:40 +90: 412x915_scale1.2 account phase E profile 412x915
+00:41 +91: 412x915_scale1.2 account phase E notifications 412x915
+00:41 +92: 412x915_scale1.2 account phase E settings 412x915
+00:41 +93: 412x915_scale1.2 account phase E report 412x915
+00:42 +94: 412x915_scale1.2 account phase E reportKeyboard 412x915
+00:42 +95: 412x915_scale1.2 account phase E football 412x915
+00:42 +96: 412x915_scale1.2 account phase E footballKeyboard 412x915
+00:43 +97: 412x915_scale1.2 account phase E premium 412x915
+00:43 +98: 412x915_scale1.2 account phase E premiumLoading 412x915
+00:43 +99: 412x915_scale1.2 account (tearDownAll)
+00:43 +99: 412x915_scale1.3 account (setUpAll)
+00:43 +99: 412x915_scale1.3 account phase E profile 412x915
+00:43 +100: 412x915_scale1.3 account phase E notifications 412x915
+00:43 +101: 412x915_scale1.3 account phase E settings 412x915
+00:44 +102: 412x915_scale1.3 account phase E report 412x915
+00:45 +103: 412x915_scale1.3 account phase E reportKeyboard 412x915
+00:45 +104: 412x915_scale1.3 account phase E football 412x915
+00:45 +105: 412x915_scale1.3 account phase E footballKeyboard 412x915
+00:45 +106: 412x915_scale1.3 account phase E premium 412x915
+00:46 +107: 412x915_scale1.3 account phase E premiumLoading 412x915
+00:46 +108: 412x915_scale1.3 account (tearDownAll)
+00:46 +108: 430x932_scale1.0 account (setUpAll)
+00:46 +108: 430x932_scale1.0 account phase E profile 430x932
+00:46 +109: 430x932_scale1.0 account phase E notifications 430x932
+00:46 +110: 430x932_scale1.0 account phase E settings 430x932
+00:46 +111: 430x932_scale1.0 account phase E report 430x932
+00:47 +112: 430x932_scale1.0 account phase E reportKeyboard 430x932
+00:47 +113: 430x932_scale1.0 account phase E football 430x932
+00:47 +114: 430x932_scale1.0 account phase E footballKeyboard 430x932
+00:47 +115: 430x932_scale1.0 account phase E premium 430x932
+00:48 +116: 430x932_scale1.0 account phase E premiumLoading 430x932
+00:48 +117: 430x932_scale1.0 account (tearDownAll)
+00:48 +117: 430x932_scale1.2 account (setUpAll)
+00:48 +117: 430x932_scale1.2 account phase E profile 430x932
+00:48 +118: 430x932_scale1.2 account phase E notifications 430x932
+00:48 +119: 430x932_scale1.2 account phase E settings 430x932
+00:49 +120: 430x932_scale1.2 account phase E report 430x932
+00:49 +121: 430x932_scale1.2 account phase E reportKeyboard 430x932
+00:49 +122: 430x932_scale1.2 account phase E football 430x932
+00:49 +123: 430x932_scale1.2 account phase E footballKeyboard 430x932
+00:50 +124: 430x932_scale1.2 account phase E premium 430x932
+00:50 +125: 430x932_scale1.2 account phase E premiumLoading 430x932
+00:50 +126: 430x932_scale1.2 account (tearDownAll)
+00:50 +126: 430x932_scale1.3 account (setUpAll)
+00:50 +126: 430x932_scale1.3 account phase E profile 430x932
+00:50 +127: 430x932_scale1.3 account phase E notifications 430x932
+00:50 +128: 430x932_scale1.3 account phase E settings 430x932
+00:51 +129: 430x932_scale1.3 account phase E report 430x932
+00:51 +130: 430x932_scale1.3 account phase E reportKeyboard 430x932
+00:51 +131: 430x932_scale1.3 account phase E football 430x932
+00:51 +132: 430x932_scale1.3 account phase E footballKeyboard 430x932
+00:52 +133: 430x932_scale1.3 account phase E premium 430x932
+00:52 +134: 430x932_scale1.3 account phase E premiumLoading 430x932
+00:52 +135: 430x932_scale1.3 account (tearDownAll)
+00:52 +135: All tests passed!

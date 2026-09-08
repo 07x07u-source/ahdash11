@@ -1,0 +1,18 @@
+Formatted lib\features\party\presentation\party_game_screens.dart
+Formatted lib\features\party\presentation\party_support_screens.dart
+Formatted lib\features\premium\presentation\premium_screen.dart
+Formatted lib\features\profile\presentation\profile_screen.dart
+Formatted lib\features\settings\presentation\settings_screen.dart
+Formatted lib\features\tournament\presentation\tournament_screens.dart
+Formatted test\features\auth\guest_routing_test.dart
+Formatted test\features\auth\social_auth_test.dart
+Formatted test\features\home\home_screen_test.dart
+Formatted test/features/support/question_report_repository_test.dart
+Formatted test/helpers/test_app.dart
+Formatted test/helpers/visual_test_variant.dart
+Formatted test/visual/global_refinement_responsive_test.dart
+Formatted test/visual/v10_phase_b_golden_test.dart
+Formatted test/visual/v10_phase_d_golden_test.dart
+Formatted test/visual/v10_phase_e_golden_test.dart
+Formatted test/visual/tournament_golden_test.dart
+Formatted 171 files (17 changed) in 2.15 seconds.

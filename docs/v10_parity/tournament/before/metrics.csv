@@ -1,0 +1,11 @@
+screen,viewport,mean_abs_difference,rms_difference,changed_pixels_percent,parity_score
+19_tournament_hub,390x844,27.494,57.142,45.660,89.22
+19_tournament_hub,360x800,32.350,65.059,45.002,87.31
+20_create_tournament,390x844,17.080,48.291,31.550,93.30
+20_create_tournament_keyboard,390x844,21.673,49.683,53.194,91.50
+21_tournament_teams,390x844,19.732,51.039,50.685,92.26
+22_tournament_draw,390x844,23.459,53.460,54.467,90.80
+23_tournament_bracket,390x844,16.190,44.572,50.953,93.65
+23_tournament_bracket,360x800,20.410,53.646,50.192,92.00
+26_tournament_match,390x844,22.669,52.150,47.073,91.11
+27_tournament_champion,390x844,15.245,45.697,38.997,94.02

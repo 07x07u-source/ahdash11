@@ -1,0 +1,86 @@
+name: ahdash_11
+description: "أحدعش | 11 - لعبة مسابقات كرة قدم تنافسية"
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cached_network_image: ^3.4.1
+  collection: ^1.19.1
+  connectivity_plus: ^7.0.0
+  cupertino_icons: ^1.0.8
+  drift: ^2.34.3
+  drift_flutter: ^0.3.1
+  firebase_analytics: ^12.0.0
+  firebase_core: ^4.14.0
+  firebase_crashlytics: ^5.0.0
+  firebase_messaging: ^16.0.0
+  flame: 1.38.2
+  flutter_riverpod: ^3.4.2
+  go_router: ^18.0.0
+  google_mobile_ads: ^7.0.0
+  intl: ^0.20.2
+  package_info_plus: ^9.0.0
+  purchases_flutter: ^10.10.0
+  shared_preferences: ^2.5.3
+  supabase_flutter: ^2.17.2
+  url_launcher: ^6.3.2
+  uuid: ^4.5.2
+  google_sign_in: ^7.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flame_test: 2.3.1
+  http: ^1.6.0
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/branding/
+    - assets/player11/
+    - assets/pictograms/
+    - assets/pictograms/helpers/
+    - assets/visuals/
+    - assets/images/currency/ahdash_coin_mark.svg
+    - assets/images/currency/ahdash_coin_token.webp
+    - assets/images/currency/ahdash_coin_stack.webp
+    - assets/images/currency/ahdash_coin_reward.webp
+    - assets/images/backgrounds/
+    - assets/images/providers/
+    - assets/images/v10_h3_visual_fixtures/
+    - assets/images/modes/
+    - assets/images/store/
+    - assets/images/store/products/
+    - assets/images/states/
+    - assets/images/results/
+  fonts:
+    - family: ThmanyahSans
+      fonts:
+        - asset: assets/fonts/thmanyah/thmanyahsans-Regular.otf
+          weight: 400
+        - asset: assets/fonts/thmanyah/thmanyahsans-Medium.otf
+          weight: 500
+        - asset: assets/fonts/thmanyah/thmanyahsans-Bold.otf
+          weight: 700
+        - asset: assets/fonts/thmanyah/thmanyahsans-Black.otf
+          weight: 900
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/app-icon.png
+  adaptive_icon_background: "#0B0F14"
+  adaptive_icon_foreground: assets/branding/logo-symbol.png
+  min_sdk_android: 23

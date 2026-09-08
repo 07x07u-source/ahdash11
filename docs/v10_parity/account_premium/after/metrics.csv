@@ -1,0 +1,11 @@
+screen,viewport,mean_abs_difference,rms_difference,changed_pixels_percent,parity_score
+38_profile,390x844,10.821,34.425,23.207,95.76
+38_profile,360x800,12.158,38.023,24.378,95.23
+39_notifications,390x844,12.150,37.982,36.427,95.24
+40_settings,390x844,6.338,27.854,9.962,97.51
+41_report,390x844,9.547,31.688,30.426,96.26
+41_report_keyboard,390x844,9.175,35.100,13.318,96.40
+42_football_preferences,390x844,12.370,41.043,24.218,95.15
+42_football_preferences_keyboard,390x844,11.257,39.356,22.927,95.59
+43_premium,390x844,10.603,36.227,41.231,95.84
+43_premium,360x800,12.569,40.495,37.160,95.07

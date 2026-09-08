@@ -1,0 +1,156 @@
+definitions:
+  environment: &environment
+    flutter: stable
+    xcode: latest
+    cocoapods: default
+    groups:
+      - ahdash_shared
+      - firebase
+      - revenuecat
+      - admob
+
+workflows:
+  android-release:
+    name: Android AAB
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      <<: *environment
+      android_signing:
+        - ahdash11_keystore
+      vars:
+        PACKAGE_NAME: com.ahdash.eleven
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $CM_BUILD_DIR/mobile/.dart_tool
+        - ~/.gradle/caches
+    scripts:
+      - name: Install dependencies
+        script: cd mobile && flutter pub get
+      - name: Static analysis
+        script: cd mobile && flutter analyze --fatal-infos
+      - name: Unit and widget tests
+        script: cd mobile && flutter test --coverage
+      - name: Configure Firebase Android
+        script: |
+          test -n "$FIREBASE_ANDROID_CONFIG" || { echo "FIREBASE_ANDROID_CONFIG is missing"; exit 1; }
+          echo "$FIREBASE_ANDROID_CONFIG" | base64 --decode > mobile/android/app/google-services.json
+      - name: Validate Production Android configuration
+        script: |
+          APP_ENV=production \
+          FIREBASE_ENABLED=true \
+          GOOGLE_AUTH_ENABLED=true \
+          ADMOB_ENABLED=true \
+          node scripts/check-release-integrations.mjs
+      - name: Build signed AAB
+        script: |
+          cd mobile
+          flutter build appbundle --release \
+            --build-number=$PROJECT_BUILD_NUMBER \
+            --dart-define=APP_ENV=production \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=FIREBASE_ENABLED=true \
+            --dart-define=GOOGLE_AUTH_ENABLED=true \
+            --dart-define=ADMOB_ENABLED=true \
+            --dart-define=ADMOB_REWARDED_ANDROID_ID=$ADMOB_REWARDED_ANDROID_ID \
+            --dart-define=ADMOB_INTERSTITIAL_ANDROID_ID=$ADMOB_INTERSTITIAL_ANDROID_ID \
+            --dart-define=ADMOB_INTERSTITIAL_EVERY_MATCHES=$ADMOB_INTERSTITIAL_EVERY_MATCHES \
+            --dart-define=REVENUECAT_ANDROID_API_KEY=$REVENUECAT_ANDROID_API_KEY \
+            --dart-define=REVENUECAT_ENTITLEMENT_ID=$REVENUECAT_ENTITLEMENT_ID \
+            --dart-define=PRIVACY_POLICY_URL=$PRIVACY_POLICY_URL \
+            --dart-define=TERMS_URL=$TERMS_URL
+    artifacts:
+      - mobile/build/app/outputs/bundle/release/*.aab
+      - mobile/build/**/mapping.txt
+      - mobile/coverage/lcov.info
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
+
+  ios-release:
+    name: iOS IPA / TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: ahdash11_app_store
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.ahdash.eleven
+      vars:
+        BUNDLE_ID: com.ahdash.eleven
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $CM_BUILD_DIR/mobile/.dart_tool
+        - ~/Library/Caches/CocoaPods
+    scripts:
+      - name: Install dependencies
+        script: cd mobile && flutter pub get
+      - name: Static analysis
+        script: cd mobile && flutter analyze --fatal-infos
+      - name: Unit and widget tests
+        script: cd mobile && flutter test --coverage
+      - name: Configure Firebase iOS
+        script: |
+          test -n "$FIREBASE_IOS_CONFIG" || { echo "FIREBASE_IOS_CONFIG is missing"; exit 1; }
+          echo "$FIREBASE_IOS_CONFIG" | base64 --decode > mobile/ios/Runner/GoogleService-Info.plist
+      - name: Apply signing profiles
+        script: xcode-project use-profiles
+      - name: Configure AdMob iOS
+        script: |
+          test -n "$ADMOB_IOS_APP_ID" || { echo "ADMOB_IOS_APP_ID is missing"; exit 1; }
+          /usr/libexec/PlistBuddy -c "Set :GADApplicationIdentifier $ADMOB_IOS_APP_ID" mobile/ios/Runner/Info.plist
+      - name: Build IPA
+        script: |
+          cd mobile
+          flutter build ipa --release \
+            --build-number=$PROJECT_BUILD_NUMBER \
+            --export-options-plist=$HOME/export_options.plist \
+            --dart-define=APP_ENV=production \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=FIREBASE_ENABLED=true \
+            --dart-define=ADMOB_ENABLED=true \
+            --dart-define=ADMOB_REWARDED_IOS_ID=$ADMOB_REWARDED_IOS_ID \
+            --dart-define=ADMOB_INTERSTITIAL_IOS_ID=$ADMOB_INTERSTITIAL_IOS_ID \
+            --dart-define=ADMOB_INTERSTITIAL_EVERY_MATCHES=$ADMOB_INTERSTITIAL_EVERY_MATCHES \
+            --dart-define=REVENUECAT_IOS_API_KEY=$REVENUECAT_IOS_API_KEY \
+            --dart-define=REVENUECAT_ENTITLEMENT_ID=$REVENUECAT_ENTITLEMENT_ID \
+            --dart-define=PRIVACY_POLICY_URL=$PRIVACY_POLICY_URL \
+            --dart-define=TERMS_URL=$TERMS_URL
+    artifacts:
+      - mobile/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - mobile/coverage/lcov.info
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
+        beta_groups:
+          - Internal Testers
+
+  pull-request-checks:
+    name: Flutter quality checks
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      flutter: stable
+    triggering:
+      events:
+        - pull_request
+    scripts:
+      - name: Install dependencies
+        script: cd mobile && flutter pub get
+      - name: Format check
+        script: cd mobile && dart format --output=none --set-exit-if-changed .
+      - name: Analyze
+        script: cd mobile && flutter analyze --fatal-infos
+      - name: Test
+        script: cd mobile && flutter test

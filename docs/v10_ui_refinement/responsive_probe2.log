@@ -1,0 +1,20 @@
+00:00 +0: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
+lib/features/tournament/presentation/tournament_screens.dart:1631:15: Error: No named parameter with the name 'tournament'.
+              tournament: tournament,
+              ^^^^^^^^^^
+lib/features/tournament/presentation/tournament_screens.dart:2629:9: Context: Found this candidate, but the arguments don't match.
+  const _V10TournamentMatchBody({required this.match, required this.teamA, required this.teamB,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+00:00 +0 -1: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart [E]
+  Failed to load "C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart":
+  Compilation failed for testPath=C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart: lib/features/tournament/presentation/tournament_screens.dart:1631:15: Error: No named parameter with the name 'tournament'.
+                tournament: tournament,
+                ^^^^^^^^^^
+  lib/features/tournament/presentation/tournament_screens.dart:2629:9: Context: Found this candidate, but the arguments don't match.
+    const _V10TournamentMatchBody({required this.match, required this.teamA, required this.teamB,
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart: loading C:/dev/ahdash11/mobile/test/visual/global_refinement_responsive_test.dart
