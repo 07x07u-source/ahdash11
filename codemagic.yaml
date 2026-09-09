@@ -88,8 +88,28 @@ workflows:
             --dart-define=PRIVACY_POLICY_URL=$PRIVACY_POLICY_URL \
             --dart-define=TERMS_URL=$TERMS_URL
 
+      - name: Build signed APK
+        script: |
+          cd mobile
+          flutter build apk --release \
+            --build-number=$PROJECT_BUILD_NUMBER \
+            --dart-define=APP_ENV=production \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=FIREBASE_ENABLED=true \
+            --dart-define=GOOGLE_AUTH_ENABLED=true \
+            --dart-define=ADMOB_ENABLED=true \
+            --dart-define=ADMOB_REWARDED_ANDROID_ID=$ADMOB_REWARDED_ANDROID_ID \
+            --dart-define=ADMOB_INTERSTITIAL_ANDROID_ID=$ADMOB_INTERSTITIAL_ANDROID_ID \
+            --dart-define=ADMOB_INTERSTITIAL_EVERY_MATCHES=$ADMOB_INTERSTITIAL_EVERY_MATCHES \
+            --dart-define=REVENUECAT_ANDROID_API_KEY=$REVENUECAT_ANDROID_API_KEY \
+            --dart-define=REVENUECAT_ENTITLEMENT_ID=$REVENUECAT_ENTITLEMENT_ID \
+            --dart-define=PRIVACY_POLICY_URL=$PRIVACY_POLICY_URL \
+            --dart-define=TERMS_URL=$TERMS_URL
+
     artifacts:
       - mobile/build/app/outputs/bundle/release/*.aab
+      - mobile/build/app/outputs/flutter-apk/app-release.apk
       - mobile/build/**/mapping.txt
       - mobile/coverage/lcov.info
 
