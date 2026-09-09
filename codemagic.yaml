@@ -36,7 +36,11 @@ workflows:
         script: cd mobile && flutter analyze --fatal-infos
 
       - name: Unit and widget tests
-        script: cd mobile && flutter test --coverage
+        script: |
+          cd mobile
+          tests=$(find test -type f -name '*_test.dart' ! -path 'test/visual/*')
+          test -n "$tests" || { echo "No non-visual tests found"; exit 1; }
+          flutter test --coverage $tests
 
       - name: Configure Firebase Android
         script: |
