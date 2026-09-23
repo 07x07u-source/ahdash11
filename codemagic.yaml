@@ -134,20 +134,30 @@ workflows:
 
     scripts:
       - name: Disable Swift Package Manager
-        script: flutter config --no-enable-swift-package-manager
+        script: |
+          flutter config --no-enable-swift-package-manager
+          flutter config --list | grep -Fq 'enable-swift-package-manager: false' || {
+            echo "Swift Package Manager could not be disabled"
+            exit 1
+          }
 
-      - name: Install Flutter and CocoaPods dependencies
+      - name: Clean and generate Flutter iOS files
         script: |
           cd mobile
+          flutter clean
           flutter pub get
 
           test -f ios/Flutter/Debug.xcconfig || { echo "ios/Flutter/Debug.xcconfig is missing"; exit 1; }
           test -f ios/Flutter/Release.xcconfig || { echo "ios/Flutter/Release.xcconfig is missing"; exit 1; }
           test -f ios/Flutter/Generated.xcconfig || { echo "ios/Flutter/Generated.xcconfig was not generated"; exit 1; }
+          test -f ios/Runner/GeneratedPluginRegistrant.h || { echo "GeneratedPluginRegistrant.h was not generated"; exit 1; }
+          test -f ios/Runner/GeneratedPluginRegistrant.m || { echo "GeneratedPluginRegistrant.m was not generated"; exit 1; }
           test -f ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme || { echo "Shared Runner scheme is missing"; exit 1; }
           grep -Fq 'path = Flutter/Debug.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Debug.xcconfig is not mapped to ios/Flutter"; exit 1; }
           grep -Fq 'path = Flutter/Release.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Release.xcconfig is not mapped to ios/Flutter"; exit 1; }
           grep -Fq 'path = Flutter/Generated.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Generated.xcconfig is not mapped to ios/Flutter"; exit 1; }
+          grep -Fq 'GeneratedPluginRegistrant.m in Sources' ios/Runner.xcodeproj/project.pbxproj || { echo "GeneratedPluginRegistrant.m is not in the Runner Sources phase"; exit 1; }
+          grep -Fq 'GeneratedPluginRegistrant.register' ios/Runner/AppDelegate.swift || { echo "AppDelegate does not register Flutter plugins"; exit 1; }
           grep -Fq 'ArchiveAction buildConfiguration = "Release"' ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme || { echo "Runner scheme does not archive Release"; exit 1; }
           if grep -Eq 'XCRemoteSwiftPackageReference|XCLocalSwiftPackageReference|packageProductDependencies' ios/Runner.xcodeproj/project.pbxproj; then
             echo "Swift Package Manager references are not allowed in the iOS project"
