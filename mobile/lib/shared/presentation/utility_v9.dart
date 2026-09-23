@@ -24,32 +24,49 @@ final class AhdashUtilityScaffold extends StatelessWidget {
     final metrics = AhdashV10Metrics.of(context);
     return Scaffold(
       backgroundColor: AppColors.paper0,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 430),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                metrics.gutter,
-                16,
-                metrics.gutter,
-                12,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AhdashPageHeader(
-                    title: title,
-                    onBack: showBack
-                        ? () => context.canPop()
-                              ? context.pop()
-                              : context.go(fallback)
-                        : null,
-                    trailing: actions.isEmpty ? null : Wrap(children: actions),
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(child: child),
-                ],
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.paper0, Color(0xFFF8F2E7), AppColors.paper0],
+            stops: [0, .62, 1],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 430),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  metrics.gutter,
+                  metrics.sectionGap,
+                  metrics.gutter,
+                  metrics.gutter,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AhdashPageHeader(
+                      title: title,
+                      onBack: showBack
+                          ? () => context.canPop()
+                                ? context.pop()
+                                : context.go(fallback)
+                          : null,
+                      trailing: actions.isEmpty
+                          ? null
+                          : Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.end,
+                              children: actions,
+                            ),
+                    ),
+                    SizedBox(height: metrics.sectionGap),
+                    Expanded(child: child),
+                  ],
+                ),
               ),
             ),
           ),

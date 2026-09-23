@@ -34,16 +34,20 @@ final class PartyFlowScaffold extends StatelessWidget {
     required this.child,
     required this.footer,
     this.subtitle,
+    this.hideFooterWhenKeyboard = false,
     super.key,
   });
   final String title;
   final String? subtitle;
+  final bool hideFooterWhenKeyboard;
   final int step;
   final VoidCallback onBack;
   final Widget child, footer;
   @override
   Widget build(BuildContext context) {
     final metrics = AhdashV10Metrics.of(context);
+    final hideFooter =
+        hideFooterWhenKeyboard && MediaQuery.viewInsetsOf(context).bottom > 0;
     return BrandScaffold(
       showDevelopmentBadge: false,
       body: PartyV2Canvas(
@@ -69,11 +73,13 @@ final class PartyFlowScaffold extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Expanded(child: child),
-                    const SizedBox(height: 12),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 56),
-                      child: footer,
-                    ),
+                    if (!hideFooter) ...[
+                      const SizedBox(height: 12),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 56),
+                        child: footer,
+                      ),
+                    ],
                   ],
                 ),
               ),

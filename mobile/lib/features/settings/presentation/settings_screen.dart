@@ -13,7 +13,6 @@ import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/capability_provider.dart';
 import '../../premium/presentation/premium_controller.dart';
 import 'notification_preferences_controller.dart';
-import 'settings_visuals.dart';
 
 final class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -35,6 +34,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return AhdashUtilityScaffold(
       title: 'الإعدادات',
       child: ListView(
+        key: const ValueKey('settings-scroll'),
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           _identityCard(
@@ -44,45 +44,29 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => context.push('/profile'),
           ),
           const SizedBox(height: 18),
-          _section('على هذا الجهاز', Icons.tune_rounded, [
-            _settingsRow(
-              icon: Icons.tune_rounded,
-              label: 'الصوت والاهتزاز والحركة',
-              subtitle: [
-                if (preferences.soundEffects) 'الصوت',
-                if (preferences.haptics) 'الاهتزاز',
-                if (preferences.reducedMotion) 'حركة أقل',
-              ].join(' • '),
-              onTap: () => _group('local'),
-              last: true,
-            ),
-          ]),
-          const SizedBox(height: 14),
-          _section('الحساب', Icons.person_outline_rounded, [
+          _sectionLabel('تجربة اللعب', Icons.tune_rounded),
+          const SizedBox(height: 8),
+          _devicePreferencesCard(preferences),
+          const SizedBox(height: 16),
+          _section('حسابك وتفضيلاتك', Icons.person_outline_rounded, [
             _settingsRow(
               icon: Icons.person_outline_rounded,
               label: 'تعديل الملف الشخصي',
               subtitle: hasAccount ? user.username : 'يتطلب حسابًا',
               onTap: () => context.push('/profile'),
-              last: true,
             ),
-          ]),
-          const SizedBox(height: 14),
-          _section('كرة القدم', Icons.sports_soccer_rounded, [
             _settingsRow(
               icon: Icons.sports_soccer_rounded,
               label: 'تفضيلاتي الكروية',
               subtitle: hasAccount ? 'الأندية والبطولات' : 'يتطلب حسابًا',
               onTap: () => context.push('/football-preferences'),
-              last: true,
             ),
-          ]),
-          const SizedBox(height: 14),
-          _section('الإشعارات', Icons.notifications_none_rounded, [
             _settingsRow(
               icon: Icons.notifications_none_rounded,
-              label: 'الإشعارات',
-              subtitle: hasAccount ? 'تحكم بما يصلك' : 'يتطلب حسابًا',
+              label: 'تفضيلات الإشعارات',
+              subtitle: hasAccount
+                  ? 'تحكم بالدعوات والتحديثات'
+                  : 'يتطلب حسابًا',
               onTap: () => _group('notifications'),
               last: true,
             ),
@@ -91,17 +75,14 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           _sectionLabel('Premium', Icons.workspace_premium_outlined),
           const SizedBox(height: 8),
           _premiumRow(active: premium, onTap: () => context.push('/premium')),
-          const SizedBox(height: 14),
-          _section('الدعم', Icons.support_agent_rounded, [
+          const SizedBox(height: 16),
+          _section('الدعم والخصوصية', Icons.shield_outlined, [
             _settingsRow(
-              icon: Icons.flag_outlined,
+              icon: Icons.campaign_outlined,
               label: 'الإبلاغ عن مشكلة',
+              subtitle: 'ساعدنا نحسّن تجربتك',
               onTap: () => context.push('/report-problem'),
-              last: true,
             ),
-          ]),
-          const SizedBox(height: 14),
-          _section('الخصوصية والقانوني', Icons.verified_user_outlined, [
             _settingsRow(
               icon: Icons.block_rounded,
               label: 'اللاعبون المحظورون',
@@ -110,7 +91,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             _settingsRow(
               icon: Icons.description_outlined,
-              label: 'شروط وأحكام الاستخدام',
+              label: 'شروط الاستخدام',
               onTap: () => _openLegal(config.termsUrl),
             ),
             _settingsRow(
@@ -154,10 +135,16 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  Icon(
-                    hasAccount ? Icons.logout_rounded : Icons.login_rounded,
-                    size: 20,
-                  ),
+                  if (_busy.contains('signout'))
+                    const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(
+                      hasAccount ? Icons.logout_rounded : Icons.login_rounded,
+                      size: 20,
+                    ),
                 ],
               ),
             ),
@@ -172,77 +159,321 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     required bool hasAccount,
     required bool premium,
     required VoidCallback onTap,
-  }) => Material(
-    key: const ValueKey('settings-identity-card'),
-    color: AppColors.ink,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-    clipBehavior: Clip.antiAlias,
-    child: InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        height: MediaQuery.textScalerOf(context).scale(1) >= 1.2 ? 176 : 138,
-        child: Stack(
-          fit: StackFit.expand,
+  }) {
+    final largeText = MediaQuery.textScalerOf(context).scale(14) > 16;
+    final copy = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 5,
           children: [
-            PositionedDirectional(
-              top: 10,
-              bottom: 10,
-              end: 10,
-              width: 142,
-              child: ExcludeSemantics(
-                child: SettingsIdentityArtwork(premium: premium),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: .12),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: .32),
+                ),
+              ),
+              child: Text(
+                hasAccount ? 'مساحتك الشخصية' : 'وضع الضيف',
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(18, 18, 148, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    hasAccount ? 'PLAYER SETTINGS / 11' : 'GUEST MODE / 11',
-                    textDirection: TextDirection.ltr,
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 9,
-                      letterSpacing: 1.05,
-                      fontWeight: FontWeight.w800,
-                    ),
+            if (premium)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.gold,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: const Text(
+                  'Premium',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    color: AppColors.ink,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    username,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.paper0,
-                      fontSize: 23,
-                      height: 1.1,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 9),
+        Text(
+          username,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.paper0,
+            fontSize: 22,
+            height: 1.12,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+    final artwork = SizedBox(
+      width: largeText ? 138 : 122,
+      height: largeText ? 106 : 102,
+      child: ExcludeSemantics(
+        child: Image.asset(
+          'assets/visuals/settings_identity_art_v2.png',
+          key: const ValueKey('settings-identity-art'),
+          fit: BoxFit.contain,
+          cacheWidth: 256,
+          filterQuality: FilterQuality.high,
+        ),
+      ),
+    );
+    return Material(
+      key: const ValueKey('settings-identity-card'),
+      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      clipBehavior: Clip.antiAlias,
+      child: Ink(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: AlignmentDirectional.topStart,
+            end: AlignmentDirectional.bottomEnd,
+            colors: [Color(0xFF244A39), Color(0xFF172A21), Color(0xFF111713)],
+          ),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: largeText
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [copy, const SizedBox(height: 8), artwork],
+                  )
+                : Row(
+                    children: [
+                      Expanded(child: copy),
+                      const SizedBox(width: 12),
+                      artwork,
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _devicePreferencesCard(AppPreferences preferences) {
+    final largeText = MediaQuery.textScalerOf(context).scale(14) > 19;
+    final controls = <Widget>[
+      _quickPreference(
+        keyName: 'sound',
+        icon: Icons.volume_up_outlined,
+        label: 'الصوت',
+        enabled: preferences.soundEffects,
+        onTap: () => _setLocalPreference(
+          'sound',
+          () => ref
+              .read(appPreferencesProvider.notifier)
+              .setSoundEffects(!preferences.soundEffects),
+        ),
+      ),
+      _quickPreference(
+        keyName: 'haptics',
+        icon: Icons.vibration_rounded,
+        label: 'الاهتزاز',
+        enabled: preferences.haptics,
+        onTap: () => _setLocalPreference(
+          'haptics',
+          () => ref
+              .read(appPreferencesProvider.notifier)
+              .setHaptics(!preferences.haptics),
+        ),
+      ),
+      _quickPreference(
+        keyName: 'motion',
+        icon: Icons.animation_rounded,
+        label: 'حركة أقل',
+        enabled: preferences.reducedMotion,
+        onTap: () => _setLocalPreference(
+          'motion',
+          () => ref
+              .read(appPreferencesProvider.notifier)
+              .setReducedMotion(!preferences.reducedMotion),
+        ),
+      ),
+    ];
+    return Material(
+      key: const ValueKey('settings-device-preferences'),
+      color: AppColors.paper1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: AppColors.hairline),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'تعديلات سريعة',
+                    style: TextStyle(
+                      color: AppColors.ink,
+                      fontSize: 13,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const SizedBox(height: 7),
-                  Text(
-                    premium
-                        ? 'Premium مفعّل'
-                        : hasAccount
-                        ? 'إدارة ملفك وتفضيلاتك'
-                        : 'سجّل الدخول للوصول إلى ميزات الحساب',
-                    maxLines: 2,
-                    style: const TextStyle(
-                      color: AppColors.paper2,
-                      fontSize: 11,
-                      height: 1.35,
-                    ),
+                ),
+                TextButton(
+                  onPressed: () => _group('local'),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(44, 34),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
+                  child: const Text(
+                    'عرض التفاصيل',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            if (largeText)
+              Column(
+                children: [
+                  for (var index = 0; index < controls.length; index++) ...[
+                    controls[index],
+                    if (index != controls.length - 1) const SizedBox(height: 8),
+                  ],
+                ],
+              )
+            else
+              Row(
+                children: [
+                  for (var index = 0; index < controls.length; index++) ...[
+                    Expanded(child: controls[index]),
+                    if (index != controls.length - 1) const SizedBox(width: 8),
+                  ],
                 ],
               ),
+            const SizedBox(height: 9),
+            const Row(
+              children: [
+                Icon(
+                  Icons.cloud_done_outlined,
+                  size: 14,
+                  color: AppColors.palm,
+                ),
+                SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    'تحفظ هذه الخيارات تلقائيًا على جهازك.',
+                    style: TextStyle(color: AppColors.inkMuted, fontSize: 10),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
-    ),
-  );
+    );
+  }
+
+  Widget _quickPreference({
+    required String keyName,
+    required IconData icon,
+    required String label,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final busy = _busy.contains('preference-$keyName');
+    return Semantics(
+      button: true,
+      toggled: enabled,
+      label: '$label، ${enabled ? 'مفعّل' : 'متوقف'}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: ValueKey('settings-quick-$keyName'),
+          onTap: busy ? null : onTap,
+          borderRadius: BorderRadius.circular(15),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            constraints: const BoxConstraints(minHeight: 78),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: enabled ? const Color(0xFFE9F5CF) : AppColors.paper0,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                color: enabled ? AppColors.primary : AppColors.hairline,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: enabled ? AppColors.ink : AppColors.paper2,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: busy
+                      ? const Padding(
+                          padding: EdgeInsets.all(9),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(
+                          icon,
+                          size: 17,
+                          color: enabled
+                              ? AppColors.primary
+                              : AppColors.inkMuted,
+                        ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.ink,
+                          fontSize: 11,
+                          height: 1.2,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        enabled ? 'مفعّل' : 'متوقف',
+                        style: TextStyle(
+                          color: enabled ? AppColors.palm : AppColors.inkMuted,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _section(String title, IconData icon, List<Widget> rows) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -250,7 +481,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _sectionLabel(title, icon),
       const SizedBox(height: 8),
       Material(
-        color: AppColors.paper0,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: AppColors.hairline),
           borderRadius: BorderRadius.circular(18),
@@ -366,76 +597,123 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ],
   );
 
-  Widget _premiumRow({required bool active, required VoidCallback onTap}) =>
-      Material(
-        key: const ValueKey('settings-premium-row'),
-        color: AppColors.paper0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: AppColors.gold),
+  Widget _premiumRow({
+    required bool active,
+    required VoidCallback onTap,
+  }) => Material(
+    key: const ValueKey('settings-premium-row'),
+    color: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: BorderSide(color: active ? AppColors.primary : AppColors.gold),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Ink(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [Color(0xFF2A241A), Color(0xFF171613)],
         ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(13),
-            child: Row(
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: active ? AppColors.primary : AppColors.gold,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (active ? AppColors.primary : AppColors.gold)
+                          .withValues(alpha: .2),
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  active
+                      ? Icons.verified_rounded
+                      : Icons.workspace_premium_rounded,
+                  color: AppColors.ink,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      active ? 'Premium مفعّل' : 'أحدعش Premium',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      active
+                          ? 'اشتراكك نشط — اضغط للإدارة'
+                          : 'فئات حصرية وتجربة لعب بلا إعلانات',
+                      style: const TextStyle(
+                        color: AppColors.paper3,
+                        fontSize: 10,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: .08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.white.withValues(alpha: .1)),
+                ),
+                child: Text(
+                  active ? 'إدارة' : 'اكتشف',
+                  style: TextStyle(
                     color: active ? AppColors.primary : AppColors.gold,
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                  child: Icon(
-                    active ? Icons.check_rounded : Icons.lock_open_rounded,
-                    size: 20,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
-                const SizedBox(width: 11),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        active ? 'Premium مفعّل' : 'أحدعش Premium',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        active
-                            ? 'إدارة حالة اشتراكك'
-                            : 'فئات حصرية • لعب بدون إعلانات',
-                        style: const TextStyle(
-                          color: AppColors.inkMuted,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.ink,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16,
-                    color: AppColors.paper0,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
+
+  Future<void> _setLocalPreference(
+    String key,
+    Future<void> Function() action,
+  ) async {
+    final busyKey = 'preference-$key';
+    if (!_busy.add(busyKey)) return;
+    setState(() {});
+    try {
+      await action();
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تعذر حفظ التفضيل. أعد المحاولة.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy.remove(busyKey));
+    }
+  }
 
   Future<void> _openLegal(String value) async {
     final service = ref.read(legalLinkServiceProvider);
@@ -517,35 +795,120 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
+        Center(
+          child: Container(
+            width: 44,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.hairline,
+              borderRadius: BorderRadius.circular(99),
+            ),
+          ),
+        ),
+        const SizedBox(height: 18),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Text(
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.ink,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
                 switch (widget.group) {
-                  'account' => 'الحساب وهوية اللاعب',
-                  'notifications' => 'الإشعارات',
-                  'local' => 'على هذا الجهاز',
-                  _ => 'المساعدة والخصوصية',
+                  'notifications' => Icons.notifications_none_rounded,
+                  'local' => Icons.tune_rounded,
+                  'account' => Icons.person_outline_rounded,
+                  _ => Icons.support_agent_rounded,
                 },
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                ),
+                color: AppColors.primary,
+                size: 21,
+              ),
+            ),
+            const SizedBox(width: 11),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    switch (widget.group) {
+                      'account' => 'الحساب وهوية اللاعب',
+                      'notifications' => 'تفضيلات الإشعارات',
+                      'local' => 'تجربة اللعب',
+                      _ => 'المساعدة والخصوصية',
+                    },
+                    style: const TextStyle(
+                      fontSize: 21,
+                      height: 1.2,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    switch (widget.group) {
+                      'notifications' => 'اختر التحديثات التي تهمك.',
+                      'local' => 'اضبط الإحساس والصوت على هذا الجهاز.',
+                      'account' => 'تحكم في هويتك وبيانات حسابك.',
+                      _ => 'كل أدوات المساعدة في مكان واحد.',
+                    },
+                    style: const TextStyle(
+                      color: AppColors.inkMuted,
+                      fontSize: 11,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
             ),
             IconButton(
               tooltip: 'إغلاق',
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close),
+              style: IconButton.styleFrom(
+                minimumSize: const Size.square(44),
+                backgroundColor: AppColors.paper1,
+                side: const BorderSide(color: AppColors.hairline),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
+                ),
+              ),
+              icon: const Icon(Icons.close_rounded, size: 20),
             ),
           ],
         ),
+        const SizedBox(height: 18),
         if (_message != null)
-          Semantics(liveRegion: true, child: Text(_message!)),
+          Semantics(
+            liveRegion: true,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(11),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE9F5CF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.primary),
+              ),
+              child: Text(
+                _message!,
+                style: const TextStyle(
+                  color: AppColors.inkSoft,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
         if (widget.group == 'local') ...[
-          const Text('تفضيلات محلية لا تحتاج إلى حساب.'),
-          SwitchListTile(
-            title: const Text('المؤثرات الصوتية'),
+          const _SettingsNotice(
+            icon: Icons.phone_android_rounded,
+            text: 'هذه التفضيلات محلية، ولا تحتاج إلى تسجيل الدخول.',
+          ),
+          const SizedBox(height: 12),
+          _preferenceSwitch(
+            icon: Icons.volume_up_outlined,
+            title: 'المؤثرات الصوتية',
+            subtitle: 'أصوات الإجابة والمؤقت والنتائج',
             value: preferences.soundEffects,
             onChanged: _busy
                 ? null
@@ -555,8 +918,10 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
                         .setSoundEffects(v),
                   ),
           ),
-          SwitchListTile(
-            title: const Text('الاهتزاز'),
+          _preferenceSwitch(
+            icon: Icons.vibration_rounded,
+            title: 'الاهتزاز',
+            subtitle: 'استجابة لمسية للأزرار والأحداث المهمة',
             value: preferences.haptics,
             onChanged: _busy
                 ? null
@@ -565,8 +930,10 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
                         ref.read(appPreferencesProvider.notifier).setHaptics(v),
                   ),
           ),
-          SwitchListTile(
-            title: const Text('تقليل الحركة'),
+          _preferenceSwitch(
+            icon: Icons.animation_rounded,
+            title: 'تقليل الحركة',
+            subtitle: 'حركات انتقال أبسط وأكثر هدوءًا',
             value: preferences.reducedMotion,
             onChanged: _busy
                 ? null
@@ -618,9 +985,12 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
             ),
           ],
         ] else if (widget.group == 'notifications') ...[
-          const Text(
-            'التفضيلات لا تضمن وصول الإشعار؛ إذن الجهاز والاتصال مطلوبان.',
+          const _SettingsNotice(
+            icon: Icons.info_outline_rounded,
+            text:
+                'التفضيلات تحدد ما نرسله، بينما وصوله يعتمد أيضًا على إذن الجهاز والاتصال.',
           ),
+          const SizedBox(height: 12),
           OutlinedButton(
             onPressed: _busy
                 ? null
@@ -637,8 +1007,18 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
                       );
                     }
                   }),
-            child: const Text('طلب إذن إشعارات الجهاز'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: const Text(
+              'التحقق من إذن الجهاز',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
           ),
+          const SizedBox(height: 14),
           ref
               .watch(notificationPreferencesProvider)
               .when(
@@ -660,7 +1040,6 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
                 data: (values) => Column(
                   children: [
                     for (final entry in const {
-                      'friend_requests': 'طلبات ربعك',
                       'match_invites': 'دعوات المباريات',
                       'challenges': 'تحديات الفريق',
                       'rewards': 'المكافآت',
@@ -669,8 +1048,10 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
                       'teams': 'الفِرق',
                       'promotions': 'العروض الترويجية',
                     }.entries)
-                      SwitchListTile(
-                        title: Text(entry.value),
+                      _preferenceSwitch(
+                        icon: _notificationPreferenceIcon(entry.key),
+                        title: entry.value,
+                        subtitle: _notificationPreferenceDescription(entry.key),
                         value: values[entry.key] ?? false,
                         onChanged: _busy
                             ? null
@@ -706,6 +1087,57 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
       ],
     );
   }
+
+  Widget _preferenceSwitch({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool>? onChanged,
+  }) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Material(
+      color: value ? const Color(0xFFE9F5CF) : AppColors.paper1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: value ? AppColors.primary : AppColors.hairline),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: SwitchListTile(
+        value: value,
+        onChanged: onChanged,
+        secondary: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: value ? AppColors.ink : AppColors.paper0,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: value ? AppColors.ink : AppColors.hairline,
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: value ? AppColors.primary : AppColors.inkMuted,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
+            color: AppColors.inkMuted,
+            fontSize: 10,
+            height: 1.35,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      ),
+    ),
+  );
 
   Future<void> _run(Future<void> Function() action) async {
     if (_busy) return;
@@ -768,3 +1200,58 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
     });
   }
 }
+
+final class _SettingsNotice extends StatelessWidget {
+  const _SettingsNotice({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: AppColors.paper1,
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: AppColors.hairline),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: AppColors.palm, size: 19),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: AppColors.inkSoft,
+              fontSize: 11,
+              height: 1.45,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+IconData _notificationPreferenceIcon(String key) => switch (key) {
+  'match_invites' => Icons.sports_soccer_rounded,
+  'challenges' => Icons.bolt_rounded,
+  'rewards' => Icons.redeem_rounded,
+  'season_events' => Icons.emoji_events_outlined,
+  'announcements' => Icons.campaign_outlined,
+  'teams' => Icons.groups_outlined,
+  _ => Icons.local_offer_outlined,
+};
+
+String _notificationPreferenceDescription(String key) => switch (key) {
+  'match_invites' => 'دعوات اللعب والمواجهات الجديدة',
+  'challenges' => 'تحديثات تحدياتك الجماعية',
+  'rewards' => 'المكافآت الجاهزة للاستلام',
+  'season_events' => 'بدايات ونهايات أحداث الموسم',
+  'announcements' => 'أهم أخبار ومزايا أحدعش',
+  'teams' => 'دعوات الفريق وتغييرات الأعضاء',
+  _ => 'العروض والفرص المختارة لك',
+};

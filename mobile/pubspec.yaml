@@ -58,6 +58,7 @@ flutter:
     - assets/images/currency/ahdash_coin_stack.webp
     - assets/images/currency/ahdash_coin_reward.webp
     - assets/images/backgrounds/
+    - assets/images/onboarding/
     - assets/images/providers/
     - assets/images/v10_h3_visual_fixtures/
     - assets/images/modes/

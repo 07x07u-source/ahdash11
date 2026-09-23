@@ -83,6 +83,34 @@ void main() {
     expect(find.text(_categories.first.name), findsOneWidget);
   });
 
+  testWidgets('Category favorites filter is visible and reversible', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const PartyCategorySelectionScreen(),
+      catalog: Future.value(_catalog),
+      state: PartyGameState(
+        favoriteCategoryIds: {_categoryIds.first},
+        restored: true,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final filter = find.byKey(
+      const ValueKey('party-category-favorites-filter'),
+    );
+    expect(filter, findsOneWidget);
+    await tester.tap(filter);
+    await tester.pump();
+    expect(find.text(_categories.first.name), findsOneWidget);
+    expect(find.text(_categories[1].name), findsNothing);
+
+    await tester.tap(filter);
+    await tester.pump();
+    expect(find.text(_categories[1].name), findsOneWidget);
+  });
+
   testWidgets('Category Selection exposes the real selected state', (
     tester,
   ) async {
@@ -123,6 +151,47 @@ void main() {
     expect(find.text('وصف منشور'), findsOneWidget);
     expect(find.text('عدد الأسئلة متغير'), findsOneWidget);
     expect(find.textContaining('تجربة'), findsNothing);
+  });
+
+  testWidgets('Category Detail selection action performs its stated action', (
+    tester,
+  ) async {
+    var selected = false;
+    await _pump(
+      tester,
+      PartyCategoryDetailPanel(
+        category: _categories.first,
+        playable: true,
+        onSelect: () => selected = true,
+      ),
+    );
+    await tester.tap(find.text('اختيار هذه الفئة'));
+    await tester.pump();
+
+    expect(selected, isTrue);
+  });
+
+  testWidgets('Category Selection supports 130% Arabic text scaling', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(390, 844)
+      ..devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view
+        ..resetPhysicalSize()
+        ..resetDevicePixelRatio();
+    });
+    await _pump(
+      tester,
+      const PartyCategorySelectionScreen(),
+      catalog: Future.value(_catalog),
+      textScaler: const TextScaler.linear(1.3),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text(_categories.first.name), findsOneWidget);
   });
 
   testWidgets('Team Setup reports duplicate names inline in Arabic', (
@@ -440,10 +509,16 @@ void main() {
         );
         await tester.pumpAndSettle();
         final field = find.byKey(ValueKey(entry.$2));
+        await tester.ensureVisible(field);
+        await tester.pumpAndSettle();
         await tester.tap(field);
         await tester.pumpAndSettle();
         expect(tester.testTextInput.isVisible, isTrue);
-        expect(tester.getRect(field).top, lessThan(size.height - 300));
+        expect(
+          tester.getRect(field).top,
+          lessThan(size.height - 300),
+          reason: entry.$2,
+        );
         expect(tester.takeException(), isNull);
       }
     });
@@ -538,7 +613,9 @@ Future<void> _pump(
       ],
       child: testApp(
         MediaQuery(
-          data: MediaQueryData(textScaler: textScaler),
+          data: MediaQueryData.fromView(
+            tester.view,
+          ).copyWith(textScaler: textScaler),
           child: screen,
         ),
         theme: AppTheme.light,

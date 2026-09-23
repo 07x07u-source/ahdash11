@@ -107,6 +107,7 @@ void main() {
       final container = _socialContainer(repository);
       addTearDown(container.dispose);
       await _pump(tester, container, const FriendsScreen());
+      await _precacheVisibleImages(tester);
       await _capture(tester, scenario.name);
     });
   }
@@ -124,6 +125,7 @@ void main() {
     );
     await tester.tap(find.byTooltip('بحث'));
     await tester.pumpAndSettle();
+    await _precacheVisibleImages(tester);
     await _capture(
       tester,
       'friends/friends_search_results_fixture_390x844.png',
@@ -141,6 +143,7 @@ void main() {
     );
     await tester.tap(find.byTooltip('بحث'));
     await tester.pumpAndSettle();
+    await _precacheVisibleImages(tester);
     await _capture(tester, 'friends/friends_search_no_results_390x844.png');
   });
 
@@ -157,6 +160,7 @@ void main() {
     );
     addTearDown(container.dispose);
     await _pump(tester, container, const FriendsScreen(), settle: false);
+    await _precacheVisibleImages(tester);
     await _capture(tester, 'loading/friends_loading_390x844.png');
   });
 
@@ -166,6 +170,7 @@ void main() {
     final container = _socialContainer(repository);
     addTearDown(container.dispose);
     await _pump(tester, container, const FriendsScreen());
+    await _precacheVisibleImages(tester);
     await _capture(tester, 'errors/friends_error_390x844.png');
   });
 
@@ -203,40 +208,54 @@ void main() {
     await _capture(tester, 'errors/blocked_players_error_390x844.png');
   });
 
-  for (final populated in [false, true]) {
-    testWidgets('capture saved games populated=$populated', (tester) async {
-      final database = AppDatabase(NativeDatabase.memory());
-      addTearDown(database.close);
-      final state = populated
-          ? PartyGameState(
-              restored: true,
-              session: phase4BoardSession,
-              history: [
-                PartyGameSession.fromJson({
-                  ...phase4CompletedSession().toJson(),
-                  'id': 'fixture-history-session',
-                }),
-              ],
-            )
-          : const PartyGameState(restored: true);
-      final container = ProviderContainer(
-        retry: (_, _) => null,
-        overrides: [
-          appDatabaseProvider.overrideWithValue(database),
-          partyGameControllerProvider.overrideWithBuild(
-            (ref, notifier) => state,
-          ),
-        ],
-      );
+  for (final size in const [Size(390, 844), Size(360, 800)]) {
+    final dimensions = '${size.width.round()}x${size.height.round()}';
+    testWidgets('capture how to play $dimensions', (tester) async {
+      final container = ProviderContainer(retry: (_, _) => null);
       addTearDown(container.dispose);
-      await _pump(tester, container, const PartyGamesScreen());
-      await _capture(
-        tester,
-        populated
-            ? 'party/saved_games_multiple_fixture_390x844.png'
-            : 'empty_states/saved_games_empty_390x844.png',
-      );
+      await _pump(tester, container, const HowToPlayScreen(), size: size);
+      await _capture(tester, 'party/how_to_play_$dimensions.png');
     });
+
+    for (final populated in [false, true]) {
+      testWidgets('capture saved games populated=$populated $dimensions', (
+        tester,
+      ) async {
+        final database = AppDatabase(NativeDatabase.memory());
+        addTearDown(database.close);
+        final state = populated
+            ? PartyGameState(
+                restored: true,
+                session: _savedVisualSession(phase4BoardSession),
+                history: [
+                  _savedVisualSession(
+                    PartyGameSession.fromJson({
+                      ...phase4CompletedSession().toJson(),
+                      'id': 'fixture-history-session',
+                    }),
+                  ),
+                ],
+              )
+            : const PartyGameState(restored: true);
+        final container = ProviderContainer(
+          retry: (_, _) => null,
+          overrides: [
+            appDatabaseProvider.overrideWithValue(database),
+            partyGameControllerProvider.overrideWithBuild(
+              (ref, notifier) => state,
+            ),
+          ],
+        );
+        addTearDown(container.dispose);
+        await _pump(tester, container, const PartyGamesScreen(), size: size);
+        await _capture(
+          tester,
+          populated
+              ? 'party/saved_games_multiple_fixture_$dimensions.png'
+              : 'empty_states/saved_games_empty_$dimensions.png',
+        );
+      });
+    }
   }
 
   testWidgets('capture ranking loading and error fixtures', (tester) async {
@@ -281,6 +300,7 @@ void main() {
       );
       addTearDown(container.dispose);
       await _pump(tester, container, const RankingScreen());
+      await _precacheVisibleImages(tester);
       await _capture(
         tester,
         populated
@@ -390,9 +410,10 @@ Future<void> _pump(
   ProviderContainer container,
   Widget screen, {
   bool settle = true,
+  Size size = const Size(390, 844),
 }) async {
   tester.view
-    ..physicalSize = const Size(390, 844)
+    ..physicalSize = size
     ..devicePixelRatio = 1;
   addTearDown(() {
     tester.view
@@ -403,8 +424,8 @@ Future<void> _pump(
     UncontrolledProviderScope(
       container: container,
       child: testApp(
-        const MediaQuery(
-          data: MediaQueryData(size: Size(390, 844), disableAnimations: true),
+        MediaQuery(
+          data: MediaQueryData(size: size, disableAnimations: true),
           child: SizedBox.shrink(),
         ),
         theme: AppTheme.light,
@@ -416,10 +437,7 @@ Future<void> _pump(
       container: container,
       child: testApp(
         MediaQuery(
-          data: const MediaQueryData(
-            size: Size(390, 844),
-            disableAnimations: true,
-          ),
+          data: MediaQueryData(size: size, disableAnimations: true),
           child: screen,
         ),
         theme: AppTheme.light,
@@ -432,8 +450,46 @@ Future<void> _pump(
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
   }
+  if (screen is PartyGamesScreen) {
+    final images = tester.widgetList<Image>(find.byType(Image)).toList();
+    if (images.isNotEmpty) {
+      final context = tester.element(find.byType(MaterialApp));
+      await tester.runAsync(
+        () => Future.wait(
+          images.map((widget) => precacheImage(widget.image, context)),
+        ),
+      );
+      await tester.pump();
+    }
+  }
   expect(tester.takeException(), isNull);
 }
+
+const _savedCoverAssets = [
+  'assets/images/v10_h3_visual_fixtures/saudi_league.png',
+  'assets/images/v10_h3_visual_fixtures/champions_league.png',
+  'assets/images/v10_h3_visual_fixtures/world_cup.png',
+  'assets/images/v10_h3_visual_fixtures/legends.png',
+  'assets/images/v10_h3_visual_fixtures/transfer_market.png',
+  'assets/images/v10_h3_visual_fixtures/tactics.png',
+];
+
+PartyGameSession _savedVisualSession(PartyGameSession source) =>
+    source.copyWith(
+      categories: [
+        for (var index = 0; index < source.categories.length; index++)
+          PartyCategorySnapshot(
+            id: source.categories[index].id,
+            name: source.categories[index].name,
+            colorValue: source.categories[index].colorValue,
+            ownerTeamIndex: source.categories[index].ownerTeamIndex,
+            imageUrl: _savedCoverAssets[index % _savedCoverAssets.length],
+            focalX: source.categories[index].focalX,
+            focalY: source.categories[index].focalY,
+            questions: source.categories[index].questions,
+          ),
+      ],
+    );
 
 Future<void> _capture(WidgetTester tester, String relativePath) async {
   const output = String.fromEnvironment('FULL_FEATURE_QA_DIR');
@@ -449,4 +505,16 @@ Future<void> _capture(WidgetTester tester, String relativePath) async {
     file.parent.createSync(recursive: true);
     file.writeAsBytesSync(bytes!.buffer.asUint8List());
   });
+}
+
+Future<void> _precacheVisibleImages(WidgetTester tester) async {
+  final images = tester.widgetList<Image>(find.byType(Image)).toList();
+  if (images.isEmpty) return;
+  final context = tester.element(find.byType(MaterialApp));
+  await tester.runAsync(
+    () => Future.wait(
+      images.map((widget) => precacheImage(widget.image, context)),
+    ),
+  );
+  await tester.pump();
 }

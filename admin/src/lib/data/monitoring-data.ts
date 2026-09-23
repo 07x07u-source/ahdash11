@@ -108,7 +108,7 @@ export async function getSystemHealthData(): Promise<SystemHealthData> {
     supabase.rpc("get_published_app_content"),
     supabase.from("notification_deliveries").select("attempted_at").order("attempted_at", { ascending: false }).limit(1),
     supabase.from("notification_deliveries").select("id", { count: "exact", head: true }).eq("status", "failed").gte("attempted_at", since),
-    supabase.from("app_error_issues").select("occurrence_count,last_seen").gte("last_seen", since),
+    supabase.from("app_error_occurrences").select("id", { count: "exact", head: true }).gte("occurred_at", since),
     supabase.from("device_tokens").select("app_version").eq("is_active", true),
   ]);
   const versionCounts = new Map<string, number>();
@@ -122,7 +122,7 @@ export async function getSystemHealthData(): Promise<SystemHealthData> {
     lastNotificationAttempt: deliveries.data?.[0]?.attempted_at ? String(deliveries.data[0].attempted_at) : null,
     notificationMonitoringAvailable: !deliveries.error && !failedDeliveries.error,
     notificationFailures24h: failedDeliveries.count ?? 0,
-    errors24h: issues.error ? 0 : (issues.data ?? []).reduce((sum, row) => sum + Number(row.occurrence_count ?? 0), 0),
+    errors24h: issues.error ? 0 : issues.count ?? 0,
     activeVersions: [...versionCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([version, count]) => ({ version, devices: count })),
   };
 }

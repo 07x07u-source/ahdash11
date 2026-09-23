@@ -70,9 +70,7 @@ final class GuestCapabilityPolicy {
       return AppCapability.tournaments;
     }
     if (path == '/profile') return AppCapability.profile;
-    if (path == '/friends' || path == '/blocked-players') {
-      return AppCapability.friends;
-    }
+    if (path == '/blocked-players') return AppCapability.friends;
     if (path == '/teams' ||
         path.startsWith('/teams/') ||
         path.startsWith('/challenges/')) {
@@ -133,7 +131,6 @@ final class GuestCapabilityPolicy {
       '/tournaments/bracket',
       '/tournaments/champion',
       '/profile',
-      '/friends',
       '/blocked-players',
       '/teams',
       '/teams/join',

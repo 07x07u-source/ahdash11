@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/presentation/app_states.dart';
 import '../../../shared/presentation/components.dart';
 import '../../../shared/presentation/v10_portrait.dart';
 import '../../auth/presentation/auth_controller.dart';
@@ -27,13 +26,9 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   List<Map<String, Object?>>? _searchResults;
   var _searching = false;
   var _searchFailed = false;
+  var _searchRevision = 0;
   Timer? _searchDebounce;
   final _busyIds = <String>{};
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -50,15 +45,24 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     final online = ref.watch(socialRepositoryProvider).isAvailable;
     final inset = MediaQuery.viewInsetsOf(context).bottom;
     return AhdashV10Page(
-      title: 'ربعك',
+      title: 'الأصدقاء',
       subtitle: widget.inviteTeamId == null
-          ? 'أصدقاء وطلبات حقيقية من الخادم'
+          ? 'كوّن دائرتك وابدأ اللعب مع أشخاص تعرفهم'
           : 'اختر صديقًا لدعوته إلى الفريق',
       onBack: () => context.canPop() ? context.pop() : context.go('/home'),
       actions: [
-        IconButton(
+        IconButton.outlined(
           tooltip: 'الفِرق',
           onPressed: () => context.push('/teams'),
+          style: IconButton.styleFrom(
+            foregroundColor: AppColors.ink,
+            backgroundColor: AppColors.paper1,
+            minimumSize: const Size(44, 44),
+            side: const BorderSide(color: AppColors.hairline),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
           icon: const Icon(Icons.groups_3_outlined),
         ),
       ],
@@ -68,17 +72,28 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
           key: const ValueKey('friends-keyboard-scroll'),
           physics: const AlwaysScrollableScrollPhysics(),
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.only(bottom: 16 + inset),
+          // The page Scaffold already reserves the keyboard inset.
+          padding: const EdgeInsets.only(bottom: 16),
           children: [
-            SocialHero(
-              title: 'ربعك في أحدعش',
-              subtitle: 'ابحث، أرسل طلبًا، واجمع فريقك من العلاقات الحقيقية.',
-              scene: SocialArtworkScene.friends,
-              actionLabel: 'إضافة صديق',
-              onAction: online ? _searchFocus.requestFocus : null,
-              compact: true,
-            ),
-            const SizedBox(height: 14),
+            if (inset == 0) ...[
+              SocialHero(
+                title: 'مع الربع أحلى',
+                subtitle: 'ابحث بالاسم واجمع فريقك.',
+                scene: SocialArtworkScene.friends,
+                actionLabel: 'أضف لاعبًا',
+                onAction: online ? _searchFocus.requestFocus : null,
+                compact: true,
+                artwork: Transform.scale(
+                  scale: 1.3,
+                  child: Image.asset(
+                    'assets/visuals/friends_social_hero_v2.png',
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
             Container(
               padding: const EdgeInsets.fromLTRB(10, 9, 10, 10),
               decoration: BoxDecoration(
@@ -89,47 +104,53 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(4, 0, 4, 7),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'ابحث في مجتمع أحدعش',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
+                  if (inset == 0)
+                    const Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(4, 1, 4, 9),
+                      child: Row(
+                        children: [
+                          _SearchHeaderIcon(),
+                          SizedBox(width: 9),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'ابحث عن لاعب',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                Text(
+                                  'بالاسم الظاهر أو اسم المستخدم',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: AppColors.inkMuted,
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'PASS / 01',
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            color: AppColors.inkMuted,
-                            fontSize: 8,
-                            letterSpacing: .8,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   TextField(
                     key: const ValueKey('friends-search-field'),
                     controller: _searchController,
                     focusNode: _searchFocus,
-                    enabled: online && !_searching,
+                    enabled: online,
                     textInputAction: TextInputAction.search,
                     onChanged: _queueSearch,
                     onSubmitted: (_) => _search(),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: AppColors.paper0,
-                      hintText: 'ابحث باسم اللاعب',
+                      hintText: 'الاسم أو اسم المستخدم',
+                      hintStyle: const TextStyle(fontSize: 13),
                       prefixIcon: const Icon(Icons.person_search_rounded),
                       suffixIconConstraints: const BoxConstraints(minWidth: 48),
                       suffixIcon: Row(
@@ -138,12 +159,17 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                           if (_searchController.text.isNotEmpty)
                             IconButton(
                               tooltip: 'مسح البحث',
-                              onPressed: _searching ? null : _clearSearch,
+                              onPressed: _clearSearch,
                               icon: const Icon(Icons.close_rounded, size: 19),
                             ),
                           IconButton(
                             tooltip: 'بحث',
                             onPressed: online && !_searching ? _search : null,
+                            style: IconButton.styleFrom(
+                              foregroundColor: AppColors.ink,
+                              backgroundColor: AppColors.brandLime,
+                              disabledBackgroundColor: AppColors.paper2,
+                            ),
                             icon: _searching
                                 ? const SizedBox.square(
                                     dimension: 19,
@@ -151,7 +177,7 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Icon(Icons.arrow_back_rounded),
+                                : const Icon(Icons.search_rounded),
                           ),
                         ],
                       ),
@@ -188,16 +214,21 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
               _SectionTitle(
                 title: 'نتائج البحث',
                 count: _searchResults!.length,
+                icon: Icons.manage_search_rounded,
+                accent: AppColors.palm,
               ),
               const SizedBox(height: 8),
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 180),
                 child: _searchResults!.isEmpty
                     ? const SocialEmptyState(
                         key: ValueKey('friends-no-results'),
                         title: 'لا يوجد لاعب مطابق.',
                         message: 'راجع كتابة الاسم أو جرّب اسم المستخدم.',
                         scene: SocialArtworkScene.search,
+                        artwork: _FriendsDiscoveryArtwork(),
                       )
                     : Column(
                         key: const ValueKey('friends-search-results'),
@@ -211,12 +242,15 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
             ref
                 .watch(friendsDashboardProvider)
                 .when(
-                  loading: () => const LoadingSkeleton(lines: 6),
-                  error: (_, _) => AppMessageState(
+                  loading: () => const _FriendsLoadingView(),
+                  error: (_, _) => SocialEmptyState(
                     title: 'تعذر تحميل الأصدقاء',
                     message: 'تحقق من الاتصال وحاول مجددًا.',
                     actionLabel: 'إعادة المحاولة',
+                    actionIcon: Icons.refresh_rounded,
                     onAction: _reload,
+                    scene: SocialArtworkScene.search,
+                    artwork: const _FriendsDiscoveryArtwork(),
                   ),
                   data: (data) {
                     final inbox = _rows(data['inbox']);
@@ -225,10 +259,19 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _FriendsOverview(
+                          friends: friends.length,
+                          inbox: inbox.length,
+                          outbox: outbox.length,
+                        ),
+                        const SizedBox(height: 20),
                         if (inbox.isNotEmpty) ...[
                           _SectionTitle(
-                            title: 'طلبات واردة',
+                            title: 'بانتظار ردك',
                             count: inbox.length,
+                            icon: Icons.mark_email_unread_rounded,
+                            accent: AppColors.brandLime,
+                            emphasized: true,
                           ),
                           const SizedBox(height: 8),
                           ...inbox.map(_incomingRequest),
@@ -238,19 +281,24 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                           _SectionTitle(
                             title: 'طلبات مرسلة',
                             count: outbox.length,
+                            icon: Icons.schedule_send_rounded,
+                            accent: AppColors.gold,
                           ),
                           const SizedBox(height: 8),
                           ...outbox.map(_outgoingRequest),
                           const SizedBox(height: 20),
                         ],
                         _SectionTitle(
-                          title: 'قائمة الأصدقاء',
+                          title: 'دائرة الأصدقاء',
                           count: friends.length,
+                          icon: Icons.groups_rounded,
+                          accent: AppColors.palm,
                         ),
                         const SizedBox(height: 8),
                         if (friends.isEmpty)
                           SocialEmptyState(
                             title: 'ربعك ينتظرك',
+                            artwork: const _FriendsDiscoveryArtwork(),
                             message: 'ابحث عن لاعب وأرسل أول طلب صداقة.',
                             scene: SocialArtworkScene.friends,
                             actionLabel: 'ابدأ البحث',
@@ -272,12 +320,26 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     final relationship = '${row['relationship'] ?? 'none'}';
     return _PlayerCard(
       row: row,
+      tone: _PlayerCardTone.search,
       trailing: switch (relationship) {
-        'friend' => const Chip(label: Text('صديق')),
-        'pending_sent' => const Chip(label: Text('بانتظار الرد')),
-        'pending_received' => FilledButton.tonal(
+        'friend' => const _RelationshipPill(
+          label: 'صديق',
+          icon: Icons.check_rounded,
+          color: AppColors.palm,
+        ),
+        'pending_sent' => const _RelationshipPill(
+          label: 'بانتظار الرد',
+          icon: Icons.schedule_rounded,
+          color: AppColors.coffee,
+        ),
+        'pending_received' => OutlinedButton.icon(
           onPressed: () => _reload(),
-          child: const Text('راجع الطلب'),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(44, 44),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+          ),
+          icon: const Icon(Icons.inbox_rounded, size: 16),
+          label: const Text('راجع الطلب'),
         ),
         _ => FilledButton.icon(
           onPressed: _busyIds.contains('${row['user_id']}')
@@ -285,6 +347,8 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
               : () => _sendRequest(row),
           style: FilledButton.styleFrom(
             side: const BorderSide(color: AppColors.ink),
+            minimumSize: const Size(44, 44),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
           ),
           icon: const Icon(Icons.person_add_alt_1_rounded, size: 18),
           label: const Text('إضافة'),
@@ -298,6 +362,7 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     return _PlayerCard(
       row: row,
       subtitle: row['message'] == null ? null : '${row['message']}',
+      tone: _PlayerCardTone.incoming,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -306,12 +371,22 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
             onPressed: _busyIds.contains(id)
                 ? null
                 : () => _respond(id, accept: false),
-            icon: const Icon(Icons.close_rounded, color: AppColors.danger),
+            style: IconButton.styleFrom(
+              foregroundColor: AhdashColors.light.error,
+              backgroundColor: AppColors.danger.withValues(alpha: .08),
+              minimumSize: const Size(44, 44),
+            ),
+            icon: const Icon(Icons.close_rounded),
           ),
+          const SizedBox(width: 4),
           FilledButton(
             onPressed: _busyIds.contains(id)
                 ? null
                 : () => _respond(id, accept: true),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size(60, 44),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
             child: const Text('قبول'),
           ),
         ],
@@ -324,10 +399,17 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     return _PlayerCard(
       row: row,
       subtitle: 'بانتظار قبول الطلب',
+      tone: _PlayerCardTone.outgoing,
       trailing: TextButton(
         onPressed: _busyIds.contains(id)
             ? null
             : () => _respond(id, accept: false),
+        style: TextButton.styleFrom(
+          minimumSize: const Size(58, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          side: const BorderSide(color: AppColors.hairline),
+          backgroundColor: AppColors.paper0,
+        ),
         child: const Text('إلغاء'),
       ),
     );
@@ -337,9 +419,16 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     final id = '${row['user_id']}';
     return _PlayerCard(
       row: row,
-      subtitle: 'من ربعك في أحدعش',
+      tone: _PlayerCardTone.friend,
       trailing: PopupMenuButton<String>(
         enabled: !_busyIds.contains(id),
+        tooltip: 'خيارات الصديق',
+        icon: const Icon(Icons.more_horiz_rounded),
+        style: IconButton.styleFrom(
+          foregroundColor: AppColors.ink,
+          backgroundColor: AppColors.paper2,
+          minimumSize: const Size(44, 44),
+        ),
         onSelected: (action) => _friendAction(action, row),
         itemBuilder: (_) => [
           if (widget.inviteTeamId != null)
@@ -380,7 +469,11 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 
   Future<void> _reload() async {
     ref.invalidate(friendsDashboardProvider);
-    await ref.read(friendsDashboardProvider.future);
+    try {
+      await ref.read(friendsDashboardProvider.future);
+    } catch (_) {
+      // The provider renders the retry state; keep refresh callbacks handled.
+    }
   }
 
   Future<void> _search() async {
@@ -390,37 +483,50 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
       _message('اكتب حرفين على الأقل للبحث.');
       return;
     }
+    final revision = ++_searchRevision;
     setState(() {
       _searching = true;
       _searchFailed = false;
+      _searchResults = null;
     });
     try {
       final data = await ref
           .read(socialRepositoryProvider)
           .searchPlayers(query);
-      if (mounted) {
+      if (mounted && revision == _searchRevision) {
         setState(() => _searchResults = data);
       }
     } catch (_) {
-      if (mounted) setState(() => _searchFailed = true);
+      if (mounted && revision == _searchRevision) {
+        setState(() => _searchFailed = true);
+      }
     } finally {
-      if (mounted) setState(() => _searching = false);
+      if (mounted && revision == _searchRevision) {
+        setState(() => _searching = false);
+      }
     }
   }
 
   void _queueSearch(String value) {
-    if (mounted) setState(() {});
     _searchDebounce?.cancel();
+    ++_searchRevision;
+    setState(() {
+      _searchResults = null;
+      _searchFailed = false;
+      _searching = false;
+    });
     if (value.trim().length < 2) return;
     _searchDebounce = Timer(const Duration(milliseconds: 420), _search);
   }
 
   void _clearSearch() {
     _searchDebounce?.cancel();
+    ++_searchRevision;
     _searchController.clear();
     setState(() {
       _searchResults = null;
       _searchFailed = false;
+      _searching = false;
     });
     _searchFocus.requestFocus();
   }
@@ -436,7 +542,9 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     await _action(id, () async {
       await ref.read(socialRepositoryProvider).sendFriendRequest(id);
       _message('تم إرسال طلب الصداقة.');
-      await _search();
+      if (mounted && _searchController.text.trim().length >= 2) {
+        await _search();
+      }
     });
   }
 
@@ -575,74 +683,403 @@ final class _FriendsScreenState extends ConsumerState<FriendsScreen> {
 }
 
 final class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, required this.count});
+  const _SectionTitle({
+    required this.title,
+    required this.count,
+    required this.icon,
+    required this.accent,
+    this.emphasized = false,
+  });
 
   final String title;
   final int count;
+  final IconData icon;
+  final Color accent;
+  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 7,
-          height: 7,
-          decoration: const BoxDecoration(
-            color: AppColors.primary,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              height: 1.2,
-              fontWeight: FontWeight.w900,
+    return Container(
+      padding: emphasized
+          ? const EdgeInsetsDirectional.fromSTEB(8, 7, 8, 7)
+          : EdgeInsets.zero,
+      decoration: emphasized
+          ? BoxDecoration(
+              color: AppColors.brandLime.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppColors.brandLime.withValues(alpha: .52),
+              ),
+            )
+          : null,
+      child: Row(
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: .14),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: emphasized
+                  ? AppColors.ink
+                  : accent == AppColors.gold
+                  ? AppColors.coffee
+                  : accent,
             ),
           ),
-        ),
-        Container(
-          constraints: const BoxConstraints(minWidth: 38, minHeight: 28),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.paper1,
-            borderRadius: BorderRadius.circular(99),
-            border: Border.all(color: AppColors.hairline),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 17,
+                height: 1.2,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
-          alignment: Alignment.center,
-          child: Text(
-            '$count',
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
+          Container(
+            constraints: const BoxConstraints(minWidth: 38, minHeight: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: emphasized ? AppColors.ink : AppColors.paper1,
+              borderRadius: BorderRadius.circular(99),
+              border: Border.all(
+                color: emphasized ? AppColors.ink : AppColors.hairline,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '$count',
+              style: TextStyle(
+                color: emphasized ? AppColors.brandLime : AppColors.ink,
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
+enum _PlayerCardTone { search, incoming, outgoing, friend }
+
 final class _PlayerCard extends StatelessWidget {
-  const _PlayerCard({required this.row, required this.trailing, this.subtitle});
+  const _PlayerCard({
+    required this.row,
+    required this.trailing,
+    required this.tone,
+    this.subtitle,
+  });
 
   final Map<String, Object?> row;
   final Widget trailing;
   final String? subtitle;
+  final _PlayerCardTone tone;
 
   @override
   Widget build(BuildContext context) {
     final name = '${row['display_name'] ?? row['username'] ?? 'لاعب 11'}';
+    final username = '${row['username'] ?? ''}'.trim();
+    final metadata =
+        subtitle ?? (username.isEmpty ? null : 'اسم المستخدم · $username');
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: SocialPlayerRow(
         displayName: name,
         avatarUrl: row['avatar_url'] as String?,
-        username: '${row['username'] ?? ''}',
-        subtitle: subtitle,
+        subtitle: metadata,
+        highlighted: tone == _PlayerCardTone.incoming,
         trailing: trailing,
       ),
     );
   }
+}
+
+final class _FriendsDiscoveryArtwork extends StatelessWidget {
+  const _FriendsDiscoveryArtwork();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    key: const ValueKey('friends-discovery-artwork'),
+    width: 180,
+    height: 120,
+    child: Image.asset(
+      'assets/visuals/friends_discovery_cutout_v1.png',
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+    ),
+  );
+}
+
+final class _SearchHeaderIcon extends StatelessWidget {
+  const _SearchHeaderIcon();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 34,
+    height: 34,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: AppColors.ink,
+      borderRadius: BorderRadius.circular(11),
+    ),
+    child: const Icon(
+      Icons.person_add_alt_1_rounded,
+      size: 17,
+      color: AppColors.brandLime,
+    ),
+  );
+}
+
+final class _FriendsOverview extends StatelessWidget {
+  const _FriendsOverview({
+    required this.friends,
+    required this.inbox,
+    required this.outbox,
+  });
+
+  final int friends;
+  final int inbox;
+  final int outbox;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    label: '$friends أصدقاء، $inbox طلبات بانتظار ردك، $outbox طلبات مرسلة',
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.ink,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.ink),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: .1),
+            offset: const Offset(0, 5),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _OverviewMetric(
+              value: friends,
+              label: 'أصدقاء',
+              icon: Icons.groups_rounded,
+              color: AppColors.brandLime,
+            ),
+          ),
+          const _OverviewDivider(),
+          Expanded(
+            child: _OverviewMetric(
+              value: inbox,
+              label: 'بانتظارك',
+              icon: Icons.mark_email_unread_rounded,
+              color: AppColors.gold,
+            ),
+          ),
+          const _OverviewDivider(),
+          Expanded(
+            child: _OverviewMetric(
+              value: outbox,
+              label: 'مرسلة',
+              icon: Icons.schedule_send_rounded,
+              color: AppColors.teamBlue,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+final class _OverviewMetric extends StatelessWidget {
+  const _OverviewMetric({
+    required this.value,
+    required this.label,
+    required this.icon,
+    required this.color,
+  });
+
+  final int value;
+  final String label;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 17, color: color),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$value',
+                textDirection: TextDirection.ltr,
+                style: const TextStyle(
+                  color: AppColors.paper0,
+                  fontSize: 16,
+                  height: 1,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.paper3,
+                  fontSize: 10,
+                  height: 1,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+final class _OverviewDivider extends StatelessWidget {
+  const _OverviewDivider();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 1,
+    height: 32,
+    color: AppColors.paper0.withValues(alpha: .16),
+  );
+}
+
+final class _FriendsLoadingView extends StatelessWidget {
+  const _FriendsLoadingView();
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Container(
+        height: 64,
+        decoration: BoxDecoration(
+          color: AppColors.ink,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        alignment: Alignment.center,
+        child: const SizedBox.square(
+          dimension: 24,
+          child: CircularProgressIndicator(
+            color: AppColors.brandLime,
+            strokeWidth: 2.5,
+          ),
+        ),
+      ),
+      const SizedBox(height: 14),
+      const _FriendSkeletonRow(),
+      const SizedBox(height: 8),
+      const _FriendSkeletonRow(),
+      const SizedBox(height: 8),
+      const _FriendSkeletonRow(),
+    ],
+  );
+}
+
+final class _FriendSkeletonRow extends StatelessWidget {
+  const _FriendSkeletonRow();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 68,
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: AppColors.paper1,
+      borderRadius: BorderRadius.circular(17),
+      border: Border.all(color: AppColors.hairline),
+    ),
+    child: Row(
+      children: [
+        const CircleAvatar(radius: 20, backgroundColor: AppColors.paper2),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 118,
+                height: 9,
+                decoration: BoxDecoration(
+                  color: AppColors.paper2,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+              const SizedBox(height: 7),
+              Container(
+                width: 76,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: AppColors.paper2,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+final class _RelationshipPill extends StatelessWidget {
+  const _RelationshipPill({
+    required this.label,
+    required this.icon,
+    required this.color,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(minHeight: 36),
+    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: .1),
+      borderRadius: BorderRadius.circular(99),
+      border: Border.all(color: color.withValues(alpha: .38)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 final class _SearchMessage extends StatelessWidget {

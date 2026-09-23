@@ -65,6 +65,7 @@ final class AhdashImage extends StatelessWidget {
                     cacheWidth: cacheWidth,
                     cacheHeight: cacheHeight,
                     semanticLabel: semanticLabel,
+                    errorBuilder: (_, _, _) => fallback,
                   )
                 : CachedNetworkImage(
                     imageUrl: imageUrl!,

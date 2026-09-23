@@ -50,6 +50,9 @@ void main() {
     expect(theme.scaffoldBackgroundColor, AppColors.paper0);
     expect(theme.extension<AhdashColors>(), AhdashColors.light);
     expect(theme.textTheme.bodyMedium?.fontFamily, AppTypography.bodyFamily);
+    expect(theme.materialTapTargetSize, MaterialTapTargetSize.padded);
+    expect(theme.bottomSheetTheme.dragHandleSize, const Size(36, 4));
+    expect(theme.popupMenuTheme.surfaceTintColor, Colors.transparent);
   });
 
   test('responsive metrics switch composition instead of global scaling', () {

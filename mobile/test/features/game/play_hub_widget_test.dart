@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/test_app.dart';
 
 void main() {
-  testWidgets('Play Hub separates game types and marks unavailable modes', (
+  testWidgets('Play Hub exposes only local Party and solo play', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(844, 390);
@@ -21,10 +21,8 @@ void main() {
     expect(find.text('تحدي الفرق'), findsOneWidget);
     expect(find.text('اللعب الفردي'), findsOneWidget);
     expect(find.text('ابدأ اللعب الآن'), findsOneWidget);
-    await tester.drag(find.byType(ListView), const Offset(0, -260));
-    await tester.pumpAndSettle();
-    expect(find.text('أونلاين (قريبًا)'), findsOneWidget);
-    expect(find.text('قريبًا'), findsWidgets);
+    expect(find.text('أونلاين (قريبًا)'), findsNothing);
+    expect(find.textContaining('مباراة عشوائية'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

@@ -128,6 +128,7 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
   }) {
     if (portrait) {
       return _portraitAuthLayout(
+        remoteBackground: remoteBackground,
         busy: busy,
         showGoogle: showGoogle,
         showApple: showApple,
@@ -178,12 +179,14 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _portraitAuthLayout({
+    required String? remoteBackground,
     required bool busy,
     required bool showGoogle,
     required bool showApple,
     required bool reducedMotion,
   }) {
-    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardOpen = mediaQuery.viewInsets.bottom > 0;
     if (!_initialScrollSettled) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -194,69 +197,94 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
       });
     }
     return ColoredBox(
-      color: AppColors.paper0,
-      child: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: LayoutBuilder(
-            builder: (context, constraints) => KeyedSubtree(
-              key: const ValueKey('v10-keyboard-scroll'),
-              child: SingleChildScrollView(
-                key: ValueKey('auth-scroll-${_mode.name}'),
-                controller: _portraitScroll,
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  keyboardOpen ? 8 : 14,
-                  16,
-                  keyboardOpen ? 18 : 20,
-                ),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight:
-                        (constraints.maxHeight - (keyboardOpen ? 26 : 34))
-                            .clamp(0, double.infinity),
+      color: AppColors.ink,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth <= 360;
+            final safeTop = mediaQuery.padding.top;
+            final safeBottom = mediaQuery.padding.bottom;
+            final sheetTop = keyboardOpen
+                ? safeTop + 48
+                : compact
+                ? 188.0
+                : 202.0;
+            final topPadding = keyboardOpen ? 16.0 : 21.0;
+            final bottomPadding = keyboardOpen
+                ? mediaQuery.viewInsets.bottom + 18
+                : safeBottom + 18;
+            final minimumContentHeight =
+                (constraints.maxHeight - sheetTop - topPadding - bottomPadding)
+                    .clamp(0.0, double.infinity);
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: sheetTop + 30,
+                  child: _AuthHero(
+                    remoteUrl: remoteBackground,
+                    condensed: keyboardOpen,
                   ),
-                  child: _entrance(
-                    reducedMotion: reducedMotion,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _AuthPortraitBrand(
-                          compact: constraints.maxWidth <= 360,
+                ),
+                Positioned(
+                  top: sheetTop,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: AppColors.paper0,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(22),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x30191714),
+                          blurRadius: 24,
+                          offset: Offset(0, -6),
                         ),
-                        SizedBox(height: keyboardOpen ? 10 : 16),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: AppColors.paper1,
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(color: AppColors.hairline),
+                      ],
+                    ),
+                    child: KeyedSubtree(
+                      key: const ValueKey('v10-keyboard-scroll'),
+                      child: SingleChildScrollView(
+                        key: ValueKey('auth-scroll-${_mode.name}'),
+                        controller: _portraitScroll,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: EdgeInsets.fromLTRB(
+                          compact ? 22 : 26,
+                          topPadding,
+                          compact ? 22 : 26,
+                          bottomPadding,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: minimumContentHeight,
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              constraints.maxWidth <= 360 ? 18 : 22,
-                              keyboardOpen ? 16 : 20,
-                              constraints.maxWidth <= 360 ? 18 : 22,
-                              keyboardOpen ? 16 : 20,
-                            ),
+                          child: _entrance(
+                            reducedMotion: reducedMotion,
                             child: _authForm(
                               busy: busy,
                               showGoogle: showGoogle,
                               showApple: showApple,
-                              compact: constraints.maxWidth <= 390,
+                              compact: true,
                               compactSplit: false,
                               figmaPortrait: true,
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -387,8 +415,8 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
   }) {
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     final fieldGap = keyboardOpen
-        ? 10.0
-        : (figmaPortrait ? 14.0 : (compact ? 7.0 : 10.0));
+        ? 8.0
+        : (figmaPortrait ? 9.0 : (compact ? 7.0 : 10.0));
     return Form(
       key: _formKey,
       child: Column(
@@ -403,34 +431,32 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
             SizedBox(height: compact ? 5 : 12),
           ],
           Text(
-            _createAccount ? 'إنشاء حساب جديد' : 'مستعد تثبت إنك تعرف الكورة؟',
+            _createAccount ? 'إنشاء حساب جديد' : 'تسجيل دخول',
             style: AhdashTypography.headline.copyWith(
               color: AppColors.ink,
               fontSize: figmaPortrait
-                  ? (compact ? 22 : 24)
+                  ? (compact ? 20 : 22)
                   : (compact ? 22 : 28),
-              height: 1.25,
+              height: 1.2,
             ),
           ),
-          SizedBox(height: figmaPortrait ? 4 : (compact ? 3 : 5)),
-          if (figmaPortrait || !compact || _createAccount)
+          SizedBox(height: figmaPortrait ? 3 : (compact ? 3 : 5)),
+          if (!_createAccount)
             Text(
-              _createAccount
-                  ? 'حساب واحد يحفظ ألعابك وبطولاتك'
-                  : figmaPortrait
+              figmaPortrait
                   ? 'سجّل دخولك وكمل اللعب'
                   : 'سجل دخولك لتسجيل نتائجك ومنافسة رفاقك.',
               maxLines: compact ? 1 : 2,
               overflow: TextOverflow.ellipsis,
               style: AhdashTypography.metadata.copyWith(
                 color: AppColors.inkSoft,
-                fontSize: compact ? 12 : 14,
+                fontSize: compact ? 11 : 14,
               ),
             ),
           SizedBox(
             height: keyboardOpen
-                ? 10
-                : (figmaPortrait ? 17 : (compact ? 10 : 16)),
+                ? 9
+                : (figmaPortrait ? 15 : (compact ? 10 : 16)),
           ),
           if (showGoogle || showApple) ...[
             _socialActions(
@@ -439,21 +465,28 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
               showApple: showApple,
               figmaPortrait: figmaPortrait,
             ),
-            SizedBox(height: keyboardOpen ? 12 : (figmaPortrait ? 14 : 12)),
+            SizedBox(height: keyboardOpen ? 9 : (figmaPortrait ? 12 : 12)),
             Row(
               children: [
-                const Expanded(child: Divider()),
+                const Expanded(
+                  child: Divider(color: AppColors.hairline, thickness: 1),
+                ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Text(
                     'أو',
-                    style: TextStyle(color: context.ahdashColors.textMuted),
+                    style: AhdashTypography.metadata.copyWith(
+                      color: AppColors.muted,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
-                const Expanded(child: Divider()),
+                const Expanded(
+                  child: Divider(color: AppColors.hairline, thickness: 1),
+                ),
               ],
             ),
-            SizedBox(height: figmaPortrait ? 10 : 12),
+            SizedBox(height: figmaPortrait ? 9 : 12),
           ],
           if (_createAccount) ...[
             _field(
@@ -503,17 +536,27 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
                 ? const [AutofillHints.newPassword]
                 : const [AutofillHints.password],
             suffix: IconButton(
+              constraints: const BoxConstraints.tightFor(
+                width: AhdashSizing.touchTarget,
+                height: AhdashSizing.touchTarget,
+              ),
               onPressed: busy
                   ? null
                   : () => setState(() => _obscurePassword = !_obscurePassword),
               tooltip: _obscurePassword
                   ? 'إظهار كلمة المرور'
                   : 'إخفاء كلمة المرور',
-              icon: Icon(
-                _obscurePassword
-                    ? AhdashIcons.visibility
-                    : AhdashIcons.visibilityOff,
-                size: compact ? 17 : 19,
+              icon: Semantics(
+                toggled: !_obscurePassword,
+                label: _obscurePassword
+                    ? 'كلمة المرور مخفية'
+                    : 'كلمة المرور ظاهرة',
+                child: Icon(
+                  _obscurePassword
+                      ? AhdashIcons.visibility
+                      : AhdashIcons.visibilityOff,
+                  size: compact ? 18 : 20,
+                ),
               ),
             ),
             validator: (value) =>
@@ -524,7 +567,7 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
             SizedBox(height: compact ? 5 : 8),
             _AuthError(message: _inlineError!),
           ],
-          SizedBox(height: figmaPortrait ? 16 : (compact ? 8 : 12)),
+          SizedBox(height: figmaPortrait ? 12 : (compact ? 8 : 12)),
           if (compactSplit)
             Row(
               children: [
@@ -539,10 +582,10 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
               compact: compact,
               figmaPortrait: figmaPortrait,
             ),
-            SizedBox(height: figmaPortrait ? 10 : (compact ? 5 : 8)),
+            SizedBox(height: figmaPortrait ? 5 : (compact ? 5 : 8)),
             _modeToggle(busy: busy, compact: compact),
             if (_createAccount && figmaPortrait) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               Text(
                 'بإنشاء حسابك، أنت توافق على شروط الاستخدام وسياسة الخصوصية.',
                 textAlign: TextAlign.center,
@@ -554,46 +597,24 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
             ],
             if (!_createAccount) ...[
-              SizedBox(height: figmaPortrait ? 8 : 4),
-              Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      'أو',
-                      style: TextStyle(color: context.ahdashColors.textMuted),
-                    ),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              ),
-              SizedBox(height: figmaPortrait ? 8 : 4),
-              SizedBox(
-                height: 48,
-                child: OutlinedButton.icon(
+              SizedBox(height: figmaPortrait ? 1 : 4),
+              Center(
+                child: TextButton.icon(
                   key: const ValueKey('auth-guest-action'),
                   onPressed: busy ? null : _guest,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.ink,
-                    side: const BorderSide(color: AppColors.hairline),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.inkMuted,
+                    minimumSize: const Size(48, 44),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    textStyle: AhdashTypography.metadata.copyWith(
+                      fontSize: compact ? 11 : 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  icon: const Icon(AhdashIcons.guest),
+                  icon: const Icon(AhdashIcons.guest, size: 16),
                   label: const Text('الدخول كضيف'),
                 ),
               ),
-              if (figmaPortrait) ...[
-                const SizedBox(height: 8),
-                const Text(
-                  'لعب محلي على هذا الجهاز. الأصدقاء والبطولات وبيانات الحساب تتطلب تسجيل الدخول.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.5,
-                    color: AppColors.inkMuted,
-                  ),
-                ),
-              ],
             ],
           ],
         ],
@@ -619,8 +640,11 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
     ValueChanged<String>? onSubmitted,
   }) {
     final outline = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppRadius.small),
-      borderSide: const BorderSide(color: AppColors.hairline, width: 1.2),
+      borderRadius: BorderRadius.circular(figmaPortrait ? 12 : AppRadius.small),
+      borderSide: BorderSide(
+        color: figmaPortrait ? const Color(0xFFD9CDBB) : AppColors.hairline,
+        width: 1,
+      ),
     );
     final field = TextFormField(
       controller: controller,
@@ -646,21 +670,23 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
           fontSize: compact ? 12 : 14,
         ),
         prefixIcon: Icon(icon, size: compact ? 16 : 18),
-        prefixIconColor: AppColors.ink,
+        prefixIconColor: figmaPortrait ? AppColors.inkMuted : AppColors.ink,
         prefixIconConstraints: const BoxConstraints(
           minWidth: 44,
-          minHeight: 52,
+          minHeight: 48,
         ),
         suffixIcon: suffix,
         suffixIconColor: AppColors.ink,
         filled: true,
-        fillColor: figmaPortrait ? AppColors.paper1 : const Color(0x26191714),
+        fillColor: figmaPortrait
+            ? const Color(0xFFFFFCF7)
+            : const Color(0x26191714),
         isDense: true,
         contentPadding: EdgeInsets.symmetric(
           horizontal: 12,
-          vertical: compact ? 11 : 13,
+          vertical: figmaPortrait ? 10 : (compact ? 11 : 13),
         ),
-        constraints: figmaPortrait ? const BoxConstraints(minHeight: 52) : null,
+        constraints: figmaPortrait ? const BoxConstraints(minHeight: 48) : null,
         enabledBorder: outline,
         disabledBorder: outline.copyWith(
           borderSide: const BorderSide(color: AppColors.hairline),
@@ -688,12 +714,12 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
         Text(
           label,
           style: AhdashTypography.metadata.copyWith(
-            color: AppColors.inkSoft,
-            fontSize: 13,
+            color: AppColors.ink,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 5),
         field,
       ],
     );
@@ -705,13 +731,22 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
     bool figmaPortrait = false,
   }) {
     return SizedBox(
-      height: figmaPortrait ? 52 : (compact ? 44 : 48),
+      height: figmaPortrait ? 50 : (compact ? 44 : 48),
       child: FilledButton(
         key: const ValueKey('auth-primary-action'),
-        style: figmaPortrait && _createAccount
+        style: figmaPortrait
             ? FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF1E874B),
-                foregroundColor: Colors.white,
+                backgroundColor: context.ahdashColors.primary,
+                foregroundColor: AppColors.ink,
+                disabledBackgroundColor: context.ahdashColors.primary
+                    .withValues(alpha: .45),
+                disabledForegroundColor: AppColors.ink.withValues(alpha: .55),
+                shape: const StadiumBorder(
+                  side: BorderSide(color: AppColors.ink, width: 1.1),
+                ),
+                textStyle: AhdashTypography.button.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
               )
             : null,
         onPressed: busy ? null : _submit,
@@ -730,10 +765,12 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
       key: const ValueKey('auth-mode-toggle'),
       onPressed: busy ? null : _toggleMode,
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.ink,
+        foregroundColor: AppColors.inkMuted,
+        minimumSize: const Size(48, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         textStyle: AhdashTypography.metadata.copyWith(
           fontSize: compact ? 11 : 13,
-          decoration: TextDecoration.underline,
+          fontWeight: FontWeight.w500,
         ),
       ),
       child: Text.rich(
@@ -743,9 +780,8 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
             TextSpan(
               text: _createAccount ? 'تسجيل الدخول' : 'إنشاء حساب',
               style: const TextStyle(
-                color: Color(0xFF237A45),
+                color: Color(0xFF2E7D4F),
                 fontWeight: FontWeight.w900,
-                decoration: TextDecoration.underline,
               ),
             ),
           ],
@@ -761,11 +797,13 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
     required bool showApple,
     required bool figmaPortrait,
   }) {
+    final compactWidth = MediaQuery.sizeOf(context).width <= 360;
+    final actionHeight = figmaPortrait ? 48.0 : (compactWidth ? 48.0 : 52.0);
     return Column(
       children: [
         if (showGoogle)
           SizedBox(
-            height: 52,
+            height: actionHeight,
             width: double.infinity,
             child: OutlinedButton(
               key: const ValueKey('auth-google-action'),
@@ -775,9 +813,11 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
               style: OutlinedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF1F1F1F),
-                side: const BorderSide(color: Color(0xFF747775)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: AppColors.hairline),
+                shape: const StadiumBorder(),
+                textStyle: AhdashTypography.button.copyWith(
+                  fontSize: compactWidth ? 12 : 13,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               child: figmaPortrait
@@ -809,10 +849,10 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
                         : const Text('المتابعة باستخدام Google')),
             ),
           ),
-        if (showGoogle && showApple) const SizedBox(height: 10),
+        if (showGoogle && showApple) SizedBox(height: compactWidth ? 8 : 10),
         if (showApple)
           SizedBox(
-            height: 52,
+            height: actionHeight,
             width: double.infinity,
             child: OutlinedButton(
               key: const ValueKey('auth-apple-action'),
@@ -822,6 +862,12 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
               style: OutlinedButton.styleFrom(
                 backgroundColor: AppColors.ink,
                 foregroundColor: AppColors.paper0,
+                side: const BorderSide(color: AppColors.ink),
+                shape: const StadiumBorder(),
+                textStyle: AhdashTypography.button.copyWith(
+                  fontSize: compactWidth ? 12 : 13,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               child: figmaPortrait
                   ? const Stack(
@@ -884,16 +930,32 @@ final class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   Future<void> _signInSocial(SocialProvider provider) async {
     if (_social.isNotEmpty) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    final scrollOffset = _portraitScroll.hasClients
+        ? _portraitScroll.offset
+        : null;
     setState(() {
       _social = {provider};
       _inlineError = null;
     });
+    _restorePortraitScroll(scrollOffset);
     final authenticated = await ref
         .read(authControllerProvider.notifier)
         .signInWithSocial(provider);
     if (!mounted) return;
     setState(() => _social = {});
+    _restorePortraitScroll(scrollOffset);
     if (authenticated) _openHome();
+  }
+
+  void _restorePortraitScroll(double? offset) {
+    if (offset == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_portraitScroll.hasClients) return;
+      _portraitScroll.jumpTo(
+        offset.clamp(0, _portraitScroll.position.maxScrollExtent),
+      );
+    });
   }
 
   void _openHome() {
@@ -935,91 +997,85 @@ final class _ProviderMark extends StatelessWidget {
   final bool google;
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 36,
-    height: 36,
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: dark ? AppColors.paper0 : AppColors.paper1,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: AppColors.hairline),
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: 24,
+    child: Center(
+      child: google
+          ? Image.asset(
+              'assets/images/providers/google_g_light.png',
+              width: 20,
+              height: 20,
+              filterQuality: FilterQuality.high,
+            )
+          : icon != null
+          ? Icon(icon, size: 20, color: dark ? AppColors.paper0 : AppColors.ink)
+          : const SizedBox.shrink(),
     ),
-    child: google
-        ? Image.asset(
-            'assets/images/providers/google_g_light.png',
-            width: 36,
-            height: 36,
-            filterQuality: FilterQuality.high,
-          )
-        : icon != null
-        ? Icon(icon, size: 19, color: AppColors.ink)
-        : const SizedBox.shrink(),
   );
 }
 
-final class _AuthPortraitBrand extends StatelessWidget {
-  const _AuthPortraitBrand({required this.compact});
+final class _AuthHero extends StatelessWidget {
+  const _AuthHero({required this.remoteUrl, required this.condensed});
 
-  final bool compact;
+  final String? remoteUrl;
+  final bool condensed;
 
   @override
   Widget build(BuildContext context) => Semantics(
-    header: true,
-    label: 'أحدعش 11، تحديات كرة قدم عربية',
-    child: Row(
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.ahdashColors.primary,
-            borderRadius: BorderRadius.circular(14),
+    label: 'هوية أحدعش فوق ملعب كرة قدم مضيء',
+    image: true,
+    child: ExcludeSemantics(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          _LoginBackground(remoteUrl: remoteUrl),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.paper0.withValues(alpha: condensed ? .72 : .48),
+                  AppColors.paper0.withValues(alpha: .12),
+                  AppColors.palm.withValues(alpha: .10),
+                ],
+                stops: const [0, .56, 1],
+              ),
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(9),
-            child: AhdashBrandLogo.mark(width: 28, height: 28),
+          Align(
+            alignment: condensed ? const Alignment(0, .08) : Alignment.center,
+            child: SizedBox(
+              width: condensed ? 132 : 174,
+              height: condensed ? 44 : 58,
+              child: Image.asset(
+                'assets/branding/logo-wordmark.png',
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                excludeFromSemantics: true,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'أحدعش | 11',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AhdashTypography.sectionTitle.copyWith(
-                  color: AppColors.ink,
-                  fontSize: compact ? 19 : 21,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 126,
+              height: 2,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary.withValues(alpha: 0),
+                      AppColors.primary.withValues(alpha: .9),
+                      AppColors.primary.withValues(alpha: 0),
+                    ],
+                  ),
                 ),
               ),
-              Text(
-                'معرفة كروية. تحدّي سعودي.',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AhdashTypography.metadata.copyWith(
-                  color: AppColors.muted,
-                  fontSize: compact ? 10 : 11,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: AppColors.paper2,
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.hairline),
-          ),
-          child: const Icon(
-            AhdashIcons.football,
-            size: 20,
-            color: AppColors.ink,
-          ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -1030,32 +1086,14 @@ final class _AuthBrand extends StatelessWidget {
   final bool compact;
 
   @override
-  Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(
-        'أحدعش',
-        style: AhdashTypography.sectionTitle.copyWith(
-          color: AppColors.ink,
-          fontSize: compact ? 19 : 23,
-        ),
-      ),
-      SizedBox(width: compact ? 7 : 10),
-      DecoratedBox(
-        decoration: BoxDecoration(
-          color: context.ahdashColors.primary,
-          borderRadius: BorderRadius.circular(AppRadius.small),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(compact ? 6 : 7),
-          child: AhdashBrandLogo.mark(
-            width: compact ? 20 : 25,
-            height: compact ? 20 : 25,
-          ),
-        ),
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final darkSurface = Theme.of(context).brightness == Brightness.dark;
+    return AhdashBrandLogo(
+      width: compact ? 112 : 142,
+      height: compact ? 38 : 46,
+      onDarkSurface: darkSurface,
+    );
+  }
 }
 
 final class _AuthError extends StatelessWidget {
@@ -1116,9 +1154,9 @@ final class _LoginBackground extends StatelessWidget {
           final width = (constraints.maxWidth * ratio).round();
           final height = (constraints.maxHeight * ratio).round();
           final fallback = Image.asset(
-            'assets/images/backgrounds/v9_2_auth_stadium.png',
+            'assets/images/backgrounds/v10_auth_stadium_light.png',
             fit: BoxFit.cover,
-            alignment: Alignment.center,
+            alignment: const Alignment(0, .12),
             cacheWidth: width,
             cacheHeight: height,
           );

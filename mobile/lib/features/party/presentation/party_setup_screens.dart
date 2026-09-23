@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/services/feedback_service.dart';
-import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/domain/category.dart';
 import '../../../shared/presentation/ahdash_image.dart';
@@ -66,6 +65,7 @@ final class _PartyCategorySelectionScreenState
     final premium = ref.watch(partyEntitlementProvider).value ?? false;
     final state = ref.watch(partyGameControllerProvider);
     final selectedCount = state.selectedCategoryIds.length;
+    final largeText = MediaQuery.textScalerOf(context).scale(1) >= 1.2;
     final playableIds = catalog.value
         ?.playableCategories(premium: premium)
         .map((category) => category.id)
@@ -79,6 +79,7 @@ final class _PartyCategorySelectionScreenState
       subtitle: 'حدد مجالات الأسئلة لمجلسك',
       step: 1,
       onBack: () => context.go('/home'),
+      hideFooterWhenKeyboard: true,
       footer: PartyPrimaryButton(
         label: selectionReady
             ? 'التالي'
@@ -117,54 +118,71 @@ final class _PartyCategorySelectionScreenState
             children: [
               _CategorySelectionStatus(selectedCount: selectedCount),
               const SizedBox(height: 10),
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.paper1,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.hairline),
-                ),
-                child: SizedBox(
-                  height: context.v9Metrics.inputHeight,
-                  child: TextField(
-                    key: const ValueKey('party-category-search'),
-                    controller: _search,
-                    onChanged: (_) => setState(() {}),
-                    decoration: InputDecoration(
-                      suffixIcon: _search.text.isEmpty
-                          ? const Icon(AhdashIcons.search, size: 19)
-                          : IconButton(
-                              tooltip: 'مسح البحث',
-                              onPressed: () {
-                                _search.clear();
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.close_rounded),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.paper1,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.hairline),
+                      ),
+                      child: SizedBox(
+                        height: context.v9Metrics.inputHeight,
+                        child: TextField(
+                          key: const ValueKey('party-category-search'),
+                          controller: _search,
+                          onChanged: (_) => setState(() {}),
+                          decoration: InputDecoration(
+                            suffixIcon: _search.text.isEmpty
+                                ? const Icon(Icons.search_rounded, size: 19)
+                                : IconButton(
+                                    tooltip: 'مسح البحث',
+                                    onPressed: () {
+                                      _search.clear();
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.close_rounded),
+                                  ),
+                            hintText: largeText
+                                ? 'ابحث عن فئة...'
+                                : 'ابحث عن دوري، بطولة أو فئة...',
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(16),
+                              ),
+                              borderSide: BorderSide(
+                                color: AppColors.ink,
+                                width: 1.35,
+                              ),
                             ),
-                      hintText: 'ابحث عن دوري، بطولة أو فئة...',
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                        borderSide: BorderSide(
-                          color: AppColors.ink,
-                          width: 1.35,
+                            isDense: true,
+                          ),
                         ),
                       ),
-                      isDense: true,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 8),
+                  _CategoryFavoritesFilter(
+                    selected: _favoritesOnly,
+                    onPressed: () =>
+                        setState(() => _favoritesOnly = !_favoritesOnly),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               Expanded(
                 child: rows.isEmpty
                     ? _CategoryEmptyState(
                         catalogEmpty: value.categories.isEmpty,
-                        onClear: _search.text.isEmpty
+                        favoritesOnly: _favoritesOnly,
+                        onClear: _search.text.isEmpty && !_favoritesOnly
                             ? null
                             : () {
                                 _search.clear();
-                                setState(() {});
+                                setState(() => _favoritesOnly = false);
                               },
                       )
                     : LayoutBuilder(
@@ -176,11 +194,11 @@ final class _PartyCategorySelectionScreenState
                                   ScrollViewKeyboardDismissBehavior.onDrag,
                               padding: const EdgeInsets.only(bottom: 4),
                               gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                  SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 10,
-                                    mainAxisExtent: 148,
+                                    mainAxisExtent: largeText ? 154 : 138,
                                   ),
                               itemCount: rows.length,
                               itemBuilder: (context, index) => _categoryTile(
@@ -262,10 +280,7 @@ final class _PartyCategorySelectionScreenState
           ? null
           : Color(state.teams[selectedIndex < 3 ? 0 : 1].colorValue),
       favorite: state.favoriteCategoryIds.contains(category.id),
-      isNew:
-          category.isNew ||
-          catalog.readyCategories.indexOf(category) >=
-              math.max(0, catalog.readyCategories.length - 6),
+      isNew: category.isNew,
       featured: featured,
       locked: locked,
       onFavorite: category.favoriteEligible
@@ -284,6 +299,10 @@ final class _PartyCategorySelectionScreenState
             .firstOrNull,
         playable: catalog.readyCategories.any((item) => item.id == category.id),
         locked: locked,
+        selected: selectedIndex >= 0,
+        onSelect: locked
+            ? null
+            : () => _toggleCategory(context, ref, category.id),
       ),
     );
   }
@@ -324,10 +343,18 @@ final class _CategorySelectionStatus extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(14, 11, 14, 10),
+            padding: const EdgeInsets.fromLTRB(14, 11, 14, 12),
             decoration: BoxDecoration(
               color: AppColors.ink,
               borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFF34322E)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1F191714),
+                  offset: Offset(0, 2),
+                  blurRadius: 0,
+                ),
+              ],
             ),
             child: Column(
               children: [
@@ -348,10 +375,10 @@ final class _CategorySelectionStatus extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             selectedCount < 3
-                                ? 'أول ٣ فئات للفريق الأول'
+                                ? 'ابدأ بـ ٣ فئات للفريق الأول'
                                 : selectedCount < 6
                                 ? 'أكمل ٣ فئات للفريق الثاني'
-                                : '٦ فئات جاهزة • ٣ لكل فريق',
+                                : 'جاهزين • ٣ فئات لكل فريق',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -374,9 +401,9 @@ final class _CategorySelectionStatus extends StatelessWidget {
                           color: complete ? AppColors.ink : AppColors.paper3,
                         ),
                       ),
-                      child: Text(
-                        '${_setupArabicDigits(selectedCount)} / ٦',
-                        textDirection: TextDirection.rtl,
+                      child: _CategoryCount(
+                        current: selectedCount,
+                        total: 6,
                         style: TextStyle(
                           color: complete ? AppColors.ink : AppColors.paper0,
                           fontSize: 15,
@@ -386,33 +413,33 @@ final class _CategorySelectionStatus extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 9),
+                const SizedBox(height: 10),
                 Row(
                   children: [
-                    for (
-                      var index = 0;
-                      index < PartyGameRules.categoriesPerGame;
-                      index++
-                    ) ...[
-                      Expanded(
-                        child: AnimatedContainer(
-                          duration: MediaQuery.disableAnimationsOf(context)
-                              ? Duration.zero
-                              : PartyV2Motion.page,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: index < selectedCount
-                                ? index < 3
-                                      ? const Color(0xFFE43D74)
-                                      : const Color(0xFF1E874B)
-                                : AppColors.inkSoft,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
+                    Expanded(
+                      child: _CategoryTeamProgress(
+                        label: 'الفريق الأول',
+                        selectedCount: math.min(selectedCount, 3),
+                        color: const Color(0xFFE43D74),
                       ),
-                      if (index != PartyGameRules.categoriesPerGame - 1)
-                        const SizedBox(width: 5),
-                    ],
+                    ),
+                    const SizedBox(width: 14),
+                    Container(
+                      width: 1,
+                      height: 24,
+                      color: AppColors.inkSoft.withValues(alpha: .7),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _CategoryTeamProgress(
+                        label: 'الفريق الثاني',
+                        selectedCount: math.max(
+                          0,
+                          math.min(selectedCount - 3, 3),
+                        ),
+                        color: const Color(0xFF1E874B),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -429,10 +456,111 @@ final class _CategorySelectionStatus extends StatelessWidget {
   }
 }
 
+final class _CategoryTeamProgress extends StatelessWidget {
+  const _CategoryTeamProgress({
+    required this.label,
+    required this.selectedCount,
+    required this.color,
+  });
+
+  final String label;
+  final int selectedCount;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.paper3,
+                fontSize: 9.5,
+                height: 1.1,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          _CategoryCount(
+            current: selectedCount,
+            total: 3,
+            separator: '/',
+            style: TextStyle(
+              color: selectedCount == 3 ? color : AppColors.paper3,
+              fontSize: 9.5,
+              height: 1.1,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 6),
+      Row(
+        children: [
+          for (var index = 0; index < 3; index++) ...[
+            Expanded(
+              child: AnimatedContainer(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : PartyV2Motion.page,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: index < selectedCount ? color : AppColors.inkSoft,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ),
+            if (index != 2) const SizedBox(width: 4),
+          ],
+        ],
+      ),
+    ],
+  );
+}
+
+final class _CategoryCount extends StatelessWidget {
+  const _CategoryCount({
+    required this.current,
+    required this.total,
+    required this.style,
+    this.separator = ' / ',
+  });
+
+  final int current;
+  final int total;
+  final TextStyle style;
+  final String separator;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      textDirection: TextDirection.ltr,
+      children: [
+        Text(_setupArabicDigits(current), style: style),
+        Text(separator, style: style),
+        Text(_setupArabicDigits(total), style: style),
+      ],
+    ),
+  );
+}
+
 final class _CategoryEmptyState extends StatelessWidget {
-  const _CategoryEmptyState({required this.catalogEmpty, this.onClear});
+  const _CategoryEmptyState({
+    required this.catalogEmpty,
+    required this.favoritesOnly,
+    this.onClear,
+  });
 
   final bool catalogEmpty;
+  final bool favoritesOnly;
   final VoidCallback? onClear;
 
   @override
@@ -454,21 +582,71 @@ final class _CategoryEmptyState extends StatelessWidget {
           Text(
             catalogEmpty
                 ? 'لا توجد فئات منشورة بعد.'
+                : favoritesOnly
+                ? 'ما عندك فئات مفضلة بعد.'
                 : 'ما لقينا فئة جاهزة بهذا البحث.',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'جرّب اسم دوري أو بطولة أخرى.',
+          Text(
+            favoritesOnly
+                ? 'أضف الفئات التي تحبها بالقلب وارجع لها بسرعة.'
+                : 'جرّب اسم دوري أو بطولة أخرى.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.inkMuted, fontSize: 13),
+            style: const TextStyle(color: AppColors.inkMuted, fontSize: 13),
           ),
           if (onClear != null) ...[
             const SizedBox(height: 8),
-            TextButton(onPressed: onClear, child: const Text('مسح البحث')),
+            TextButton(
+              onPressed: onClear,
+              child: Text(favoritesOnly ? 'عرض كل الفئات' : 'مسح البحث'),
+            ),
           ],
         ],
+      ),
+    ),
+  );
+}
+
+final class _CategoryFavoritesFilter extends StatelessWidget {
+  const _CategoryFavoritesFilter({
+    required this.selected,
+    required this.onPressed,
+  });
+
+  final bool selected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: selected ? 'عرض كل الفئات' : 'الفئات المفضلة',
+    child: Semantics(
+      button: true,
+      selected: selected,
+      label: selected ? 'فلتر المفضلة مفعّل' : 'عرض الفئات المفضلة',
+      child: Material(
+        color: selected ? AppColors.ink : AppColors.paper1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: selected ? AppColors.ink : AppColors.hairline,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          key: const ValueKey('party-category-favorites-filter'),
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox.square(
+            dimension: context.v9Metrics.inputHeight,
+            child: Icon(
+              selected ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+              size: 20,
+              color: selected ? AppColors.primary : AppColors.ink,
+            ),
+          ),
+        ),
       ),
     ),
   );
@@ -574,16 +752,22 @@ final class _CategoryTile extends StatelessWidget {
         duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
         child: Material(
           color: Colors.transparent,
+          elevation: selected ? 1.5 : .6,
+          shadowColor: AppColors.ink.withValues(alpha: .18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
             onLongPress: onInfo,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             child: AnimatedContainer(
               duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
                 color: const Color(0xFFF4EBDD),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: selected
                       ? AppColors.ink
@@ -596,15 +780,6 @@ final class _CategoryTile extends StatelessWidget {
                       ? 1.4
                       : 1,
                 ),
-                boxShadow: selected
-                    ? const [
-                        BoxShadow(
-                          color: Color(0x26191714),
-                          offset: Offset(0, 3),
-                          blurRadius: 0,
-                        ),
-                      ]
-                    : null,
               ),
               child: Column(
                 children: [
@@ -646,6 +821,21 @@ final class _CategoryTile extends StatelessWidget {
                             top: 8,
                             start: 8,
                             child: PremiumCategoryBadge(compact: true),
+                          ),
+                        if (!locked && !selected && onFavorite != null)
+                          PositionedDirectional(
+                            top: 7,
+                            start: 7,
+                            child: _CategoryImageAction(
+                              tooltip: favorite
+                                  ? 'إزالة من المفضلة'
+                                  : 'إضافة للمفضلة',
+                              onPressed: onFavorite!,
+                              icon: favorite
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              selected: favorite,
+                            ),
                           ),
                         if (selected)
                           PositionedDirectional(
@@ -693,11 +883,37 @@ final class _CategoryTile extends StatelessWidget {
                               child: const Icon(Icons.lock_rounded, size: 17),
                             ),
                           ),
+                        if (isNew && !locked && !selected)
+                          PositionedDirectional(
+                            bottom: 7,
+                            start: 8,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 7,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: AppColors.ink.withValues(alpha: .24),
+                                ),
+                              ),
+                              child: const Text(
+                                'جديد',
+                                style: TextStyle(
+                                  fontSize: 8.5,
+                                  height: 1,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
                   Container(
-                    height: 44,
+                    height: 46,
                     decoration: BoxDecoration(
                       color: selected
                           ? const Color(0xFFEAF3EC)
@@ -713,28 +929,12 @@ final class _CategoryTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 10,
+                      end: 5,
+                    ),
                     child: Row(
                       children: [
-                        if (!selected && onFavorite != null)
-                          IconButton(
-                            tooltip: favorite
-                                ? 'إزالة من المفضلة'
-                                : 'إضافة للمفضلة',
-                            onPressed: onFavorite,
-                            constraints: const BoxConstraints.tightFor(
-                              width: 30,
-                              height: 40,
-                            ),
-                            padding: EdgeInsets.zero,
-                            icon: Icon(
-                              favorite
-                                  ? AhdashIcons.favoriteSelected
-                                  : AhdashIcons.favorite,
-                              size: 16,
-                            ),
-                          ),
-                        SizedBox(width: selected ? 0 : 7),
                         Expanded(
                           child: Text(
                             category.name,
@@ -748,6 +948,21 @@ final class _CategoryTile extends StatelessWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(width: 3),
+                        IconButton(
+                          tooltip: 'تفاصيل ${category.name}',
+                          onPressed: onInfo,
+                          constraints: const BoxConstraints.tightFor(
+                            width: 34,
+                            height: 40,
+                          ),
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(
+                            Icons.info_outline_rounded,
+                            size: 18,
+                            color: AppColors.inkSoft,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -759,6 +974,34 @@ final class _CategoryTile extends StatelessWidget {
       ),
     );
   }
+}
+
+final class _CategoryImageAction extends StatelessWidget {
+  const _CategoryImageAction({
+    required this.tooltip,
+    required this.onPressed,
+    required this.icon,
+    required this.selected,
+  });
+
+  final String tooltip;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    tooltip: tooltip,
+    onPressed: onPressed,
+    constraints: const BoxConstraints.tightFor(width: 32, height: 32),
+    padding: EdgeInsets.zero,
+    style: IconButton.styleFrom(
+      backgroundColor: AppColors.paper0.withValues(alpha: .92),
+      foregroundColor: selected ? const Color(0xFFE43D74) : AppColors.ink,
+      side: BorderSide(color: AppColors.ink.withValues(alpha: .12)),
+    ),
+    icon: Icon(icon, size: 17),
+  );
 }
 
 final class _CategoryImageFallback extends StatelessWidget {
@@ -798,22 +1041,32 @@ void _showCategoryDetail(
   QuizQuestion? sample, {
   required bool playable,
   required bool locked,
+  required bool selected,
+  required VoidCallback? onSelect,
 }) {
   final parentContext = context;
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (context) => FractionallySizedBox(
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) => FractionallySizedBox(
       heightFactor: 0.9,
       child: PartyCategoryDetailPanel(
         category: category,
         sample: sample,
         playable: playable,
         locked: locked,
+        selected: selected,
+        onSelect: onSelect == null
+            ? null
+            : () {
+                Navigator.pop(sheetContext);
+                onSelect();
+              },
         onPremium: locked
             ? () {
-                Navigator.pop(context);
+                Navigator.pop(sheetContext);
                 unawaited(_showPremiumGate(parentContext, category));
               }
             : null,
@@ -828,6 +1081,8 @@ final class PartyCategoryDetailPanel extends StatelessWidget {
     this.sample,
     this.playable,
     this.locked = false,
+    this.selected = false,
+    this.onSelect,
     this.onPremium,
     super.key,
   });
@@ -836,6 +1091,8 @@ final class PartyCategoryDetailPanel extends StatelessWidget {
   final QuizQuestion? sample;
   final bool? playable;
   final bool locked;
+  final bool selected;
+  final VoidCallback? onSelect;
   final VoidCallback? onPremium;
 
   @override
@@ -848,8 +1105,11 @@ final class PartyCategoryDetailPanel extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 37),
           child: _CategoryDetails(
             category: category,
+            sample: sample,
             playable: playable,
             locked: locked,
+            selected: selected,
+            onSelect: onSelect,
             onPremium: onPremium,
           ),
         ),
@@ -861,19 +1121,25 @@ final class PartyCategoryDetailPanel extends StatelessWidget {
 final class _CategoryDetails extends StatelessWidget {
   const _CategoryDetails({
     required this.category,
+    required this.sample,
     required this.playable,
     required this.locked,
+    required this.selected,
+    required this.onSelect,
     required this.onPremium,
   });
 
   final QuizCategory category;
+  final QuizQuestion? sample;
   final bool? playable;
   final bool locked;
+  final bool selected;
+  final VoidCallback? onSelect;
   final VoidCallback? onPremium;
 
   @override
   Widget build(BuildContext context) {
-    final compact = MediaQuery.sizeOf(context).height < 820;
+    final compact = MediaQuery.sizeOf(context).height < 880;
     return SafeArea(
       child: Center(
         child: ConstrainedBox(
@@ -891,7 +1157,7 @@ final class _CategoryDetails extends StatelessWidget {
                       child: IconButton.outlined(
                         tooltip: 'عودة للفئات',
                         onPressed: () => Navigator.maybePop(context),
-                        icon: const Icon(AhdashIcons.back),
+                        icon: const Icon(Icons.arrow_back_rounded),
                       ),
                     ),
                     const Positioned.fill(
@@ -985,6 +1251,12 @@ final class _CategoryDetails extends StatelessWidget {
                         : 'جاهزة للعب',
                     accent: locked ? AppColors.gold : category.accentColor,
                   ),
+                  if (selected)
+                    const _CategoryMetaPill(
+                      icon: Icons.check_circle_outline_rounded,
+                      label: 'ضمن اختياراتك',
+                      accent: Color(0xFF1E874B),
+                    ),
                   if (category.seasonLabel?.isNotEmpty == true)
                     _CategoryMetaPill(
                       icon: Icons.calendar_today_rounded,
@@ -996,70 +1268,98 @@ final class _CategoryDetails extends StatelessWidget {
               const SizedBox(height: 12),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF4EBDD),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: const Color(0xFFD3C6B2)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'عن الفئة',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4EBDD),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: const Color(0xFFD3C6B2)),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          category.description.isEmpty
-                              ? 'لا يتوفر وصف منشور لهذه الفئة.'
-                              : category.description,
-                          style: TextStyle(
-                            color: context.ahdashColors.textSecondary,
-                            height: 1.55,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Divider(height: 1),
-                        const SizedBox(height: 10),
-                        const Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Icon(
-                              Icons.dynamic_feed_outlined,
-                              size: 16,
-                              color: AppColors.inkMuted,
+                            Row(
+                              children: [
+                                Container(
+                                  width: 4,
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    color: locked
+                                        ? AppColors.gold
+                                        : category.accentColor,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'عن الفئة',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(width: 7),
+                            const SizedBox(height: 8),
                             Text(
-                              'عدد الأسئلة متغير',
+                              category.description.isEmpty
+                                  ? 'لا يتوفر وصف منشور لهذه الفئة.'
+                                  : category.description,
                               style: TextStyle(
-                                color: AppColors.inkSoft,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
+                                color: context.ahdashColors.textSecondary,
+                                height: 1.55,
                               ),
                             ),
+                            const SizedBox(height: 12),
+                            const Divider(height: 1),
+                            const SizedBox(height: 10),
+                            const Row(
+                              children: [
+                                Icon(
+                                  Icons.dynamic_feed_outlined,
+                                  size: 16,
+                                  color: AppColors.inkMuted,
+                                ),
+                                SizedBox(width: 7),
+                                Text(
+                                  'عدد الأسئلة متغير',
+                                  style: TextStyle(
+                                    color: AppColors.inkSoft,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (category.gameplayInstructions?.isNotEmpty ==
+                                true) ...[
+                              const SizedBox(height: 12),
+                              const Divider(height: 1),
+                              const SizedBox(height: 10),
+                              Text(
+                                category.gameplayInstructions!,
+                                style: const TextStyle(
+                                  color: AppColors.inkSoft,
+                                  fontSize: 13,
+                                  height: 1.45,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
-                        if (category.gameplayInstructions?.isNotEmpty ==
-                            true) ...[
-                          const SizedBox(height: 12),
-                          const Divider(height: 1),
-                          const SizedBox(height: 10),
-                          Text(
-                            category.gameplayInstructions!,
-                            style: const TextStyle(
-                              color: AppColors.inkSoft,
-                              fontSize: 13,
-                              height: 1.45,
-                            ),
-                          ),
-                        ],
+                      ),
+                      if (!locked &&
+                          sample?.text.trim().isNotEmpty == true) ...[
+                        const SizedBox(height: 10),
+                        _CategorySampleCard(
+                          question: sample!.text.trim(),
+                          accent: category.accentColor,
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -1069,12 +1369,24 @@ final class _CategoryDetails extends StatelessWidget {
                     ? 'عرض Premium'
                     : playable == false
                     ? 'العودة للفئات'
-                    : 'تحديد هذه الفئة',
-                icon: locked ? Icons.lock_open_rounded : Icons.check_rounded,
+                    : onSelect == null
+                    ? 'العودة للفئات'
+                    : selected
+                    ? 'إزالة من الاختيارات'
+                    : 'اختيار هذه الفئة',
+                icon: locked
+                    ? Icons.lock_open_rounded
+                    : onSelect == null || playable == false
+                    ? Icons.arrow_back_rounded
+                    : selected
+                    ? Icons.remove_circle_outline_rounded
+                    : Icons.check_rounded,
                 backgroundColor: const Color(0xFFB6FF3B),
                 foregroundColor: const Color(0xFF191714),
                 onPressed: locked && onPremium != null
                     ? onPremium
+                    : playable != false && onSelect != null
+                    ? onSelect
                     : () => Navigator.maybePop(context),
               ),
             ],
@@ -1083,6 +1395,66 @@ final class _CategoryDetails extends StatelessWidget {
       ),
     );
   }
+}
+
+final class _CategorySampleCard extends StatelessWidget {
+  const _CategorySampleCard({required this.question, required this.accent});
+
+  final String question;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: accent.withValues(alpha: .08),
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: accent.withValues(alpha: .38)),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: .17),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Icon(Icons.quiz_outlined, size: 19, color: accent),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'مثال سؤال',
+                style: TextStyle(
+                  color: AppColors.inkSoft,
+                  fontSize: 11,
+                  height: 1.2,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                question,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  height: 1.4,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 final class _CategoryMetaPill extends StatelessWidget {
@@ -1201,6 +1573,7 @@ final class _PartyTeamSetupScreenState
       title: 'تكوين الفرق',
       subtitle: 'وزع رفاق المجلس إلى فريقين',
       step: 2,
+      hideFooterWhenKeyboard: true,
       onBack: () => context.go('/party/categories?review=1'),
       footer: PartyPrimaryButton(
         label: 'التالي',
@@ -1213,26 +1586,39 @@ final class _PartyTeamSetupScreenState
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.only(top: 8, bottom: 12),
         children: [
-          firstTeam,
-          SizedBox(height: 56, child: versus),
-          secondTeam,
           if (teamError != null) ...[
-            const SizedBox(height: 10),
-            Text(
-              teamError,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: context.ahdashColors.error,
-                fontWeight: FontWeight.w800,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              decoration: BoxDecoration(
+                color: context.ahdashColors.error.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(
+                  color: context.ahdashColors.error.withValues(alpha: 0.32),
+                ),
+              ),
+              child: Text(
+                teamError,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: context.ahdashColors.error,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
+            const SizedBox(height: 10),
           ],
-          const SizedBox(height: 10),
-          TextButton.icon(
+          if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
+            const _TeamSetupHero(),
+            const SizedBox(height: 12),
+          ],
+          firstTeam,
+          SizedBox(height: 44, child: versus),
+          secondTeam,
+          const SizedBox(height: 12),
+          _OptionalSplitterTile(
             key: const ValueKey('party-use-splitter'),
             onPressed: teamError == null ? _continueWithSplitter : null,
-            icon: const Icon(AhdashIcons.random),
-            label: const Text('إضافة اللاعبين وتقسيمهم اختياريًا'),
           ),
         ],
       ),
@@ -1266,6 +1652,178 @@ final class _PartyTeamSetupScreenState
   }
 }
 
+final class _TeamSetupHero extends StatelessWidget {
+  const _TeamSetupHero();
+  @override
+  Widget build(BuildContext context) => const _PartySetupVisualHero(
+    key: ValueKey('party-team-setup-hero'),
+    title: 'جهّز مواجهة الليلة',
+    subtitle: 'اسم مميز ولون واضح لكل فريق',
+    image: 'assets/visuals/party_team_duo_v1.png',
+  );
+}
+
+/// Decorative artwork never replaces live names, counts or team colors.
+final class _PartySetupVisualHero extends StatelessWidget {
+  const _PartySetupVisualHero({
+    required this.title,
+    required this.subtitle,
+    required this.image,
+    this.playerCount,
+    super.key,
+  });
+  final String title;
+  final String subtitle;
+  final String image;
+  final int? playerCount;
+  @override
+  Widget build(BuildContext context) {
+    // Keep the active input above the keyboard; artwork is not form content.
+    if (MediaQuery.viewInsetsOf(context).bottom > 0) {
+      return const SizedBox.shrink();
+    }
+    final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+    return Container(
+      constraints: const BoxConstraints(minHeight: 120),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [Color(0xFF214B3D), Color(0xFF122D26)],
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.paper3.withValues(alpha: .2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.paper0,
+                    fontSize: 17,
+                    height: 1.35,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Color(0xFFD2DFD3),
+                    fontSize: 11,
+                    height: 1.5,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (playerCount != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      '$playerCount لاعب',
+                      style: const TextStyle(
+                        color: AppColors.ink,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Image.asset(
+            image,
+            width: largeText ? 62 : 102,
+            height: largeText ? 70 : 100,
+            fit: BoxFit.contain,
+            excludeFromSemantics: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _OptionalSplitterTile extends StatelessWidget {
+  const _OptionalSplitterTile({required this.onPressed, super.key});
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    enabled: onPressed != null,
+    label: 'إضافة أسماء اللاعبين وتقسيمهم تلقائيًا، خطوة اختيارية',
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F6F1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF93B7A4)),
+          ),
+          child: const Row(
+            children: [
+              SizedBox.square(
+                dimension: 36,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF173F34),
+                    borderRadius: BorderRadius.all(Radius.circular(11)),
+                  ),
+                  child: Icon(Icons.shuffle_rounded, color: AppColors.primary),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'قسّم اللاعبين تلقائيًا',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'اختياري — أضف الأسماء ودع أحدعش يوزعهم',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 10, color: AppColors.inkMuted),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_left_rounded, size: 21),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 final class _TeamStage extends StatelessWidget {
   const _TeamStage({required this.color, required this.child});
 
@@ -1275,17 +1833,24 @@ final class _TeamStage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final spacious = constraints.maxHeight > 190;
-      return DecoratedBox(
+      final spacious = constraints.maxWidth >= 390;
+      return Container(
         decoration: BoxDecoration(
           color: const Color(0xFFF4EBDD),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD3C6B2)),
+          border: Border.all(color: color.withValues(alpha: 0.55), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.09),
+              offset: const Offset(0, 3),
+              blurRadius: 0,
+            ),
+          ],
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: spacious ? 16 : 14,
-            vertical: 10,
+            vertical: 11,
           ),
           child: Center(child: child),
         ),
@@ -1322,39 +1887,51 @@ final class _TeamLineEditor extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            textDirection: TextDirection.ltr,
             children: [
               Container(
-                width: 12,
-                height: 12,
+                width: 34,
+                height: 34,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: Color(team.colorValue),
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(11),
                 ),
-              ),
-              const SizedBox(width: 7),
-              Text(
-                'الفريق ${index == 0 ? 'أ' : 'ب'}',
-                maxLines: 1,
-                style: TextStyle(
-                  color: context.ahdashColors.textMuted,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
                 child: Text(
-                  index == 0 ? 'الفريق الأول' : 'الفريق الثاني',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.end,
-                  style: const TextStyle(fontWeight: FontWeight.w900),
+                  index == 0 ? 'أ' : 'ب',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      index == 0 ? 'الفريق الأول' : 'الفريق الثاني',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    Text(
+                      'سيظهر بهذا الاسم طوال الجولة',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: context.ahdashColors.textMuted,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 9),
           SizedBox(
             height: context.v9Metrics.inputHeight,
             child: TextField(
@@ -1371,55 +1948,80 @@ final class _TeamLineEditor extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 9),
           Row(
             children: [
-              PopupMenuButton<int>(
-                tooltip: 'تغيير لون الفريق',
-                padding: EdgeInsets.zero,
-                onSelected: (value) => ref
-                    .read(partyGameControllerProvider.notifier)
-                    .updateTeam(index, colorValue: value),
-                itemBuilder: (_) => [
-                  for (final value in _teamColors)
-                    PopupMenuItem(
-                      value: value,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: Color(value),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                ],
-                child: SizedBox.square(
-                  dimension: 44,
-                  child: Center(
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: Color(team.colorValue),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
               Text(
-                'لون الفريق',
+                'اللون',
                 style: TextStyle(
                   color: context.ahdashColors.textMuted,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
+              const Spacer(),
+              for (final value in _teamColors) ...[
+                _TeamColorChoice(
+                  value: value,
+                  selected: team.colorValue == value,
+                  onTap: () => ref
+                      .read(partyGameControllerProvider.notifier)
+                      .updateTeam(index, colorValue: value),
+                ),
+                if (value != _teamColors.last) const SizedBox(width: 7),
+              ],
             ],
           ),
         ],
+      ),
+    ),
+  );
+}
+
+final class _TeamColorChoice extends StatelessWidget {
+  const _TeamColorChoice({
+    required this.value,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final int value;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: selected,
+    label: selected ? 'لون الفريق الحالي' : 'اختيار لون الفريق',
+    child: InkResponse(
+      onTap: onTap,
+      radius: 22,
+      child: SizedBox.square(
+        dimension: 32,
+        child: Center(
+          child: AnimatedContainer(
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : PartyV2Motion.page,
+            width: selected ? 27 : 22,
+            height: selected ? 27 : 22,
+            decoration: BoxDecoration(
+              color: Color(value),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selected ? AppColors.ink : AppColors.paper0,
+                width: selected ? 2.5 : 1.5,
+              ),
+              boxShadow: selected
+                  ? const [BoxShadow(color: Color(0x29191714), blurRadius: 5)]
+                  : null,
+            ),
+            child: selected
+                ? const Icon(Icons.check_rounded, color: Colors.white, size: 15)
+                : null,
+          ),
+        ),
       ),
     ),
   );
@@ -1755,13 +2357,11 @@ final class _PartyTeamSplitterSheetState
                       keyboardDismissBehavior:
                           ScrollViewKeyboardDismissBehavior.onDrag,
                       children: [
-                        SizedBox(
-                          height: keyboardOpen
-                              ? 8
-                              : MediaQuery.sizeOf(context).width < 380
-                              ? 140
-                              : 147,
-                        ),
+                        if (!keyboardOpen) ...[
+                          _SplitterRosterHero(playerCount: names.length),
+                          const SizedBox(height: 14),
+                        ] else
+                          const SizedBox(height: 4),
                         Row(
                           children: [
                             Expanded(
@@ -1786,9 +2386,12 @@ final class _PartyTeamSplitterSheetState
                                 onPressed: _addPlayer,
                                 style: FilledButton.styleFrom(
                                   padding: EdgeInsets.zero,
-                                  backgroundColor: keyboardOpen
-                                      ? const Color(0xFFA8FF2A)
-                                      : const Color(0xFF1E874B),
+                                  backgroundColor: names.isEmpty
+                                      ? const Color(0xFF173F34)
+                                      : AppColors.primary,
+                                  foregroundColor: names.isEmpty
+                                      ? AppColors.paper0
+                                      : AppColors.ink,
                                 ),
                                 child: const Icon(Icons.add_rounded, size: 28),
                               ),
@@ -1796,27 +2399,9 @@ final class _PartyTeamSplitterSheetState
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            for (final name in names)
-                              InputChip(
-                                label: Text(name),
-                                padding: EdgeInsets.zero,
-                                labelPadding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                ),
-                                onDeleted: () => _removePlayer(name),
-                                deleteIcon: const Icon(
-                                  Icons.cancel_outlined,
-                                  size: 15,
-                                ),
-                                visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                              ),
-                          ],
+                        _PlayerRosterChips(
+                          names: names,
+                          onRemove: _removePlayer,
                         ),
                         const SizedBox(height: 10),
                         OutlinedButton.icon(
@@ -1830,7 +2415,11 @@ final class _PartyTeamSplitterSheetState
                             ),
                           ),
                           icon: const Icon(Icons.shuffle_rounded),
-                          label: const Text('توزيع اللاعبين عشوائيًا'),
+                          label: Text(
+                            hasSplit
+                                ? 'إعادة توزيع اللاعبين'
+                                : 'توزيع اللاعبين عشوائيًا',
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Row(
@@ -1859,13 +2448,11 @@ final class _PartyTeamSplitterSheetState
                     ),
                     child: PartyPrimaryButton(
                       label: hasSplit ? 'تأكيد التشكيلة' : 'قسّم تلقائيًا',
-                      backgroundColor: MediaQuery.sizeOf(context).width < 380
-                          ? const Color(0xFF1E874B)
+                      onPressed: hasSplit
+                          ? _confirm
+                          : names.length >= 2
+                          ? _splitTeams
                           : null,
-                      foregroundColor: MediaQuery.sizeOf(context).width < 380
-                          ? Colors.white
-                          : null,
-                      onPressed: hasSplit ? _confirm : _splitTeams,
                     ),
                   ),
                 ],
@@ -1956,6 +2543,71 @@ final class _PartyTeamSplitterSheetState
   }
 }
 
+final class _SplitterRosterHero extends StatelessWidget {
+  const _SplitterRosterHero({required this.playerCount});
+  final int playerCount;
+  @override
+  Widget build(BuildContext context) => _PartySetupVisualHero(
+    key: const ValueKey('party-splitter-hero'),
+    title: 'كل الأسماء في تشكيلة واحدة',
+    subtitle: playerCount < 2
+        ? 'أضف لاعبين على الأقل لبدء التوزيع'
+        : 'جاهزون لتوزيع متوازن وعشوائي',
+    image: 'assets/visuals/party_roster_tokens_v1.png',
+    playerCount: playerCount,
+  );
+}
+
+final class _PlayerRosterChips extends StatelessWidget {
+  const _PlayerRosterChips({required this.names, required this.onRemove});
+
+  final List<String> names;
+  final ValueChanged<String> onRemove;
+
+  @override
+  Widget build(BuildContext context) => AnimatedContainer(
+    duration: MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : PartyV2Motion.page,
+    width: double.infinity,
+    constraints: const BoxConstraints(minHeight: 42),
+    padding: names.isEmpty
+        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 11)
+        : const EdgeInsets.all(7),
+    decoration: BoxDecoration(
+      color: names.isEmpty ? AppColors.paper1 : AppColors.paper0,
+      borderRadius: BorderRadius.circular(15),
+      border: Border.all(color: AppColors.hairline),
+    ),
+    child: names.isEmpty
+        ? const Text(
+            'ستظهر أسماء اللاعبين هنا',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppColors.inkMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          )
+        : Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final name in names)
+                InputChip(
+                  label: Text(name),
+                  padding: EdgeInsets.zero,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                  onDeleted: () => onRemove(name),
+                  deleteIcon: const Icon(Icons.cancel_outlined, size: 15),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+            ],
+          ),
+  );
+}
+
 final class _PortraitSplitTeamCard extends StatelessWidget {
   const _PortraitSplitTeamCard({required this.team});
 
@@ -1965,12 +2617,17 @@ final class _PortraitSplitTeamCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     return Container(
-      height: 120 + ((textScale - 1).clamp(0, 0.3) * 100),
+      constraints: BoxConstraints(
+        minHeight: 122 + ((textScale - 1).clamp(0, 0.3) * 100),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
         color: const Color(0xFFF4EBDD),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.ahdashColors.border),
+        border: Border.all(
+          color: Color(team.colorValue).withValues(alpha: 0.55),
+          width: 1.1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1987,21 +2644,53 @@ final class _PortraitSplitTeamCard extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Color(team.colorValue).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${team.players.length}',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    color: Color(team.colorValue),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
             ],
           ),
           const Divider(height: 10),
-          for (final player in team.players)
+          for (var index = 0; index < team.players.length; index++)
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                player,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 14,
-                  height: 1.1,
-                  fontWeight: FontWeight.w700,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    '${index + 1}'.padLeft(2, '0'),
+                    textDirection: TextDirection.ltr,
+                    style: const TextStyle(
+                      color: AppColors.inkMuted,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      team.players[index],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.1,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -2138,6 +2827,16 @@ final class _PartyHelperSelectionScreenState
               activeIds.containsAll(team.selectedHelpers),
         );
     final team = state.teams[_teamIndex];
+    final remaining = math.max(
+      0,
+      PartyGameRules.helpersPerTeam - team.selectedHelpers.length,
+    );
+    final otherIndex = 1 - _teamIndex;
+    final otherRemaining = math.max(
+      0,
+      PartyGameRules.helpersPerTeam -
+          state.teams[otherIndex].selectedHelpers.length,
+    );
     return PartyFlowScaffold(
       title: 'اختر المساعدات',
       subtitle: 'لكل فريق ثلاث أدوات — وكل أداة مرة واحدة في الجولة',
@@ -2151,7 +2850,13 @@ final class _PartyHelperSelectionScreenState
         children: [
           Expanded(
             child: PartyPrimaryButton(
-              label: 'التالي',
+              label: ready
+                  ? 'مراجعة التشكيلة'
+                  : remaining == 0 && otherRemaining > 0
+                  ? 'تابع مع ${state.teams[otherIndex].name}'
+                  : remaining == 1
+                  ? 'اختر مساعدة أخيرة'
+                  : 'اختر $remaining مساعدات',
               icon: Icons.arrow_back_rounded,
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.ink,
@@ -2162,6 +2867,8 @@ final class _PartyHelperSelectionScreenState
                         activeHelperIds: activeIds,
                       ),
                     )
+                  : remaining == 0 && otherRemaining > 0
+                  ? () => setState(() => _teamIndex = otherIndex)
                   : null,
             ),
           ),
@@ -2172,17 +2879,14 @@ final class _PartyHelperSelectionScreenState
           constraints: const BoxConstraints(maxWidth: 976),
           child: Column(
             children: [
-              SizedBox(
-                height: compactPortrait ? 48 : 56,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: _HelperTeamSwitcher(
-                    teams: state.teams,
-                    selectedIndex: _teamIndex,
-                    onSelected: (value) => setState(() => _teamIndex = value),
-                  ),
-                ),
+              _HelperSelectionStatus(
+                teams: state.teams,
+                selectedIndex: _teamIndex,
+                remaining: remaining,
+                compact: compactPortrait,
+                onSelected: (value) => setState(() => _teamIndex = value),
               ),
+              SizedBox(height: compactPortrait ? 9 : 12),
               Expanded(
                 child: ListView.separated(
                   key: const ValueKey('party-helper-list'),
@@ -2223,67 +2927,224 @@ final class _PartyHelperSelectionScreenState
   }
 }
 
+final class _HelperSelectionStatus extends StatelessWidget {
+  const _HelperSelectionStatus({
+    required this.teams,
+    required this.selectedIndex,
+    required this.remaining,
+    required this.compact,
+    required this.onSelected,
+  });
+
+  final List<PartyTeam> teams;
+  final int selectedIndex;
+  final int remaining;
+  final bool compact;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      _HelperTeamSwitcher(
+        teams: teams,
+        selectedIndex: selectedIndex,
+        onSelected: onSelected,
+      ),
+      SizedBox(height: compact ? 6 : 8),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              remaining == 0
+                  ? 'اكتملت اختيارات هذا الفريق'
+                  : 'متبقي $remaining من ${PartyGameRules.helpersPerTeam}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: remaining == 0
+                    ? context.ahdashColors.success
+                    : context.ahdashColors.textMuted,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          for (
+            var index = 0;
+            index < PartyGameRules.helpersPerTeam;
+            index++
+          ) ...[
+            AnimatedContainer(
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : PartyV2Motion.page,
+              width: index < teams[selectedIndex].selectedHelpers.length
+                  ? 18
+                  : 7,
+              height: 7,
+              decoration: BoxDecoration(
+                color: index < teams[selectedIndex].selectedHelpers.length
+                    ? AppColors.primary
+                    : AppColors.paper3,
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(
+                  color: index < teams[selectedIndex].selectedHelpers.length
+                      ? AppColors.ink
+                      : AppColors.hairline,
+                  width: 0.8,
+                ),
+              ),
+            ),
+            if (index < PartyGameRules.helpersPerTeam - 1)
+              const SizedBox(width: 4),
+          ],
+        ],
+      ),
+    ],
+  );
+}
+
 final class _HelperTeamSwitcher extends StatelessWidget {
   const _HelperTeamSwitcher({
     required this.teams,
     required this.selectedIndex,
     required this.onSelected,
   });
-
   final List<PartyTeam> teams;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
-
   @override
   Widget build(BuildContext context) => Container(
-    height: 42,
-    clipBehavior: Clip.antiAlias,
+    key: const ValueKey('party-helper-team-switcher'),
+    padding: const EdgeInsets.all(4),
     decoration: BoxDecoration(
-      color: const Color(0xFFF4EBDD),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: AppColors.ink, width: 1.1),
+      color: AppColors.paper1,
+      borderRadius: BorderRadius.circular(19),
+      border: Border.all(color: AppColors.hairline),
     ),
-    child: Row(
-      children: [
-        for (var index = 0; index < teams.length; index++)
-          Expanded(
-            child: InkWell(
-              onTap: () => onSelected(index),
-              child: ColoredBox(
-                color: index == selectedIndex
-                    ? AppColors.ink
-                    : Colors.transparent,
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+    child: IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var index = 0; index < teams.length; index++) ...[
+            if (index > 0) const SizedBox(width: 5),
+            Expanded(
+              child: _HelperTeamTab(
+                team: teams[index],
+                index: index,
+                selected: index == selectedIndex,
+                onPressed: () => onSelected(index),
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
+}
+
+final class _HelperTeamTab extends StatelessWidget {
+  const _HelperTeamTab({
+    required this.team,
+    required this.index,
+    required this.selected,
+    required this.onPressed,
+  });
+  final PartyTeam team;
+  final int index;
+  final bool selected;
+  final VoidCallback onPressed;
+  @override
+  Widget build(BuildContext context) {
+    final count = team.selectedHelpers.length;
+    final complete = count == PartyGameRules.helpersPerTeam;
+    return Semantics(
+      container: true,
+      button: true,
+      selected: selected,
+      label: '${team.name}، $count من ${PartyGameRules.helpersPerTeam} مساعدات',
+      child: Tooltip(
+        message: team.name,
+        child: Material(
+          color: selected ? AppColors.ink : Colors.transparent,
+          borderRadius: BorderRadius.circular(15),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            key: ValueKey('party-helper-team-$index'),
+            onTap: onPressed,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      PartyTeamDot(color: Color(teams[index].colorValue)),
+                      PartyTeamDot(color: Color(team.colorValue)),
                       const SizedBox(width: 6),
-                      Flexible(
+                      Expanded(
                         child: Text(
-                          '${teams[index].name}  ${teams[index].selectedHelpers.length}/3',
-                          maxLines: 1,
+                          team.name,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                              ).copyWith(
-                                color: index == selectedIndex
-                                    ? AppColors.paper0
-                                    : AppColors.ink,
-                              ),
+                          style: TextStyle(
+                            color: selected ? AppColors.paper0 : AppColors.ink,
+                            fontSize: 12,
+                            height: 1.25,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 7),
+                  Row(
+                    children: [
+                      Icon(
+                        complete
+                            ? Icons.check_circle_rounded
+                            : Icons.auto_awesome_rounded,
+                        size: 13,
+                        color: selected ? AppColors.primary : AppColors.palm,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '$count/${PartyGameRules.helpersPerTeam}',
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: selected ? AppColors.primary : AppColors.ink,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          'مساعدات',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: selected
+                                ? AppColors.paper3
+                                : AppColors.inkMuted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-      ],
-    ),
-  );
+        ),
+      ),
+    );
+  }
 }
 
 final class _V10HelperCard extends StatelessWidget {
@@ -2320,11 +3181,13 @@ final class _V10HelperCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(17),
             child: AnimatedContainer(
               duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
-              height: compactPortrait
-                  ? largeText
-                        ? 74
-                        : 68
-                  : 78,
+              constraints: BoxConstraints(
+                minHeight: compactPortrait
+                    ? largeText
+                          ? 74
+                          : 68
+                    : 78,
+              ),
               padding: const EdgeInsetsDirectional.fromSTEB(14, 8, 12, 8),
               decoration: BoxDecoration(
                 color: !enabled
@@ -2393,7 +3256,7 @@ final class _V10HelperCard extends StatelessWidget {
                           enabled
                               ? definition.description
                               : 'غير متاح لهذه التشكيلة',
-                          maxLines: 1,
+                          maxLines: largeText ? 2 : 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: context.ahdashColors.textMuted,
@@ -2553,6 +3416,10 @@ final class PartyReadyScreen extends ConsumerWidget {
                 categories: selectedCategories,
                 definitions: definitions,
                 error: state.error ?? readyError,
+                timerSeconds: state.timerSeconds,
+                onTimerChanged: ref
+                    .read(partyGameControllerProvider.notifier)
+                    .setTimer,
               ),
             )
           : Column(
@@ -2671,12 +3538,16 @@ final class _ReadyPortraitContent extends StatelessWidget {
     required this.categories,
     required this.definitions,
     required this.error,
+    required this.timerSeconds,
+    required this.onTimerChanged,
   });
 
   final List<PartyTeam> teams;
   final List<QuizCategory> categories;
   final List<PartyHelperDefinition> definitions;
   final String? error;
+  final int? timerSeconds;
+  final ValueChanged<int?> onTimerChanged;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -2688,6 +3559,8 @@ final class _ReadyPortraitContent extends StatelessWidget {
         teams: teams,
         categories: categories,
         definitions: definitions,
+        timerSeconds: timerSeconds,
+        onTimerChanged: onTimerChanged,
       ),
       if (error != null) ...[
         const SizedBox(height: 6),
@@ -2709,41 +3582,58 @@ final class _ReadyPortraitContent extends StatelessWidget {
 
 final class _ReadyMatchHero extends StatelessWidget {
   const _ReadyMatchHero({required this.teams});
-
   final List<PartyTeam> teams;
-
   @override
   Widget build(BuildContext context) => Container(
-    height: MediaQuery.sizeOf(context).height < 820 ? 172 : 190,
+    key: const ValueKey('party-ready-match-hero'),
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       color: const Color(0xFF173F34),
       borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: AppColors.ink, width: 1.2),
+      border: Border.all(color: AppColors.paper3.withValues(alpha: .3)),
     ),
     child: Stack(
-      fit: StackFit.expand,
       children: [
-        const PartyGameplayArtwork(
-          scene: PartyGameplayArtworkScene.ready,
-          onDark: true,
-          accent: AppColors.primary,
+        Positioned.fill(
+          child: Image.asset(
+            'assets/visuals/party_kickoff_arena_v1.png',
+            fit: BoxFit.cover,
+            excludeFromSemantics: true,
+          ),
+        ),
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.ink.withValues(alpha: .18),
+                  const Color(0xCC0D251E),
+                ],
+              ),
+            ),
+          ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+          padding: const EdgeInsets.fromLTRB(14, 16, 14, 18),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
                 'صافرة البداية قريبة',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  height: 1.4,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 18),
               Row(
                 textDirection: TextDirection.ltr,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: _ReadyTeamBadge(
@@ -2752,22 +3642,27 @@ final class _ReadyMatchHero extends StatelessWidget {
                       onDark: true,
                     ),
                   ),
-                  Container(
-                    width: 52,
-                    height: 52,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.paper0,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.gold, width: 1.6),
-                    ),
-                    child: const Text(
-                      'VS',
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        color: AppColors.ink,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.ink.withValues(alpha: .72),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.gold.withValues(alpha: .8),
+                        ),
+                      ),
+                      child: const Text(
+                        'VS',
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: AppColors.gold,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                   ),
@@ -2780,7 +3675,6 @@ final class _ReadyMatchHero extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
             ],
           ),
         ),
@@ -2801,43 +3695,70 @@ final class _ReadyTeamBadge extends StatelessWidget {
   final bool onDark;
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Container(
-        width: 80,
-        height: 80,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Color(team.colorValue),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: onDark ? AppColors.paper0 : const Color(0xFFD3C6B2),
-            width: 1.5,
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).height < 820;
+    final teamColor = Color(team.colorValue);
+    final badgeInk = teamColor.computeLuminance() > .45
+        ? AppColors.ink
+        : Colors.white;
+    return Column(
+      children: [
+        Container(
+          width: compact ? 74 : 80,
+          height: compact ? 74 : 80,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [teamColor, Color.lerp(teamColor, AppColors.ink, .18)!],
+            ),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: onDark ? AppColors.paper0 : const Color(0xFFD3C6B2),
+              width: 1.5,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: badgeInk,
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 30,
+        const SizedBox(height: 7),
+        Text(
+          team.name,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: onDark ? AppColors.paper0 : AppColors.ink,
+            fontSize: 14,
+            height: 1.3,
             fontWeight: FontWeight.w900,
           ),
         ),
-      ),
-      const SizedBox(height: 7),
-      Text(
-        team.name,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: onDark ? AppColors.paper0 : AppColors.ink,
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
+        const SizedBox(height: 2),
+        Text(
+          team.players.isEmpty
+              ? 'اللعب باسم الفريق'
+              : '${team.players.length} لاعب',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: onDark
+                ? AppColors.paper0.withValues(alpha: 0.68)
+                : AppColors.inkMuted,
+            fontSize: 10,
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
 
 final class _ReadySummaryCard extends StatelessWidget {
@@ -2845,26 +3766,59 @@ final class _ReadySummaryCard extends StatelessWidget {
     required this.teams,
     required this.categories,
     required this.definitions,
+    required this.timerSeconds,
+    required this.onTimerChanged,
   });
   final List<PartyTeam> teams;
   final List<QuizCategory> categories;
   final List<PartyHelperDefinition> definitions;
+  final int? timerSeconds;
+  final ValueChanged<int?> onTimerChanged;
 
   @override
   Widget build(BuildContext context) => AhdashV10Panel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'ملخص خيارات اللعبة',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'ملخص خيارات اللعبة',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE9F5CF),
+                borderRadius: BorderRadius.circular(9),
+                border: Border.all(color: const Color(0xFF9DCB48)),
+              ),
+              child: const Text(
+                'مكتمل',
+                style: TextStyle(
+                  color: Color(0xFF416B0A),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        const Text(
-          '٦ فئات • ٣٦ سؤالًا',
-          style: TextStyle(fontSize: 13, color: AppColors.inkMuted),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                '٦ فئات • ٣٦ سؤالًا • فريقان',
+                style: TextStyle(fontSize: 12, color: AppColors.inkMuted),
+              ),
+            ),
+            _ReadyTimerSelector(value: timerSeconds, onChanged: onTimerChanged),
+          ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -2888,16 +3842,38 @@ final class _ReadySummaryCard extends StatelessWidget {
               ),
           ],
         ),
-        const Divider(height: 32),
+        const Divider(height: 26),
         const Text(
           'المساعدات المفعّلة',
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
         ),
         for (final team in teams) ...[
-          const SizedBox(height: 12),
-          Text(
-            team.name,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              PartyTeamDot(color: Color(team.colorValue)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  team.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              Text(
+                '${team.selectedHelpers.length}/${PartyGameRules.helpersPerTeam}',
+                textDirection: TextDirection.ltr,
+                style: const TextStyle(
+                  color: AppColors.inkMuted,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 4),
           Wrap(
@@ -2932,6 +3908,53 @@ final class _ReadySummaryCard extends StatelessWidget {
           ),
         ],
       ],
+    ),
+  );
+}
+
+final class _ReadyTimerSelector extends StatelessWidget {
+  const _ReadyTimerSelector({required this.value, required this.onChanged});
+
+  final int? value;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: value == null ? 'وقت السؤال بدون مؤقت' : 'وقت السؤال $value ثانية',
+    child: Container(
+      height: 34,
+      padding: const EdgeInsetsDirectional.only(start: 9, end: 4),
+      decoration: BoxDecoration(
+        color: AppColors.paper0,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.hairline),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int?>(
+          value: value,
+          isDense: true,
+          borderRadius: BorderRadius.circular(14),
+          icon: const Icon(Icons.expand_more_rounded, size: 18),
+          style: const TextStyle(
+            color: AppColors.ink,
+            fontFamily: 'ThmanyahSans',
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
+          items: PartyGameRules.timerOptions
+              .map(
+                (seconds) => DropdownMenuItem<int?>(
+                  value: seconds,
+                  child: Text(
+                    seconds == null ? 'بدون مؤقت' : '$seconds ث',
+                    textDirection: TextDirection.rtl,
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: onChanged,
+        ),
+      ),
     ),
   );
 }

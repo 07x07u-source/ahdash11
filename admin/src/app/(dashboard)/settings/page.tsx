@@ -16,14 +16,14 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader eyebrow="تهيئة المنصة" title="إعدادات اللعبة" description="اضبط القيم التشغيلية من مصدر مركزي مع صلاحيات خادم، بحيث تتغير قواعد اللعبة دون إصدار نسخة جديدة من التطبيق." />
-      {data.mode === "development" ? <DevelopmentDataNotice label="الحفظ يعمل كمحاكاة في وضع التطوير. بعد ربط Supabase ستُكتب القيم إلى game_settings وفق RLS." /> : null}
+      {data.mode === "development" ? <DevelopmentDataNotice label="الإعدادات الحية غير متاحة حاليًا. تحقق من الاتصال والصلاحيات قبل تعديل قيم التشغيل." /> : null}
       <div className="grid gap-4 2xl:grid-cols-[1.35fr_.65fr]">
         <SettingsForm items={data.rows} />
         <aside className="space-y-4">
           <section className="surface-card overflow-hidden">
             <div className="border-b border-white/7 p-5"><p className="eyebrow">سلامة التكامل</p><h2 className="mt-2 text-sm font-black">حالة البيئة</h2></div>
             <div className="space-y-3 p-5">
-              <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-lg bg-white/4 text-[#8e98a7]"><Database size={17} /></span><span className="flex-1 text-xs font-bold">Supabase</span><StatusBadge tone={hasSupabaseConfig ? "success" : "warning"}>{hasSupabaseConfig ? "متصل" : "غير مهيأ"}</StatusBadge></div>
+              <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-lg bg-white/4 text-[#8e98a7]"><Database size={17} /></span><span className="flex-1 text-xs font-bold">Supabase</span><StatusBadge tone={data.mode === "live" ? "success" : "warning"}>{data.mode === "live" ? "تمت قراءة الإعدادات" : hasSupabaseConfig ? "مهيأ · تعذر التحقق" : "غير مهيأ"}</StatusBadge></div>
               <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-lg bg-white/4 text-[#8e98a7]"><KeyRound size={17} /></span><span className="flex-1 text-xs font-bold">Service Role في المتصفح</span><StatusBadge tone="success">غير مستخدم</StatusBadge></div>
               <div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-lg bg-white/4 text-[#8e98a7]"><ShieldCheck size={17} /></span><span className="flex-1 text-xs font-bold">حماية الأدوار</span><StatusBadge tone="success">خادم + RLS</StatusBadge></div>
             </div>

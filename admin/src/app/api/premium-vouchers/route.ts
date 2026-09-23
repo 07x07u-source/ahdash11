@@ -1,4 +1,5 @@
 import { authorizeAdminApi } from "@/lib/auth/context";
+import { rejectCrossOriginMutation } from "@/lib/security/request";
 import {
   createPremiumVoucherSchema,
   mapCreatedVoucher,
@@ -7,6 +8,8 @@ import {
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  const crossOrigin = rejectCrossOriginMutation(request);
+  if (crossOrigin) return crossOrigin;
   const authorization = await authorizeAdminApi("admin");
   if (authorization.response) return authorization.response;
   if (!premiumVoucherActionsEnabled()) {

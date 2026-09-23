@@ -71,6 +71,24 @@ void main() {
       });
     }
   }
+
+  testWidgets('Profile keeps the selected Player 11 identity', (tester) async {
+    const size = Size(360, 800);
+    _view(tester, size);
+    await tester.pumpWidget(
+      _scope(
+        size,
+        1.3,
+        const ProfileScreen(),
+        preferences: const AppPreferences(
+          player11Variant: Player11Variant.female,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('هوية لاعبة 11'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 void _view(WidgetTester tester, Size size, {double keyboard = 0}) {
@@ -86,7 +104,13 @@ void _view(WidgetTester tester, Size size, {double keyboard = 0}) {
   });
 }
 
-Widget _scope(Size size, double scale, Widget screen, {double inset = 0}) =>
+Widget _scope(
+  Size size,
+  double scale,
+  Widget screen, {
+  double inset = 0,
+  AppPreferences preferences = const AppPreferences(),
+}) =>
     ProviderScope(
       overrides: [
         appConfigProvider.overrideWithValue(phase6Config),
@@ -95,7 +119,7 @@ Widget _scope(Size size, double scale, Widget screen, {double inset = 0}) =>
           (ref, notifier) async => phase6User,
         ),
         appPreferencesProvider.overrideWithBuild(
-          (ref, notifier) async => const AppPreferences(),
+          (ref, notifier) async => preferences,
         ),
         playerProfileProvider.overrideWith((ref) async => phase6Profile),
         notificationsProvider.overrideWith((ref) async => phase6Notifications),

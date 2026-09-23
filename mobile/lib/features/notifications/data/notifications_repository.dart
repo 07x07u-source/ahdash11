@@ -73,4 +73,15 @@ class NotificationsRepository {
         .select('id')
         .single();
   }
+
+  Future<void> markAllRead(String userId) async {
+    if (client == null || client!.auth.currentUser?.id != userId) {
+      throw StateError('Unavailable');
+    }
+    await client!
+        .from('notifications')
+        .update({'read_at': DateTime.now().toUtc().toIso8601String()})
+        .eq('target_user_id', userId)
+        .isFilter('read_at', null);
+  }
 }

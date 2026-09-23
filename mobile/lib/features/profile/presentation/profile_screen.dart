@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/settings/app_preferences.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../shared/presentation/app_states.dart';
 import '../../../shared/presentation/social_identity.dart';
 import '../../../shared/presentation/utility_v9.dart';
@@ -51,6 +53,7 @@ final class _ProfileBody extends StatelessWidget {
   const _ProfileBody({required this.profile, required this.premium});
   final PlayerProfile profile;
   final bool premium;
+
   @override
   Widget build(BuildContext context) {
     final club = profile.showFootballPreferences
@@ -59,111 +62,401 @@ final class _ProfileBody extends StatelessWidget {
     final league = profile.showFootballPreferences
         ? profile.favoriteLeagueData
         : null;
+    final stats = _ProfileStats.from(profile);
     return ListView(
       key: const ValueKey('profile-scroll'),
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(
+        bottom: AhdashSizing.floatingDockContentInset,
+      ),
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.ink,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.ink),
+        _PlayerIdentityHero(profile: profile, premium: premium),
+        if (stats.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _ProfileStatsRow(items: stats),
+        ],
+        const SizedBox(height: 14),
+        _FootballIdentityCard(
+          club: club,
+          league: league,
+          preferencesVisible: profile.showFootballPreferences,
+          onTap: () => context.push('/football-preferences'),
+        ),
+        const SizedBox(height: 16),
+        const _ProfileSectionTitle(
+          title: 'مساحة اللعب',
+          subtitle: 'فريقك، ترتيبك، ومنافساتك في مكان واحد',
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _ProfileDestinationCard(
+                icon: Icons.leaderboard_outlined,
+                label: 'الترتيب',
+                accent: AppColors.primary,
+                onTap: () => context.push('/ranking'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ProfileDestinationCard(
+                icon: Icons.groups_3_outlined,
+                label: 'فريقي',
+                accent: AppColors.gold,
+                onTap: () => context.push('/teams'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _TournamentDestination(onTap: () => context.push('/tournaments')),
+        const SizedBox(height: 8),
+        _QuietDestinationRow(
+          icon: Icons.block_outlined,
+          label: 'اللاعبون المحظورون',
+          onTap: () => context.push('/blocked-players'),
+        ),
+      ],
+    );
+  }
+}
+
+final class _PlayerIdentityHero extends StatelessWidget {
+  const _PlayerIdentityHero({required this.profile, required this.premium});
+
+  final PlayerProfile profile;
+  final bool premium;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width <= 370;
+    return Container(
+      key: const ValueKey('profile-identity-hero'),
+      decoration: BoxDecoration(
+        color: AppColors.ink,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: AppColors.paper3.withValues(alpha: .4)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: .1),
+            blurRadius: 18,
+            offset: const Offset(0, 7),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 126,
-                child: Stack(
-                  alignment: Alignment.center,
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/visuals/profile_identity_arena_v1.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+              excludeFromSemantics: true,
+            ),
+          ),
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x11191714),
+                    Color(0x99191714),
+                    Color(0xFF191714),
+                  ],
+                  stops: [0, .46, 1],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
                   children: [
-                    const Positioned.fill(child: _PitchBanner()),
-                    const PositionedDirectional(
-                      top: 14,
-                      start: 16,
+                    const Icon(
+                      Icons.sports_soccer_rounded,
+                      size: 15,
+                      color: AppColors.brandLime,
+                    ),
+                    const SizedBox(width: 7),
+                    const Expanded(
                       child: Text(
-                        'PLAYER CARD / 11',
+                        'هوية اللاعب',
+                        style: TextStyle(
+                          color: AppColors.paper0,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 32,
+                      height: 32,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.brandLime,
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      child: const Text(
+                        '11',
                         textDirection: TextDirection.ltr,
                         style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 9,
-                          letterSpacing: 1.15,
+                          color: AppColors.ink,
+                          fontSize: 13,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
-                    AhdashPlayer11Avatar(
+                  ],
+                ),
+                SizedBox(height: compact ? 64 : 74),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _ProfilePlayerAvatar(
                       imageUrl: profile.avatarUrl,
                       jerseyColorHex: profile.safeJerseyColor,
-                      size: 80,
+                      size: compact ? 72 : 80,
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                child: Column(
-                  children: [
-                    Text(
-                      profile.publicName,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        height: 1.3,
-                        color: AppColors.paper0,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '@${profile.username}',
-                      textDirection: TextDirection.ltr,
-                      style: const TextStyle(color: AppColors.paper3),
-                    ),
-                    if (premium) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.gold,
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.workspace_premium_outlined, size: 15),
-                            SizedBox(width: 4),
-                            Text(
-                              'Premium مفعّل',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w900,
-                              ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            profile.publicName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: compact ? 20 : 22,
+                              height: 1.3,
+                              color: AppColors.paper0,
+                              fontWeight: FontWeight.w900,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '@${profile.username}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textDirection: TextDirection.ltr,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.paper3,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 7,
+                            runSpacing: 7,
+                            children: [
+                              _HeroChip(
+                                icon: Icons.bolt_rounded,
+                                label: 'المستوى ${profile.level}',
+                              ),
+                              if (premium)
+                                const _HeroChip(
+                                  icon: Icons.workspace_premium_rounded,
+                                  label: 'Premium',
+                                  highlighted: true,
+                                ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _ProfilePlayerAvatar extends ConsumerWidget {
+  const _ProfilePlayerAvatar({
+    required this.imageUrl,
+    required this.jerseyColorHex,
+    required this.size,
+  });
+
+  final String? imageUrl;
+  final String? jerseyColorHex;
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return AhdashPlayer11Avatar(
+        imageUrl: imageUrl,
+        jerseyColorHex: jerseyColorHex,
+        size: size,
+      );
+    }
+    final variant =
+        ref.watch(appPreferencesProvider).value?.player11Variant ??
+        Player11Variant.male;
+    final jersey = ahdashHexColor(jerseyColorHex);
+    final asset = switch (variant) {
+      Player11Variant.male => 'assets/player11/player11-male-avatar.png',
+      Player11Variant.female => 'assets/player11/player11-female-avatar.png',
+    };
+    return Semantics(
+      container: true,
+      image: true,
+      label: 'هوية ${variant.labelAr}',
+      child: Container(
+        width: size,
+        height: size,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.ink,
+          border: Border.all(color: jersey, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ink.withValues(alpha: .34),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: Image.asset(
+            asset,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.medium,
           ),
         ),
-        const SizedBox(height: 18),
-        AhdashV10Panel(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'ناديّ المفضل',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+}
+
+final class _HeroChip extends StatelessWidget {
+  const _HeroChip({
+    required this.icon,
+    required this.label,
+    this.highlighted = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 7, 4),
+    decoration: BoxDecoration(
+      color: highlighted
+          ? AppColors.gold
+          : AppColors.paper0.withValues(alpha: .13),
+      borderRadius: BorderRadius.circular(99),
+      border: highlighted
+          ? null
+          : Border.all(color: AppColors.paper0.withValues(alpha: .18)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 13,
+          color: highlighted ? AppColors.ink : AppColors.primary,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: highlighted ? AppColors.ink : AppColors.paper0,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+final class _FootballIdentityCard extends StatelessWidget {
+  const _FootballIdentityCard({
+    required this.club,
+    required this.league,
+    required this.preferencesVisible,
+    required this.onTap,
+  });
+
+  final ProfileFootballChoice? club;
+  final ProfileFootballChoice? league;
+  final bool preferencesVisible;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColors.paper1,
+    shape: RoundedRectangleBorder(
+      side: const BorderSide(color: AppColors.hairline),
+      borderRadius: BorderRadius.circular(20),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.shield_outlined, size: 17),
+                const SizedBox(width: 7),
+                const Expanded(
+                  child: Text(
+                    'هويتي الكروية',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.paper0,
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(color: AppColors.hairline),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'تعديل',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      SizedBox(width: 3),
+                      Icon(Icons.edit_outlined, size: 12),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.paper0,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: AppColors.hairline),
               ),
-              const SizedBox(height: 12),
-              Row(
+              child: Row(
                 children: [
                   AhdashClubBadge(
                     label: club?.badgeText ?? club?.nameAr ?? '11',
@@ -173,84 +466,210 @@ final class _ProfileBody extends StatelessWidget {
                             const [
                               'licensed',
                               'custom',
-                            ].contains(club.visualStatus)
-                        ? club.logoUrl
+                            ].contains(club!.visualStatus)
+                        ? club!.logoUrl
                         : null,
-                    size: 44,
+                    size: 46,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 11),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           club?.nameAr ??
-                              (profile.showFootballPreferences
-                                  ? 'لم تحدد ناديًا بعد'
+                              (preferencesVisible
+                                  ? 'اختر ناديك المفضل'
                                   : 'اختياراتك خاصة'),
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        if (league != null)
-                          Text(
-                            league.nameAr,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.inkMuted,
-                            ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
                           ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          league?.nameAr ??
+                              (preferencesVisible
+                                  ? 'خصص تجربتك الكروية'
+                                  : 'يمكنك التحكم في ظهورها'),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.inkMuted,
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 6),
+                  const Icon(Icons.arrow_back_ios_new_rounded, size: 14),
                 ],
               ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: () => context.push('/football-preferences'),
-                child: const Text('إدارة تفضيلاتي الكروية'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
-        AhdashV10Panel(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'ربعك وفريقك',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
-              ),
-              const SizedBox(height: 8),
-              _SocialDestinationRow(
-                icon: Icons.people_alt_outlined,
-                label: 'الأصدقاء والطلبات',
-                onTap: () => context.push('/friends'),
-              ),
-              _SocialDestinationRow(
-                icon: Icons.groups_3_outlined,
-                label: 'فريقي',
-                onTap: () => context.push('/teams'),
-              ),
-              _SocialDestinationRow(
-                icon: Icons.block_outlined,
-                label: 'اللاعبون المحظورون',
-                onTap: () => context.push('/blocked-players'),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        OutlinedButton(
-          onPressed: () => context.push('/tournaments'),
-          child: const Text('بطولاتي'),
-        ),
-      ],
-    );
-  }
+      ),
+    ),
+  );
 }
 
-final class _SocialDestinationRow extends StatelessWidget {
-  const _SocialDestinationRow({
+final class _ProfileSectionTitle extends StatelessWidget {
+  const _ProfileSectionTitle({required this.title, required this.subtitle});
+
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        title,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+      ),
+      const SizedBox(height: 2),
+      Text(
+        subtitle,
+        style: const TextStyle(fontSize: 11, color: AppColors.inkMuted),
+      ),
+    ],
+  );
+}
+
+final class _ProfileDestinationCard extends StatelessWidget {
+  const _ProfileDestinationCard({
+    required this.icon,
+    required this.label,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColors.paper1,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(18),
+      side: const BorderSide(color: AppColors.hairline),
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        height: 78,
+        child: Padding(
+          padding: const EdgeInsets.all(11),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, size: 20, color: AppColors.ink),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.25,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+final class _TournamentDestination extends StatelessWidget {
+  const _TournamentDestination({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: AppColors.ink,
+    borderRadius: BorderRadius.circular(18),
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(14, 11, 12, 11),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: const Icon(
+                Icons.emoji_events_rounded,
+                size: 21,
+                color: AppColors.ink,
+              ),
+            ),
+            const SizedBox(width: 11),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'بطولاتي',
+                    style: TextStyle(
+                      color: AppColors.paper0,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Text(
+                    'تابع مشاركاتك ونتائجك',
+                    style: TextStyle(color: AppColors.paper3, fontSize: 10),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 32,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.paper0.withValues(alpha: .1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_rounded,
+                size: 18,
+                color: AppColors.paper0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+final class _QuietDestinationRow extends StatelessWidget {
+  const _QuietDestinationRow({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -263,95 +682,89 @@ final class _SocialDestinationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: onTap,
-    borderRadius: BorderRadius.circular(12),
+    borderRadius: BorderRadius.circular(14),
     child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 11),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
       child: Row(
         children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: AppColors.paper2,
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(icon, size: 20),
-          ),
-          const SizedBox(width: 11),
+          Icon(icon, size: 17, color: AppColors.inkMuted),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(fontWeight: FontWeight.w800),
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.inkMuted,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-          const Icon(Icons.arrow_back_ios_new_rounded, size: 15),
+          const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 12,
+            color: AppColors.inkMuted,
+          ),
         ],
       ),
     ),
   );
 }
 
-final class _PitchBanner extends StatelessWidget {
-  const _PitchBanner();
+final class _ProfileStat {
+  const _ProfileStat({required this.label, required this.value});
 
-  @override
-  Widget build(BuildContext context) =>
-      CustomPaint(painter: _PitchPainter(), child: const SizedBox.expand());
+  final String label;
+  final String value;
 }
 
-final class _PitchPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.ink);
-    final line = Paint()
-      ..color = AppColors.paper3.withValues(alpha: .38)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    final field = Rect.fromLTWH(42, 10, size.width - 84, size.height + 28);
-    canvas.drawRect(field, line);
-    canvas.drawLine(
-      Offset(size.width / 2, field.top),
-      Offset(size.width / 2, field.bottom),
-      line,
-    );
-    canvas.drawCircle(Offset(size.width / 2, field.center.dy), 19, line);
-    for (final x in [field.left, field.right]) {
-      canvas.drawRect(
-        Rect.fromCenter(
-          center: Offset(x, field.center.dy),
-          width: 42,
-          height: 48,
-        ),
-        line,
-      );
-    }
-    canvas.drawCircle(
-      Offset(size.width * .18, size.height * .28),
-      36,
-      Paint()..color = AppColors.primary.withValues(alpha: .14),
-    );
-    canvas.drawCircle(
-      Offset(size.width * .82, size.height * .78),
-      28,
-      Paint()..color = AppColors.gold.withValues(alpha: .14),
-    );
-    final route = Path()
-      ..moveTo(size.width * .08, size.height * .78)
-      ..quadraticBezierTo(
-        size.width * .32,
-        size.height * .5,
-        size.width * .48,
-        size.height * .72,
-      );
-    canvas.drawPath(
-      route,
-      Paint()
-        ..color = AppColors.primary
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
-    );
-  }
+abstract final class _ProfileStats {
+  static List<_ProfileStat> from(PlayerProfile profile) => [
+    if (profile.availableStats.contains('matches'))
+      _ProfileStat(label: 'مباراة', value: '${profile.matches}'),
+    if (profile.availableStats.contains('wins'))
+      _ProfileStat(label: 'فوز', value: '${profile.wins}'),
+    if (profile.availableStats.contains('tournaments_won'))
+      _ProfileStat(label: 'بطولة', value: '${profile.tournamentsWon}'),
+    if (profile.availableStats.contains('questions_answered'))
+      _ProfileStat(label: 'إجابة', value: '${profile.questionsAnswered}'),
+  ];
+}
+
+final class _ProfileStatsRow extends StatelessWidget {
+  const _ProfileStatsRow({required this.items});
+
+  final List<_ProfileStat> items;
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  Widget build(BuildContext context) => AhdashV10Panel(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+    child: Row(
+      children: [
+        for (var index = 0; index < items.length; index++) ...[
+          if (index > 0)
+            Container(width: 1, height: 30, color: AppColors.hairline),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  items[index].value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Text(
+                  items[index].label,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
 }

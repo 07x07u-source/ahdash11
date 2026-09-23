@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, BellRing, Bug, CircleHelp, Coins, FileClock, FileUp, Flag, Gamepad2, Layers3, ShieldAlert, ShoppingBag, Sparkles, UserRoundCheck, UsersRound, type LucideIcon } from "lucide-react";
+import { Activity, ArrowUpLeft, BellRing, Bug, CircleHelp, Coins, DatabaseZap, FileClock, FileUp, Flag, Gamepad2, Globe2, Layers3, ShieldAlert, ShoppingBag, Sparkles, Trophy, UserRoundCheck, UsersRound, type LucideIcon } from "lucide-react";
 import { DevelopmentDataNotice } from "@/components/ui/development-data-notice";
 import { MetricCard } from "@/components/ui/metric-card";
 import { PageHeader } from "@/components/ui/page-header";
@@ -12,10 +12,29 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const data = await getDashboardData(); const maxMatches = Math.max(...data.activity.map((day) => day.matches), 1); const publishRatio = data.totals.questions ? Math.round(data.totals.publishedQuestions / data.totals.questions * 100) : 0;
-  return <div className="space-y-6">
-    <PageHeader eyebrow="نظرة عامة" title="نبض أحدعش" description="مؤشرات تشغيلية ومحتوى واقتصاد ومراقبة من البيانات الحقيقية، مع وصول مباشر للأشياء التي تحتاج قرارًا." actions={<Link href="/import" className="button-primary"><FileUp size={17} />استيراد أسئلة</Link>} />
+  return <div className="admin-overview space-y-6">
+    <PageHeader eyebrow="نظرة عامة" title="غرفة عمليات أحدعش" description="القرارات المهمة وحالة المحتوى واللعب في مساحة واحدة." actions={<Link href="/import" className="button-primary"><FileUp size={17} />استيراد أسئلة</Link>} />
+    <section className="admin-ops-hero">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div><span className="inline-flex items-center gap-2 text-[10px] font-black tracking-wider text-[#aaff3d]"><Activity size={14} />مركز التحكم</span><h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">كل ما يحتاج انتباهك، الآن.</h2><p className="mt-2 max-w-xl text-xs leading-6 text-[#9b988f]">راقب التشغيل وانتقل مباشرة إلى المحتوى أو البطولات دون البحث داخل القوائم.</p></div>
+        <Link href="/" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[.06] px-4 text-xs font-black text-white"><Globe2 size={16} className="text-[#aaff3d]" />عرض الموقع <ArrowUpLeft size={15} /></Link>
+      </div>
+      <div className="admin-status-grid">
+        <Link href="/questions" className="admin-status-item"><span><Layers3 size={18} /></span><div><strong>المحتوى</strong><small>{data.available ? `${formatNumber(data.totals.publishedQuestions)} سؤال منشور` : "جاهز بعد ربط البيانات"}</small></div></Link>
+        <Link href="/tournaments" className="admin-status-item"><span><Trophy size={18} /></span><div><strong>البطولات</strong><small>{data.available ? "المتابعة والإدارة" : "مركز الإدارة جاهز"}</small></div></Link>
+        <Link href="/users" className="admin-status-item"><span><UsersRound size={18} /></span><div><strong>اللاعبون</strong><small>{data.available ? `${formatNumber(data.totals.activeUsers)} نشط خلال 24 ساعة` : "بانتظار اتصال الحسابات"}</small></div></Link>
+        <Link href="/system-health" className="admin-status-item"><span><DatabaseZap size={18} /></span><div><strong>الأنظمة</strong><small>{data.available ? "مراقبة الاتصال والخدمات" : "أكمل إعداد Supabase"}</small></div></Link>
+      </div>
+    </section>
+    <section className="surface-card p-5 sm:p-6" aria-labelledby="operations-workflow">
+      <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="eyebrow">من الإدارة إلى تجربة اللاعب</p><h2 id="operations-workflow" className="mt-2 text-lg font-black">مسار مراجعة المحتوى والتشغيل</h2></div><StatusBadge tone="info">Party وSolo / Classic</StatusBadge></div>
+      <div className="mt-5 grid gap-3 md:grid-cols-3">
+        {[{ href: "/categories", title: "١ · جهّز الفئات", detail: "راجع نشر الفئة وصورتها وإتاحة الوصول إليها." }, { href: "/questions", title: "٢ · راجع الأسئلة", detail: "تحتاج جلسة Party إلى ست فئات، وفي كل فئة سؤالان لكل مستوى." }, { href: "/play", title: "٣ · جرّب الموقع", detail: "اختبر التحميل والإجابة والنتيجة والحفظ بعد تحديث المحتوى." }].map((item) => <Link key={item.href} href={item.href} className="rounded-xl border border-[var(--border)] p-4 transition hover:bg-black/[.03]"><strong className="text-sm">{item.title}</strong><p className="mt-2 text-xs leading-6 text-[var(--muted)]">{item.detail}</p></Link>)}
+      </div>
+      <p className="mt-4 text-xs leading-6 text-[var(--muted)]">جلسات اللعب المحلية محفوظة على جهاز اللاعب؛ عدادات المباريات أدناه تخص السجلات السحابية وقد تتضمن الأنماط القديمة. مؤشرات الاقتصاد تخص بنية مؤجلة، ولا تثبت إتاحتها في اللعبة.</p>
+    </section>
     {!data.available ? <DevelopmentDataNotice /> : null}
-    {!data.available ? <div className="surface-card p-8 text-center"><Activity className="mx-auto text-[var(--muted)]" /><h2 className="mt-3 font-black">المؤشرات الحقيقية غير متاحة</h2><p className="mt-2 text-sm text-[var(--muted)]">لا نعرض أرقامًا تجريبية. اربط Supabase وطبّق migration الجديدة لتفعيل ملخص الإدارة.</p></div> : <>
+    {!data.available ? <div className="surface-card p-8 text-center"><Activity className="mx-auto text-[var(--muted)]" /><h2 className="mt-3 font-black">تعذر تحميل المؤشرات</h2><p className="mt-2 text-sm text-[var(--muted)]">تحقق من اتصال Supabase وصلاحية الحساب وحالة استعلام المؤشرات.</p><Link href="/system-health" className="button-secondary mt-4">فتح صحة الأنظمة</Link></div> : <>
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4 2xl:grid-cols-6">
         <MetricCard label="إجمالي المستخدمين" value={formatNumber(data.totals.users)} change={`${formatNumber(data.totals.newUsers)} جديد خلال 7 أيام`} icon={UsersRound} />
         <MetricCard label="نشط خلال 24 ساعة" value={formatNumber(data.totals.activeUsers)} change="بحسب آخر ظهور موثوق" icon={UserRoundCheck} accent="blue" />

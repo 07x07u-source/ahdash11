@@ -14,6 +14,7 @@ import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/presentation/ahdash_image.dart';
 import '../../../shared/presentation/ahdash_pictograms.dart';
 import '../../../shared/presentation/brand_scaffold.dart';
 import '../../../shared/presentation/measured_v9.dart';
@@ -398,6 +399,11 @@ final class _PortraitBoardLayout extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: horizontal),
+          child: _BoardProgressRail(session: session),
+        ),
         const Spacer(),
         if (helperActions.isNotEmpty)
           Padding(
@@ -421,6 +427,79 @@ final class _PortraitBoardLayout extends StatelessWidget {
           ),
         const SizedBox(height: 12),
       ],
+    );
+  }
+}
+
+final class _BoardProgressRail extends StatelessWidget {
+  const _BoardProgressRail({required this.session});
+
+  final PartyGameSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final questions = session.categories
+        .expand((category) => category.questions)
+        .toList(growable: false);
+    final used = questions.where((question) => question.used).length;
+    final remaining = math.max(0, questions.length - used);
+    final progress = questions.isEmpty ? 0.0 : used / questions.length;
+    return Semantics(
+      label: 'تقدم الجولة، تبقى $remaining من ${questions.length} سؤالًا',
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF4EBDD),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.hairline),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.ink,
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: const Icon(
+                Icons.sports_soccer_rounded,
+                size: 16,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 9),
+            Text(
+              remaining == 0 ? 'اكتملت اللوحة' : 'تبقى $remaining سؤالًا',
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(99),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 6,
+                  color: AppColors.primary,
+                  backgroundColor: AppColors.paper3,
+                ),
+              ),
+            ),
+            const SizedBox(width: 9),
+            Text(
+              '$used/${questions.length}',
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(
+                color: AppColors.inkMuted,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -483,6 +562,7 @@ final class _BoardColumn extends StatelessWidget {
             horizontal: context.v9Metrics.compact ? 5 : 9,
             vertical: 5,
           ),
+          clipBehavior: portrait ? Clip.antiAlias : Clip.none,
           decoration: BoxDecoration(
             color: portrait ? AppColors.ink : context.ahdashColors.surface,
             borderRadius: portrait ? BorderRadius.circular(11) : null,
@@ -504,19 +584,53 @@ final class _BoardColumn extends StatelessWidget {
           child: portrait
               ? Tooltip(
                   message: category.name,
-                  child: Center(
-                    child: Text(
-                      category.name,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        height: 1.2,
-                        fontWeight: FontWeight.w900,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      AhdashImage(
+                        imageUrl: category.imageUrl,
+                        fallbackWidget: _BoardCategoryImageFallback(
+                          accent: Color(category.colorValue),
+                        ),
+                        aspectRatio: 1,
+                        alignment: Alignment(
+                          category.focalX * 2 - 1,
+                          category.focalY * 2 - 1,
+                        ),
+                        borderRadius: 0,
                       ),
-                    ),
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0x42191714), Color(0xC2191714)],
+                            stops: [0, 1],
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          category.name,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            height: 1.2,
+                            fontWeight: FontWeight.w900,
+                            shadows: [
+                              Shadow(
+                                color: Color(0xCC000000),
+                                blurRadius: 6,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               : Column(
@@ -584,6 +698,28 @@ final class _BoardColumn extends StatelessWidget {
       ],
     );
   }
+}
+
+final class _BoardCategoryImageFallback extends StatelessWidget {
+  const _BoardCategoryImageFallback({required this.accent});
+
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [accent.withValues(alpha: 0.92), AppColors.ink],
+      ),
+    ),
+    child: PartyGameplayArtwork(
+      scene: PartyGameplayArtworkScene.category,
+      accent: AppColors.primary,
+      onDark: true,
+    ),
+  );
 }
 
 final class _PointTile extends StatelessWidget {
@@ -1656,26 +1792,47 @@ final class _QuestionTimerState extends State<_QuestionTimer>
         ? context.ahdashColors.dangerTimer
         : context.ahdashColors.primary;
     if (widget.textOnly) {
-      return Stack(
-        alignment: Alignment.center,
-        children: [
-          Semantics(
-            label: 'باقي $_seconds ثانية',
-            child: Text(
-              _arabicDigits(_seconds),
-              style: TextStyle(
-                color: widget.onDark
-                    ? danger
-                          ? AppColors.gold
-                          : AppColors.paper0
-                    : AppColors.inkMuted,
-                fontSize: 13,
-                fontWeight: FontWeight.w900,
+      return AnimatedContainer(
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : PartyV2Motion.page,
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+        decoration: BoxDecoration(
+          color: danger
+              ? AppColors.danger.withValues(alpha: 0.2)
+              : AppColors.paper0.withValues(alpha: widget.onDark ? 0.08 : 0.5),
+          borderRadius: BorderRadius.circular(7),
+          border: Border.all(
+            color: danger
+                ? AppColors.gold.withValues(alpha: 0.7)
+                : AppColors.paper0.withValues(
+                    alpha: widget.onDark ? 0.18 : 0.6,
+                  ),
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Semantics(
+              label: 'باقي $_seconds ثانية',
+              child: Text(
+                _arabicDigits(_seconds),
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  color: widget.onDark
+                      ? danger
+                            ? AppColors.gold
+                            : AppColors.primary
+                      : AppColors.inkMuted,
+                  fontSize: 13,
+                  height: 1,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-          ),
-          Opacity(opacity: 0, child: Text('$_seconds')),
-        ],
+            Opacity(opacity: 0, child: Text('$_seconds')),
+          ],
+        ),
       );
     }
     return Semantics(
@@ -2561,6 +2718,7 @@ final class _PartyRevealScreenState extends ConsumerState<PartyRevealScreen> {
                 selectedTeam: _selectedTeam,
                 selectedNobody: _selectedNobody,
                 submitting: _submitting,
+                awardableTeams: awardableTeams,
                 onTeam: (index) => setState(() {
                   _selectedTeam = index;
                   _selectedNobody = false;
@@ -2667,6 +2825,7 @@ final class _PortraitRevealLayout extends StatelessWidget {
     required this.selectedTeam,
     required this.selectedNobody,
     required this.submitting,
+    required this.awardableTeams,
     required this.onTeam,
     required this.onNobody,
     required this.onSubmit,
@@ -2675,6 +2834,7 @@ final class _PortraitRevealLayout extends StatelessWidget {
   final PartyQuestionSnapshot question;
   final int? selectedTeam;
   final bool selectedNobody, submitting;
+  final List<int> awardableTeams;
   final ValueChanged<int> onTeam;
   final VoidCallback onNobody, onSubmit;
 
@@ -2767,10 +2927,22 @@ final class _PortraitRevealLayout extends StatelessWidget {
                 const Text(
                   'من يحصل على النقطة؟',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
-                const SizedBox(height: 16),
-                for (var i = 0; i < session.teams.length; i++) ...[
+                const SizedBox(height: 3),
+                Text(
+                  awardableTeams.length == 1
+                      ? 'فرصة النقطة متاحة للفريق المجيب فقط'
+                      : 'اختاروا الفريق الذي قدّم الإجابة الصحيحة',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                for (final i in awardableTeams) ...[
                   ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 56),
                     child: _PortraitAwardButton(
@@ -2861,10 +3033,21 @@ final class _PortraitAwardButton extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 9,
-                height: 9,
+              AnimatedContainer(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : PartyV2Motion.page,
+                width: selected ? 24 : 9,
+                height: selected ? 24 : 9,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                child: selected
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 15,
+                      )
+                    : null,
               ),
               const SizedBox(width: 9),
               Expanded(
@@ -2902,11 +3085,14 @@ final class _PortraitAwardButton extends StatelessWidget {
               if (score != null) ...[
                 const SizedBox(width: 7),
                 Text(
-                  _arabicDigits(score!),
-                  style: const TextStyle(
-                    color: AppColors.inkMuted,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
+                  selected && points != null
+                      ? 'تصير ${_arabicDigits(score! + points!)}'
+                      : _arabicDigits(score!),
+                  textDirection: TextDirection.rtl,
+                  style: TextStyle(
+                    color: selected ? color : AppColors.inkMuted,
+                    fontSize: selected ? 12 : 11,
+                    fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
                   ),
                 ),
               ],
@@ -3087,12 +3273,6 @@ final class _PartyResultScreenState extends ConsumerState<PartyResultScreen> {
     if (tournamentMatchId != null && !tied) {
       primaryAction = PartyPrimaryButton(
         label: 'مراجعة نتيجة البطولة',
-        backgroundColor: MediaQuery.sizeOf(context).width < 390
-            ? const Color(0xFF1E874B)
-            : null,
-        foregroundColor: MediaQuery.sizeOf(context).width < 390
-            ? Colors.white
-            : null,
         onPressed: () async {
           await ref.read(tournamentControllerProvider.notifier).restore();
           if (!context.mounted) return;
@@ -3102,12 +3282,6 @@ final class _PartyResultScreenState extends ConsumerState<PartyResultScreen> {
     } else if (canStartTieBreaker) {
       primaryAction = PartyPrimaryButton(
         label: 'احسموها بسؤال فاصل',
-        backgroundColor: MediaQuery.sizeOf(context).width < 390
-            ? const Color(0xFF1E874B)
-            : null,
-        foregroundColor: MediaQuery.sizeOf(context).width < 390
-            ? Colors.white
-            : null,
         onPressed: () {
           final started = ref
               .read(partyGameControllerProvider.notifier)
@@ -3119,12 +3293,6 @@ final class _PartyResultScreenState extends ConsumerState<PartyResultScreen> {
       primaryAction = PartyPrimaryButton(
         key: const ValueKey('party-play-again'),
         label: 'العب مرة ثانية',
-        backgroundColor: MediaQuery.sizeOf(context).width < 390
-            ? const Color(0xFF1E874B)
-            : null,
-        foregroundColor: MediaQuery.sizeOf(context).width < 390
-            ? Colors.white
-            : null,
         onPressed: () {
           ref.read(partyGameControllerProvider.notifier).beginRematch();
           context.go('/party/categories');
@@ -3133,7 +3301,7 @@ final class _PartyResultScreenState extends ConsumerState<PartyResultScreen> {
     }
     final newGameButton = TextButton(
       onPressed: () => context.go('/home'),
-      child: const Text('تم'),
+      child: const Text('العودة للرئيسية'),
     );
     if (context.v9Metrics.portrait) {
       return PopScope(
@@ -3151,6 +3319,9 @@ final class _PartyResultScreenState extends ConsumerState<PartyResultScreen> {
                 tied: tied,
                 primaryAction: primaryAction,
                 newGameButton: newGameButton,
+                onHistory: session.scoreEvents.isEmpty
+                    ? null
+                    : () => _showScoreHistory(session),
               ),
             ),
           ),
@@ -3345,11 +3516,13 @@ final class _PortraitResultLayout extends StatelessWidget {
     required this.tied,
     required this.primaryAction,
     required this.newGameButton,
+    required this.onHistory,
   });
   final PartyGameSession session;
   final int winnerIndex;
   final bool tied;
   final Widget primaryAction, newGameButton;
+  final VoidCallback? onHistory;
   @override
   Widget build(BuildContext context) {
     final gutter = AhdashV10Metrics.of(context).gutter;
@@ -3411,6 +3584,8 @@ final class _PortraitResultLayout extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 14),
+                  _ResultRoundStats(session: session, onHistory: onHistory),
                 ],
               ),
             ),
@@ -3430,6 +3605,110 @@ final class _PortraitResultLayout extends StatelessWidget {
   }
 }
 
+final class _ResultRoundStats extends StatelessWidget {
+  const _ResultRoundStats({required this.session, required this.onHistory});
+
+  final PartyGameSession session;
+  final VoidCallback? onHistory;
+
+  @override
+  Widget build(BuildContext context) {
+    final answered = session.questions
+        .where((question) => question.used)
+        .length;
+    final helperCount = session.teams.expand((team) => team.usedHelpers).length;
+    final difference = (session.scores[0] - session.scores[1]).abs();
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 7),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0F6F1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFB3CDBF)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _ResultStat(
+                  value: _arabicDigits(answered),
+                  label: 'سؤال',
+                ),
+              ),
+              const _QuestionMetaDivider(),
+              Expanded(
+                child: _ResultStat(
+                  value: _arabicDigits(difference),
+                  label: 'فارق النقاط',
+                ),
+              ),
+              const _QuestionMetaDivider(),
+              Expanded(
+                child: _ResultStat(
+                  value: _arabicDigits(helperCount),
+                  label: 'مساعدة',
+                ),
+              ),
+            ],
+          ),
+          if (onHistory != null) ...[
+            const Divider(height: 12),
+            SizedBox(
+              height: 30,
+              child: TextButton.icon(
+                onPressed: onHistory,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  visualDensity: VisualDensity.compact,
+                ),
+                icon: const Icon(Icons.receipt_long_outlined, size: 15),
+                label: Text(
+                  'عرض سجل الاحتساب • ${session.scoreEvents.length}',
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+final class _ResultStat extends StatelessWidget {
+  const _ResultStat({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    children: [
+      Text(
+        value,
+        textDirection: TextDirection.ltr,
+        style: const TextStyle(
+          color: Color(0xFF1E874B),
+          fontSize: 17,
+          height: 1,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      const SizedBox(height: 3),
+      Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: AppColors.inkMuted,
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ],
+  );
+}
+
 final class _ResultArtworkHero extends StatelessWidget {
   const _ResultArtworkHero({required this.accent, required this.tied});
 
@@ -3438,40 +3717,82 @@ final class _ResultArtworkHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
+    key: const ValueKey('party-result-artwork'),
     width: double.infinity,
-    height: MediaQuery.sizeOf(context).height < 820 ? 166 : 188,
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       color: const Color(0xFF173F34),
       borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: AppColors.ink, width: 1.25),
+      border: Border.all(color: accent.withValues(alpha: .5)),
     ),
     child: Stack(
-      fit: StackFit.expand,
       children: [
-        PartyGameplayArtwork(
-          scene: PartyGameplayArtworkScene.result,
-          accent: accent,
-          onDark: true,
+        Positioned.fill(
+          child: Image.asset(
+            'assets/visuals/party_victory_arena_v1.png',
+            fit: BoxFit.cover,
+            excludeFromSemantics: true,
+          ),
         ),
-        PositionedDirectional(
-          start: 14,
-          top: 12,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        const Positioned.fill(
+          child: DecoratedBox(
             decoration: BoxDecoration(
-              color: AppColors.ink.withValues(alpha: 0.72),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.paper0.withValues(alpha: .3)),
-            ),
-            child: Text(
-              tied ? 'مباراة متكافئة' : 'بطل المجلس',
-              style: const TextStyle(
-                color: AppColors.paper0,
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
+              gradient: LinearGradient(
+                colors: [Color(0x33191714), Color(0x99173F34)],
               ),
             ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'نهاية الجولة',
+                      style: TextStyle(
+                        color: AppColors.paper3,
+                        fontSize: 11,
+                        height: 1.4,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      tied ? 'مباراة متكافئة' : 'بطل المجلس',
+                      style: const TextStyle(
+                        color: AppColors.paper0,
+                        fontSize: 24,
+                        height: 1.3,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: 28,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: AppColors.brandLime,
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Image.asset(
+                tied
+                    ? 'assets/visuals/ranking_laurel_cutout_v1.png'
+                    : 'assets/visuals/challenge_result_trophy_v1.png',
+                width: MediaQuery.sizeOf(context).width < 390 ? 132 : 148,
+                height: 148,
+                fit: BoxFit.contain,
+                excludeFromSemantics: true,
+              ),
+            ],
           ),
         ),
       ],

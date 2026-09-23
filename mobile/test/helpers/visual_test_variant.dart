@@ -36,6 +36,17 @@ Future<void> verifyVisual(
   expect(tester.view.physicalSize, variant.size);
   const output = String.fromEnvironment('UI_REVIEW_DIR');
   if (output.isEmpty) return;
+  const pixelRatio = int.fromEnvironment(
+    'UI_REVIEW_PIXEL_RATIO',
+    defaultValue: 1,
+  );
+  if (pixelRatio <= 0) {
+    throw ArgumentError.value(
+      pixelRatio,
+      'UI_REVIEW_PIXEL_RATIO',
+      'must be greater than zero',
+    );
+  }
   final stem = golden.split('/').last.replaceAll(RegExp(r'_\d+x\d+\.png$'), '');
   final folder = golden.contains('phase_b')
       ? 'party'
@@ -47,7 +58,7 @@ Future<void> verifyVisual(
     find.byKey(const ValueKey('test-app-boundary')),
   );
   await tester.runAsync(() async {
-    final image = await boundary.toImage(pixelRatio: 1);
+    final image = await boundary.toImage(pixelRatio: pixelRatio.toDouble());
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     final file = File('$output/$folder/${stem}_${variant.label}.png');
     file.parent.createSync(recursive: true);

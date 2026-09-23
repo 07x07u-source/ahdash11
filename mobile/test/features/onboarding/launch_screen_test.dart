@@ -9,6 +9,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
+  test('default launch has no artificial minimum display delay', () {
+    const screen = LaunchScreen();
+    expect(screen.minimumDisplayDuration, Duration.zero);
+  });
+
   for (final scenario
       in <
         ({

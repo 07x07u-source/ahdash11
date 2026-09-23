@@ -38,9 +38,9 @@ final class AuthGateScreen extends StatelessWidget {
         requiredCapability ?? GuestCapabilityPolicy.capabilityFor(target);
     final (label, description, icon) = switch (capability) {
       AppCapability.friends => (
-        'الأصدقاء',
-        'أضف ربعك وتابع طلبات الصداقة من حسابك. بيانات الأصدقاء خاصة بأصحابها.',
-        AhdashIcons.group,
+        'اللاعبون المحظورون',
+        'إدارة قائمة الحظر مرتبطة بحسابك وتحافظ على اختيارات الخصوصية الخاصة بك.',
+        Icons.block_outlined,
       ),
       AppCapability.teamChallenge => (
         'تحدي فريق',

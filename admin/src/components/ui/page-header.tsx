@@ -10,7 +10,7 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <header className="admin-page-heading flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-3xl">
         <p className="eyebrow mb-2">{eyebrow}</p>
         <h1 className="text-2xl font-black tracking-tight text-[var(--foreground)] sm:text-3xl">{title}</h1>

@@ -21,7 +21,10 @@ import '../helpers/visual_test_variant.dart';
 
 void main() => registerVisualTests();
 
-void registerVisualTests({VisualTestVariant? variant}) {
+void registerVisualTests({
+  VisualTestVariant? variant,
+  Set<String>? screenPrefixes,
+}) {
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
     await (FontLoader('ThmanyahSans')
@@ -133,6 +136,9 @@ void registerVisualTests({VisualTestVariant? variant}) {
     ),
   ];
   for (final item in setupCases) {
+    if (screenPrefixes != null && !screenPrefixes.any(item.name.startsWith)) {
+      continue;
+    }
     if (variant != null && item.size.width != 390) continue;
     testWidgets('V10 Phase B ${item.name}', (tester) async {
       await _pumpGolden(
@@ -184,6 +190,9 @@ void registerVisualTests({VisualTestVariant? variant}) {
     ],
   ];
   for (final item in gameplayCases) {
+    if (screenPrefixes != null && !screenPrefixes.any(item.name.startsWith)) {
+      continue;
+    }
     if (variant != null && item.size.width != 390) continue;
     testWidgets('V10 Phase B ${item.name}', (tester) async {
       await _pumpGolden(tester, item, session: item.session!, variant: variant);
@@ -250,6 +259,14 @@ final _v10BoardSession = phase4BoardSession.copyWith(
           'تاريخ',
           'عالمي',
           'سعودي',
+        ][index],
+        imageUrl: const [
+          'assets/images/v10_h3_visual_fixtures/transfer_market.png',
+          'assets/images/v10_h3_visual_fixtures/legends.png',
+          'assets/images/v10_h3_visual_fixtures/champions_league.png',
+          'assets/images/v10_h3_visual_fixtures/world_cup.png',
+          'assets/images/v10_h3_visual_fixtures/tactics.png',
+          'assets/images/v10_h3_visual_fixtures/saudi_league.png',
         ][index],
         colorValue: phase4BoardSession.categories[index].colorValue,
         ownerTeamIndex: phase4BoardSession.categories[index].ownerTeamIndex,

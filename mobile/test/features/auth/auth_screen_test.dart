@@ -30,7 +30,7 @@ void main() {
     final router = await _pumpAuth(tester, repository);
     addTearDown(router.dispose);
 
-    expect(find.text('مستعد تثبت إنك تعرف الكورة؟'), findsOneWidget);
+    expect(find.text('تسجيل دخول'), findsOneWidget);
     expect(find.text('البريد الإلكتروني'), findsOneWidget);
     expect(find.text('تسجيل الدخول'), findsOneWidget);
     expect(find.text('الدخول كضيف'), findsOneWidget);
@@ -121,6 +121,10 @@ void main() {
     await tester.tap(find.byTooltip('إظهار كلمة المرور'));
     await tester.pump();
     expect(tester.widget<EditableText>(passwordEditor).obscureText, isFalse);
+    expect(
+      tester.getSize(find.byTooltip('إخفاء كلمة المرور')),
+      const Size(48, 48),
+    );
     await tester.tap(find.byKey(const ValueKey('auth-primary-action')));
     await tester.pumpAndSettle();
     expect(find.text('HOME'), findsOneWidget);
@@ -145,6 +149,35 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('HOME'), findsOneWidget);
     expect(repository.socialCalls, 1);
+  });
+
+  testWidgets('Google loading preserves the portrait scroll position', (
+    tester,
+  ) async {
+    _setSize(tester, const Size(390, 844));
+    final socialCompleter = Completer<SocialSignInResult>();
+    final repository = _FakeAuthRepository(socialCompleter: socialCompleter);
+    final router = await _pumpAuth(tester, repository, config: _googleConfig);
+    addTearDown(router.dispose);
+
+    final scrollable = find.byKey(const ValueKey('auth-scroll-signIn'));
+    expect(
+      tester.widget<SingleChildScrollView>(scrollable).controller!.offset,
+      0,
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-google-action')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsWidgets);
+    expect(
+      tester.widget<SingleChildScrollView>(scrollable).controller!.offset,
+      0,
+    );
+    socialCompleter.completeError(
+      const SocialSignInException(SocialSignInFailureCode.canceled),
+    );
+    await tester.pumpAndSettle();
   });
 
   testWidgets('Google is absent only when configuration is unavailable', (
@@ -235,6 +268,20 @@ void main() {
       }
     }
   }
+
+  testWidgets('password visibility announces its current state', (
+    tester,
+  ) async {
+    _setSize(tester, const Size(390, 844));
+    final repository = _FakeAuthRepository();
+    final router = await _pumpAuth(tester, repository);
+    addTearDown(router.dispose);
+
+    expect(find.bySemanticsLabel('كلمة المرور مخفية'), findsOneWidget);
+    await tester.tap(find.byTooltip('إظهار كلمة المرور'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('كلمة المرور ظاهرة'), findsOneWidget);
+  });
 }
 
 Future<GoRouter> _pumpAuth(
@@ -314,6 +361,7 @@ final class _FakeAuthRepository implements AuthRepository {
     this.signInCompleter,
     this.signInResult,
     this.signUpResult,
+    this.socialCompleter,
     this.socialResult,
     this.socialError,
   });
@@ -321,6 +369,7 @@ final class _FakeAuthRepository implements AuthRepository {
   final Completer<AuthUser>? signInCompleter;
   final AuthUser? signInResult;
   final AuthUser? signUpResult;
+  final Completer<SocialSignInResult>? socialCompleter;
   final SocialSignInResult? socialResult;
   final Object? socialError;
   int signInCalls = 0;
@@ -361,6 +410,7 @@ final class _FakeAuthRepository implements AuthRepository {
   Future<SocialSignInResult> signInWithSocial(SocialProvider provider) async {
     socialCalls += 1;
     if (socialError != null) throw socialError!;
+    if (socialCompleter != null) return socialCompleter!.future;
     return socialResult!;
   }
 

@@ -70,28 +70,28 @@ abstract final class V10FeatureFixtures {
       <String, Object?>{
         'request_id': 'fixture-request-in',
         'user_id': 'fixture-player-in',
-        'display_name': 'لاعب طلب وارد',
-        'username': 'fixture_incoming',
+        'display_name': 'وليد الدوسري',
+        'username': 'waleed_d',
       },
     ],
     'outbox': <Object?>[
       <String, Object?>{
         'request_id': 'fixture-request-out',
         'user_id': 'fixture-player-out',
-        'display_name': 'لاعب طلب مرسل',
-        'username': 'fixture_outgoing',
+        'display_name': 'مشعل العنزي',
+        'username': 'meshal_a',
       },
     ],
     'friends': <Object?>[
       <String, Object?>{
         'user_id': 'fixture-friend-a',
-        'display_name': 'صديق الاختبار الأول',
-        'username': 'fixture_friend_a',
+        'display_name': 'سلمان الحربي',
+        'username': 'salman_hrb',
       },
       <String, Object?>{
         'user_id': 'fixture-friend-b',
-        'display_name': 'صديق الاختبار الثاني',
-        'username': 'fixture_friend_b',
+        'display_name': 'فيصل الزهراني',
+        'username': 'faisal_z',
       },
     ],
   };
@@ -99,20 +99,20 @@ abstract final class V10FeatureFixtures {
   static const friendSearchResults = <Map<String, Object?>>[
     <String, Object?>{
       'user_id': 'fixture-search-new',
-      'display_name': 'لاعب جديد',
-      'username': 'fixture_new',
+      'display_name': 'عبدالله المطيري',
+      'username': 'abdullah_m',
       'relationship': 'none',
     },
     <String, Object?>{
       'user_id': 'fixture-search-pending',
-      'display_name': 'طلب سابق',
-      'username': 'fixture_pending',
+      'display_name': 'راكان الشمري',
+      'username': 'rakan_sh',
       'relationship': 'pending_sent',
     },
     <String, Object?>{
       'user_id': 'fixture-search-friend',
-      'display_name': 'صديق حالي',
-      'username': 'fixture_existing',
+      'display_name': 'فهد القحطاني',
+      'username': 'fahad_q',
       'relationship': 'friend',
     },
   ];
@@ -138,15 +138,43 @@ abstract final class V10FeatureFixtures {
     LeaderboardEntry(
       rank: 1,
       userId: 'fixture-ranked-a',
-      username: 'fixture_ranked_a',
-      rating: 1120,
-      tier: 'Gold',
+      username: 'نواف العتيبي',
+      rating: 1840,
+      tier: 'Diamond',
     ),
     LeaderboardEntry(
       rank: 2,
       userId: 'fixture-ranked-b',
-      username: 'fixture_ranked_b',
-      rating: 1080,
+      username: 'سلمان الحربي',
+      rating: 1785,
+      tier: 'Platinum',
+    ),
+    LeaderboardEntry(
+      rank: 3,
+      userId: 'fixture-ranked-c',
+      username: 'خالد منصور',
+      rating: 1690,
+      tier: 'Gold',
+    ),
+    LeaderboardEntry(
+      rank: 4,
+      userId: 'fixture-ranked-d',
+      username: 'فيصل الزهراني',
+      rating: 1605,
+      tier: 'Gold',
+    ),
+    LeaderboardEntry(
+      rank: 5,
+      userId: 'fixture-ranked-e',
+      username: 'تركي القحطاني',
+      rating: 1540,
+      tier: 'Silver',
+    ),
+    LeaderboardEntry(
+      rank: 6,
+      userId: 'fixture-ranked-f',
+      username: 'أحمد الشهري',
+      rating: 1495,
       tier: 'Silver',
     ),
   ];
@@ -285,16 +313,9 @@ const v10FeatureFixtureCoverage = <FeatureFixtureCoverage>[
     },
   ),
   FeatureFixtureCoverage(
-    feature: 'Social',
-    screens: [
-      'Social Hub',
-      'Team Join',
-      'Friends',
-      'Search',
-      'Blocked Players',
-      'Team Detail',
-    ],
-    actions: ['search', 'add', 'accept/reject', 'remove', 'block', 'unblock'],
+    feature: 'Teams and Safety',
+    screens: ['Social Hub', 'Team Join', 'Blocked Players', 'Team Detail'],
+    actions: ['join', 'rotate invite code', 'block', 'unblock'],
     states: {
       FixtureStateKind.loading,
       FixtureStateKind.populated,
@@ -304,7 +325,6 @@ const v10FeatureFixtureCoverage = <FeatureFixtureCoverage>[
       FixtureStateKind.guestRestricted,
       FixtureStateKind.compact,
       FixtureStateKind.textScale13,
-      FixtureStateKind.keyboard,
     },
   ),
   FeatureFixtureCoverage(

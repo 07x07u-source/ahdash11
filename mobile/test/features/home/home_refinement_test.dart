@@ -12,6 +12,7 @@ import 'package:ahdash_11/features/content/presentation/app_content_controller.d
 import 'package:ahdash_11/features/home/presentation/home_screen.dart';
 import 'package:ahdash_11/features/party/presentation/party_game_controller.dart';
 import 'package:ahdash_11/features/tournament/presentation/tournament_controller.dart';
+import 'package:ahdash_11/shared/presentation/app_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -60,6 +61,7 @@ void main() {
             addTearDown(router.dispose);
             expect(find.text('ابدأ لعبة'), findsOneWidget);
             expect(find.textContaining('Online'), findsNothing);
+            expect(find.text('الأصدقاء'), findsNothing);
             expect(find.textContaining('قريبًا'), findsNothing);
             expect(tester.takeException(), isNull);
             await captureReview(
@@ -77,6 +79,12 @@ void main() {
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
             }
+            if (scale == 1.0) {
+              await captureReview(
+                tester,
+                'home_${guest ? 'guest' : 'account'}_${size.width.toInt()}x${size.height.toInt()}_lower',
+              );
+            }
           },
         );
       }
@@ -89,7 +97,7 @@ void main() {
         size: const Size(390, 844),
         scale: scale,
         guest: true,
-        initialLocation: '/account-required?next=%2Ffriends',
+        initialLocation: '/account-required?next=%2Ftournaments',
       );
       addTearDown(router.dispose);
       expect(find.byKey(const ValueKey('gate-sign-in')), findsOneWidget);
@@ -119,7 +127,11 @@ Future<GoRouter> pumpReviewHome(
   final router = GoRouter(
     initialLocation: initialLocation,
     routes: [
-      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+      GoRoute(
+        path: '/home',
+        builder: (_, _) =>
+            const AppShell(location: '/home', child: HomeScreen()),
+      ),
       GoRoute(
         path: '/account-required',
         builder: (_, s) => AuthGateScreen(
@@ -133,7 +145,6 @@ Future<GoRouter> pumpReviewHome(
         '/teams',
         '/party/games',
         '/ranking',
-        '/friends',
         '/how-to-play',
         '/profile',
         '/settings',

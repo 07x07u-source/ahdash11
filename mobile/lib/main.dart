@@ -10,19 +10,24 @@ import 'core/bootstrap/app_bootstrap.dart';
 import 'core/config/app_config.dart';
 import 'core/services/app_error_reporter.dart';
 import 'core/services/app_services.dart';
+import 'core/startup/startup_trace.dart';
 
 Future<void> main() async {
+  StartupTrace.mark('process_entry');
   var activeServices = const AppServices.noop();
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
+      StartupTrace.mark('bindings_ready');
       await SystemChrome.setPreferredOrientations(const [
         DeviceOrientation.portraitUp,
       ]);
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      StartupTrace.mark('platform_ready');
       final config = AppConfig.fromEnvironment();
       try {
         activeServices = await AppBootstrap.initialize(config);
+        StartupTrace.mark('core_services_ready');
       } catch (error, stackTrace) {
         FlutterError.presentError(
           FlutterErrorDetails(exception: error, stack: stackTrace),
@@ -75,6 +80,10 @@ Future<void> main() async {
           ],
           child: const AhdashApp(),
         ),
+      );
+      StartupTrace.mark('app_scheduled');
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => StartupTrace.mark('first_flutter_frame'),
       );
     },
     (error, stack) {

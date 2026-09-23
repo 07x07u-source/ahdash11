@@ -6,10 +6,10 @@
 |---|---:|
 | Expected active screens | 38 |
 | Captured active screens | 38 |
-| Total PNG files | 242 |
-| Full-screen screenshots | 152 |
-| Primary full-screen screenshots | 76 |
-| Compact screenshots | 42 |
+| Total PNG files | 246 |
+| Full-screen screenshots | 156 |
+| Primary full-screen screenshots | 78 |
+| Compact screenshots | 44 |
 | Keyboard screenshots | 9 |
 | Guest screenshots | 7 |
 | Empty-state screenshots | 5 |

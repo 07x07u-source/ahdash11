@@ -125,6 +125,39 @@ void registerVisualTests({VisualTestVariant? variant}) {
             ),
           ),
         );
+        final imageProviders = tester
+            .widgetList<Image>(find.byType(Image))
+            .map((image) => image.image)
+            .toList(growable: false);
+        if (imageProviders.isNotEmpty) {
+          final context = tester.element(find.byType(MaterialApp));
+          await tester.runAsync(
+            () => Future.wait(
+              imageProviders.map(
+                (provider) => precacheImage(provider, context),
+              ),
+            ),
+          );
+          await tester.pump();
+        }
+        if (visual == _Visual.profile) {
+          final context = tester.element(find.byType(ProfileScreen));
+          await tester.runAsync(
+            () => Future.wait([
+              precacheImage(
+                const AssetImage(
+                  'assets/visuals/profile_identity_arena_v1.png',
+                ),
+                context,
+              ),
+              precacheImage(
+                const AssetImage('assets/player11/player11-male-avatar.png'),
+                context,
+              ),
+            ]),
+          );
+          await tester.pump();
+        }
         await tester.pump(const Duration(milliseconds: 500));
         if (visual == _Visual.premiumLoading) {
           expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -143,6 +176,21 @@ void registerVisualTests({VisualTestVariant? variant}) {
             );
           }
           await tester.pump(const Duration(milliseconds: 500));
+        }
+        final resolvedImageProviders = tester
+            .widgetList<Image>(find.byType(Image))
+            .map((image) => image.image)
+            .toList(growable: false);
+        if (resolvedImageProviders.isNotEmpty) {
+          final context = tester.element(find.byType(MaterialApp));
+          await tester.runAsync(
+            () => Future.wait(
+              resolvedImageProviders.map(
+                (provider) => precacheImage(provider, context),
+              ),
+            ),
+          );
+          await tester.pump();
         }
         expect(tester.takeException(), isNull);
         await verifyVisual(

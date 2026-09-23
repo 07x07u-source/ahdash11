@@ -40,6 +40,10 @@ void main() {
     await (FontLoader(
       'MaterialIcons',
     )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+    await (FontLoader('packages/cupertino_icons/CupertinoIcons')..addFont(
+          rootBundle.load('packages/cupertino_icons/assets/CupertinoIcons.ttf'),
+        ))
+        .load();
   });
 
   final cases = <_CaptureCase>[
@@ -66,6 +70,18 @@ void main() {
       catalog: _premiumCatalog,
     ),
     _CaptureCase(
+      'categories/category_selection_favorites_390x844.png',
+      const Size(390, 844),
+      const PartyCategorySelectionScreen(initialFavoritesOnly: true),
+      favoriteCategoryIds: {'category-0', 'category-3'},
+    ),
+    _CaptureCase(
+      'categories/category_selection_text_scale_1_3_390x844.png',
+      const Size(390, 844),
+      const PartyCategorySelectionScreen(),
+      textScaler: TextScaler.linear(1.3),
+    ),
+    _CaptureCase(
       'categories/category_detail_normal_390x844.png',
       const Size(390, 844),
       PartyCategoryDetailPanel(
@@ -86,6 +102,17 @@ void main() {
       ),
     ),
     _CaptureCase(
+      'categories/category_detail_selected_390x844.png',
+      const Size(390, 844),
+      PartyCategoryDetailPanel(
+        category: _detailCategory,
+        sample: _sample,
+        playable: true,
+        selected: true,
+        onSelect: _noop,
+      ),
+    ),
+    _CaptureCase(
       'categories/category_detail_media_fallback_390x844.png',
       const Size(390, 844),
       PartyCategoryDetailPanel(
@@ -96,6 +123,38 @@ void main() {
       allowImageError: true,
     ),
     _CaptureCase(
+      'party_setup/team_setup_primary_390x844.png',
+      const Size(390, 844),
+      const PartyTeamSetupScreen(),
+      teams: _emptyHelperTeams,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
+      'party_setup/team_setup_compact_360x800.png',
+      const Size(360, 800),
+      const PartyTeamSetupScreen(),
+      teams: _emptyHelperTeams,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
+      'party_setup/splitter_primary_390x844.png',
+      const Size(390, 844),
+      const PartyTeamSplitterScreen(),
+      teams: _splitTeams,
+      splitterStatus: PartySplitterStatus.completed,
+      splitterPlayers: _splitterPlayers,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
+      'party_setup/splitter_compact_360x800.png',
+      const Size(360, 800),
+      const PartyTeamSplitterScreen(),
+      teams: _splitTeams,
+      splitterStatus: PartySplitterStatus.completed,
+      splitterPlayers: _splitterPlayers,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
       'helpers/helpers_default_390x844.png',
       const Size(390, 844),
       const PartyHelperSelectionScreen(),
@@ -103,8 +162,22 @@ void main() {
       selectedCategoryIds: _categoryIds,
     ),
     _CaptureCase(
+      'helpers/helpers_default_360x800.png',
+      const Size(360, 800),
+      const PartyHelperSelectionScreen(),
+      teams: _emptyHelperTeams,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
       'helpers/helpers_selected_390x844.png',
       const Size(390, 844),
+      const PartyHelperSelectionScreen(),
+      teams: _teams,
+      selectedCategoryIds: _categoryIds,
+    ),
+    _CaptureCase(
+      'helpers/helpers_selected_360x800.png',
+      const Size(360, 800),
       const PartyHelperSelectionScreen(),
       teams: _teams,
       selectedCategoryIds: _categoryIds,
@@ -200,8 +273,20 @@ void main() {
       session: _revealSession,
     ),
     _CaptureCase(
+      'reveal/answer_reveal_360x800.png',
+      const Size(360, 800),
+      const PartyRevealScreen(),
+      session: _revealSession,
+    ),
+    _CaptureCase(
       'result/final_result_winner_390x844.png',
       const Size(390, 844),
+      const PartyResultScreen(),
+      session: _completedSession,
+    ),
+    _CaptureCase(
+      'result/final_result_winner_360x800.png',
+      const Size(360, 800),
       const PartyResultScreen(),
       session: _completedSession,
     ),
@@ -247,7 +332,7 @@ void main() {
         session: _revealSession,
       ),
     );
-    await tester.tap(find.text('صقور الجزيرة').last);
+    await tester.tap(find.widgetWithText(OutlinedButton, 'صقور الجزيرة').first);
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.takeException(), isNull);
     await _capture(tester, 'reveal/scoring_selected_390x844.png');
@@ -302,10 +387,12 @@ Future<void> _pumpScreen(WidgetTester tester, _CaptureCase item) async {
   addTearDown(database.close);
   final state = PartyGameState(
     selectedCategoryIds: item.selectedCategoryIds,
+    favoriteCategoryIds: item.favoriteCategoryIds,
     teams: item.teams,
     hasSetupDraft: true,
     teamSetupCompleted: true,
-    splitterStatus: PartySplitterStatus.skipped,
+    splitterStatus: item.splitterStatus,
+    splitterPlayers: item.splitterPlayers,
     session: item.session,
     restored: true,
   );
@@ -339,7 +426,7 @@ Future<void> _pumpScreen(WidgetTester tester, _CaptureCase item) async {
           data: MediaQueryData(
             size: item.size,
             devicePixelRatio: 1,
-            textScaler: const TextScaler.linear(1),
+            textScaler: item.textScaler,
             disableAnimations: true,
             padding: const EdgeInsets.only(top: 47, bottom: 34),
             viewPadding: const EdgeInsets.only(top: 47, bottom: 34),
@@ -484,6 +571,10 @@ final class _CaptureCase {
     this.catalog,
     this.teams = _teams,
     this.selectedCategoryIds = const [],
+    this.favoriteCategoryIds = const {},
+    this.splitterStatus = PartySplitterStatus.skipped,
+    this.splitterPlayers = const [],
+    this.textScaler = TextScaler.noScaling,
     this.viewInsets = EdgeInsets.zero,
     this.allowImageError = false,
   });
@@ -495,6 +586,10 @@ final class _CaptureCase {
   final PartyCatalog? catalog;
   final List<PartyTeam> teams;
   final List<String> selectedCategoryIds;
+  final Set<String> favoriteCategoryIds;
+  final PartySplitterStatus splitterStatus;
+  final List<String> splitterPlayers;
+  final TextScaler textScaler;
   final EdgeInsets viewInsets;
   final bool allowImageError;
 }
@@ -653,6 +748,21 @@ const _emptyHelperTeams = [
   ),
 ];
 
+const _splitterPlayers = ['سلمان', 'فيصل', 'محمد', 'سعود', 'خالد', 'عبدالله'];
+
+const _splitTeams = [
+  PartyTeam(
+    name: 'صقور الجزيرة',
+    colorValue: 0xFFE43D74,
+    players: ['سلمان', 'فيصل', 'محمد'],
+  ),
+  PartyTeam(
+    name: 'ذئاب المدرج',
+    colorValue: 0xFF1E874B,
+    players: ['سعود', 'خالد', 'عبدالله'],
+  ),
+];
+
 PartyGameSession _boardSession({
   required int usedThrough,
 }) => phase4BoardSession.copyWith(
@@ -673,6 +783,14 @@ PartyGameSession _boardSession({
           'تاريخ',
           'عالمي',
           'سعودي',
+        ][categoryIndex],
+        imageUrl: const [
+          'assets/images/v10_h3_visual_fixtures/transfer_market.png',
+          'assets/images/v10_h3_visual_fixtures/legends.png',
+          'assets/images/v10_h3_visual_fixtures/champions_league.png',
+          'assets/images/v10_h3_visual_fixtures/world_cup.png',
+          'assets/images/v10_h3_visual_fixtures/tactics.png',
+          'assets/images/v10_h3_visual_fixtures/saudi_league.png',
         ][categoryIndex],
         colorValue: phase4BoardSession.categories[categoryIndex].colorValue,
         ownerTeamIndex:

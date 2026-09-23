@@ -8,6 +8,7 @@ import '../../../core/services/app_error_reporter.dart';
 import '../../../core/services/app_services.dart';
 import '../data/development_auth_repository.dart';
 import '../data/supabase_auth_repository.dart';
+import '../data/supabase_user_mapper.dart';
 import '../domain/auth_repository.dart';
 import '../domain/auth_user.dart';
 import '../domain/guest_capability_policy.dart';
@@ -20,6 +21,22 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return const DevelopmentAuthRepository();
 });
 
+/// Keeps browser-based OAuth callbacks in sync with the application session.
+///
+/// Email and native Google authentication return a user directly. Apple uses
+/// Supabase's PKCE redirect flow, whose completion is delivered later through
+/// [GoTrueClient.onAuthStateChange] after iOS opens the callback URL.
+final authStateChangesProvider = Provider<Stream<AuthUser?>>((ref) {
+  final config = ref.watch(appConfigProvider);
+  if (!config.hasSupabase) return const Stream.empty();
+  return Supabase.instance.client.auth.onAuthStateChange
+      .where((event) => event.event != AuthChangeEvent.initialSession)
+      .map((event) {
+        final user = event.session?.user;
+        return user == null ? null : mapSupabaseUser(user);
+      });
+});
+
 final authControllerProvider = AsyncNotifierProvider<AuthController, AuthUser?>(
   AuthController.new,
 );
@@ -29,6 +46,16 @@ final class AuthController extends AsyncNotifier<AuthUser?> {
 
   @override
   Future<AuthUser?> build() async {
+    final authSubscription = ref
+        .watch(authStateChangesProvider)
+        .listen(
+          (user) => unawaited(_applyExternalAuthState(user)),
+          onError: (_, _) {
+            // The repository action and restored session remain authoritative.
+          },
+        );
+    ref.onDispose(() => unawaited(authSubscription.cancel()));
+
     final user = await ref.watch(authRepositoryProvider).restore();
     if (user != null) await _identify(user);
     return user;
@@ -216,4 +243,21 @@ final class AuthController extends AsyncNotifier<AuthUser?> {
       // Entitlements will be refreshed when the store is opened.
     }
   }
+
+  Future<void> _applyExternalAuthState(AuthUser? user) async {
+    // Direct Email/Google operations publish their own final state and telemetry.
+    // Browser OAuth callbacks arrive after the initiating action has completed.
+    if (_authActionInProgress || !ref.mounted) return;
+    final current = state.asData?.value;
+    if (_sameIdentity(current, user)) return;
+    if (user != null) await _identify(user);
+    if (ref.mounted) state = AsyncData(user);
+  }
+
+  bool _sameIdentity(AuthUser? current, AuthUser? next) =>
+      current?.id == next?.id &&
+      current?.username == next?.username &&
+      current?.email == next?.email &&
+      current?.avatarUrl == next?.avatarUrl &&
+      current?.isGuest == next?.isGuest;
 }

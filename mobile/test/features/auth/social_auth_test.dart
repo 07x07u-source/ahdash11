@@ -126,6 +126,46 @@ void main() {
     },
   );
 
+  test('external OAuth callback updates and identifies the session', () async {
+    const user = AuthUser(
+      id: 'apple-user',
+      username: 'لاعب Apple',
+      isGuest: false,
+      email: 'apple-player@example.test',
+    );
+    final authEvents = StreamController<AuthUser?>();
+    final notifications = _FakeNotifications();
+    final purchases = _FakePurchases();
+    final container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(
+          _FakeAuthRepository(restoreUser: null),
+        ),
+        authStateChangesProvider.overrideWithValue(authEvents.stream),
+        appServicesProvider.overrideWithValue(
+          AppServices(
+            analytics: _FakeAnalytics(),
+            crashReporter: const NoopCrashReporter(),
+            notifications: notifications,
+            ads: const NoopAdsService(),
+            purchases: purchases,
+            errors: const NoopAppErrorReporter(),
+          ),
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
+    addTearDown(authEvents.close);
+    await container.read(authControllerProvider.future);
+
+    authEvents.add(user);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(container.read(authControllerProvider).value?.id, user.id);
+    expect(notifications.identifiedUserId, user.id);
+    expect(purchases.identifiedUserId, user.id);
+  });
+
   test('Google cancellation returns quietly without an error state', () async {
     final container = ProviderContainer(
       overrides: [

@@ -5,6 +5,15 @@ import { hasSupabaseConfig, supabaseAnonKey, supabaseUrl } from "@/lib/supabase/
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  const pathname = request.nextUrl.pathname;
+  const userAgent = request.headers.get("user-agent") ?? "";
+  const isPhone = /Android|iPhone|iPod|IEMobile|Opera Mini|Mobile/i.test(userAgent);
+  const isPublicWebsite = pathname === "/" || ["/games", "/play", "/championships", "/support", "/legal", "/account"].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+
+  if (isPhone && isPublicWebsite && pathname !== "/mobile-app") {
+    return NextResponse.rewrite(new URL("/mobile-app", request.url));
+  }
+
   if (!hasSupabaseConfig) return response;
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {

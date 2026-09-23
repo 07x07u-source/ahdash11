@@ -1,10 +1,13 @@
 import { authorizeAdminApi } from "@/lib/auth/context";
+import { rejectCrossOriginMutation } from "@/lib/security/request";
 import { premiumVoucherActionsEnabled } from "@/lib/premium-vouchers/schema";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export async function POST(_: Request, context: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  const crossOrigin = rejectCrossOriginMutation(request);
+  if (crossOrigin) return crossOrigin;
   const authorization = await authorizeAdminApi("admin");
   if (authorization.response) return authorization.response;
   if (!premiumVoucherActionsEnabled()) {

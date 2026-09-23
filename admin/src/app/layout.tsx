@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "لوحة أحدعش | 11",
+    default: "أحدعش 11 — العب وتحدَّ أصحابك",
     template: "%s | أحدعش 11",
   },
-  description: "لوحة تشغيل وإدارة منصة أحدعش لمسابقات كرة القدم.",
+  description: "لعبة أسئلة كرة قدم اجتماعية: العب، تحدَّ أصحابك وأنشئ بطولاتك.",
   icons: {
     icon: "/branding/app-icon.png",
     apple: "/branding/app-icon.png",

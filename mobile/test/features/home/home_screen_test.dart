@@ -96,6 +96,23 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Home notification action opens the notifications inbox', (
+    tester,
+  ) async {
+    _setSize(tester, const Size(844, 390));
+    final router = await _pumpHome(
+      tester,
+      const PartyGameState(restored: true),
+    );
+    addTearDown(router.dispose);
+
+    final action = find.byKey(const ValueKey('home-notifications-action'));
+    expect(action, findsOneWidget);
+    await tester.tap(action);
+    await tester.pumpAndSettle();
+    expect(find.text('NOTIFICATIONS'), findsOneWidget);
+  });
 }
 
 Future<GoRouter> _pumpHome(
@@ -121,6 +138,10 @@ Future<GoRouter> _pumpHome(
       GoRoute(
         path: '/settings',
         builder: (_, _) => const Scaffold(body: Text('SETTINGS')),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (_, _) => const Scaffold(body: Text('NOTIFICATIONS')),
       ),
       GoRoute(
         path: '/how-to-play',

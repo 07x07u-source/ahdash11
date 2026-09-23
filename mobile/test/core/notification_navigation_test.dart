@@ -52,6 +52,10 @@ void main() {
         NotificationNavigation.resolve({'deep_link': 'https://evil.test'}),
         '/notifications',
       );
+      expect(
+        NotificationNavigation.resolve({'deep_link': '/friends'}),
+        '/notifications',
+      );
     });
 
     test('legacy live-match invitations no longer open gameplay', () {

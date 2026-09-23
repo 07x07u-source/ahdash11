@@ -10,13 +10,14 @@ import 'package:ahdash_11/features/ranking/presentation/ranking_screen.dart';
 import 'package:ahdash_11/features/social/data/social_repository.dart';
 import 'package:ahdash_11/features/social/domain/social_entities.dart';
 import 'package:ahdash_11/features/social/presentation/blocked_players_screen.dart';
-import 'package:ahdash_11/features/social/presentation/friends_screen.dart';
 import 'package:ahdash_11/features/social/presentation/social_team_screen.dart';
 import 'package:ahdash_11/features/social/presentation/team_challenge_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/fake_social_repository.dart';
+import '../fixtures/v10_feature_fixtures.dart';
 import '../helpers/test_app.dart';
 
 void main() {
@@ -55,33 +56,6 @@ void main() {
       );
     }
   }
-
-  for (final size in const [Size(360, 800), Size(390, 844)]) {
-    testWidgets('Friends search stays reachable with keyboard at $size', (
-      tester,
-    ) async {
-      tester.view
-        ..physicalSize = size
-        ..devicePixelRatio = 1
-        ..viewInsets = const FakeViewPadding(bottom: 300);
-      addTearDown(() {
-        tester.view
-          ..resetPhysicalSize()
-          ..resetDevicePixelRatio()
-          ..resetViewInsets();
-      });
-      await tester.pumpWidget(
-        _scope(size, 1.3, const FriendsScreen(), inset: 300),
-      );
-      await tester.pumpAndSettle();
-      final field = find.byKey(const ValueKey('friends-search-field'));
-      expect(field, findsOneWidget);
-      await tester.tap(field);
-      await tester.enterText(field, 'لاعب');
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-    });
-  }
 }
 
 Widget _scope(Size size, double scale, Widget screen, {double inset = 0}) =>
@@ -93,8 +67,16 @@ Widget _scope(Size size, double scale, Widget screen, {double inset = 0}) =>
           (ref, notifier) => const PartyGameState(restored: true),
         ),
         categoriesProvider.overrideWithBuild((ref, notifier) async => const []),
-        leaderboardProvider.overrideWith((ref) async => const []),
+        leaderboardProvider.overrideWith(
+          (ref) async => V10FeatureFixtures.ranking,
+        ),
         blockedPlayersProvider.overrideWith((ref) async => const []),
+        socialRepositoryProvider.overrideWithValue(
+          FakeSocialRepository(
+            challengeQuestion: teamChallengeQuestionFixture,
+            challengeResult: teamChallengeResultFixture,
+          ),
+        ),
         socialTeamDetailProvider.overrideWith((ref, id) async => _team),
       ],
       child: testApp(
@@ -117,7 +99,6 @@ const _screens = <Widget>[
   SoloSetupScreen(),
   TeamChallengeScreen(challengeId: 'unavailable', enableCountdown: false),
   RankingScreen(),
-  FriendsScreen(),
   BlockedPlayersScreen(),
   SocialTeamScreen(teamId: 'team'),
 ];

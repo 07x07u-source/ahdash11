@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/presentation/ahdash_pictograms.dart';
 import '../../../shared/presentation/brand_scaffold.dart';
@@ -1631,6 +1632,8 @@ final class _TournamentMatchScreenState
               match: match,
               teamA: teamA,
               teamB: teamB,
+              scoreA: scoreA,
+              scoreB: scoreB,
               awaitingResult: awaitingResult,
               playable: playable,
               blocked: blocked,
@@ -2092,6 +2095,15 @@ final class _V10TournamentHubBody extends StatelessWidget {
     final next = TournamentFlowResolver.currentMatch(tournament);
     final a = tournament.team(next?.teamAId),
         b = tournament.team(next?.teamBId);
+    final completedMatches = tournament.matches
+        .where((match) => match.status == TournamentMatchStatus.completed)
+        .length;
+    final playableMatches = tournament.matches
+        .where((match) => match.status != TournamentMatchStatus.bye)
+        .length;
+    final progress = playableMatches == 0
+        ? tournament.teams.length / tournament.rules.capacity
+        : completedMatches / playableMatches;
     final route = TournamentFlowResolver.routeFor(
       TournamentState(
         active: tournament,
@@ -2100,6 +2112,7 @@ final class _V10TournamentHubBody extends StatelessWidget {
       ),
     );
     return _TournamentBody(
+      bottomInset: AhdashSizing.floatingDockContentInset,
       action: _V10TournamentCta(
         label: tournament.status == TournamentStatus.completed
             ? 'شاهد بطل البطولة'
@@ -2107,101 +2120,344 @@ final class _V10TournamentHubBody extends StatelessWidget {
         onPressed: () => context.push(route),
       ),
       children: [
-        AhdashV10Panel(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                tournament.name,
-                style: const TextStyle(
-                  fontSize: 26,
-                  height: 1.3,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                next == null
-                    ? 'حالة البطولة: ${tournament.status == TournamentStatus.completed ? "مكتملة" : "قيد التجهيز"}'
-                    : _tRoundLabel(next.round),
-                style: const TextStyle(fontSize: 14, color: AppColors.inkMuted),
-              ),
-              const Divider(height: 32),
-              Row(
-                children: [
-                  const Expanded(
-                    child: _V10MetaPair(
-                      label: 'نظام البطولة',
-                      value: 'خروج المغلوب',
-                    ),
-                  ),
-                  Expanded(
-                    child: _V10MetaPair(
-                      label: 'الفرق المسجلة',
-                      value:
-                          '${_tArabic(tournament.teams.length)} / ${_tArabic(tournament.rules.capacity)}',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        _V10TournamentHero(
+          tournament: tournament,
+          stage: next == null
+              ? tournament.status == TournamentStatus.completed
+                    ? 'اكتملت البطولة'
+                    : 'تجهيز البطولة'
+              : _tRoundLabel(next.round),
+          progress: progress.clamp(0, 1),
         ),
         if (next != null && a != null && b != null) ...[
-          const SizedBox(height: 16),
-          AhdashV10Panel(
-            backgroundColor: AppColors.paper0,
+          const SizedBox(height: 14),
+          _V10UpcomingMatchCard(
+            tournament: tournament,
+            match: next,
+            teamA: a,
+            teamB: b,
+          ),
+        ],
+        const SizedBox(height: 18),
+        _V10OutlineAction(
+          label: 'البطولات السابقة والأرشيف',
+          icon: Icons.history_rounded,
+          onPressed: onHistory,
+        ),
+        const SizedBox(height: 10),
+        _V10OutlineAction(
+          label: 'لوائح البطولة والقواعد',
+          icon: Icons.menu_book_outlined,
+          onPressed: onRules,
+        ),
+      ],
+    );
+  }
+}
+
+final class _V10TournamentHero extends StatelessWidget {
+  const _V10TournamentHero({
+    required this.tournament,
+    required this.stage,
+    required this.progress,
+  });
+
+  final Tournament tournament;
+  final String stage;
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width <= 370;
+    return Container(
+      height: compact ? 184 : 196,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.ink,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x26000000),
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: compact ? -28 : -20,
+            bottom: compact ? -26 : -30,
+            child: IgnorePointer(
+              child: Opacity(
+                opacity: .96,
+                child: Image.asset(
+                  'assets/visuals/home_mode_tournament.png',
+                  width: compact ? 160 : 178,
+                  height: compact ? 160 : 178,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+          PositionedDirectional(
+            end: -34,
+            top: -54,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [Color(0x33B6FF3B), Color(0x00B6FF3B)],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              compact ? 16 : 18,
+              16,
+              compact ? 16 : 18,
+              15,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'المباراة القادمة',
-                  style: TextStyle(fontSize: 14, color: AppColors.inkMuted),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: _V10StagePill(label: stage),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  '${a.name}  ضد  ${b.name}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+                const SizedBox(height: 10),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: SizedBox(
+                    width: compact ? 180 : 202,
+                    child: Text(
+                      tournament.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.paper0,
+                        fontSize: compact ? 22 : 24,
+                        height: 1.12,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: SizedBox(
+                    width: compact ? 176 : 196,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${_tArabic(tournament.teams.length)} فرق',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: AppColors.paper1,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'خروج المغلوب',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                  color: Color(0xBFFBF7EF),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 7),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 6,
+                            color: AppColors.primary,
+                            backgroundColor: const Color(0xFF3D3A34),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ],
-        const SizedBox(height: 24),
-        _V10OutlineAction(
-          label: 'البطولات السابقة والأرشيف',
-          onPressed: onHistory,
-        ),
-        const SizedBox(height: 12),
-        _V10OutlineAction(label: 'لوائح البطولة والقواعد', onPressed: onRules),
-      ],
+      ),
     );
   }
 }
 
-final class _V10MetaPair extends StatelessWidget {
-  const _V10MetaPair({required this.label, required this.value});
-  final String label;
-  final String value;
+final class _V10UpcomingMatchCard extends StatelessWidget {
+  const _V10UpcomingMatchCard({
+    required this.tournament,
+    required this.match,
+    required this.teamA,
+    required this.teamB,
+  });
+
+  final Tournament tournament;
+  final TournamentMatch match;
+  final TournamentTeam teamA;
+  final TournamentTeam teamB;
+
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: const TextStyle(color: AppColors.inkMuted, fontSize: 11),
+  Widget build(BuildContext context) {
+    final indexA = tournament.teams.indexWhere((team) => team.id == teamA.id);
+    final indexB = tournament.teams.indexWhere((team) => team.id == teamB.id);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 13),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.hairline),
       ),
-      const SizedBox(height: 2),
-      Text(
-        value,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.schedule_rounded,
+                size: 17,
+                color: Color(0xFF1E874B),
+              ),
+              const SizedBox(width: 6),
+              const Expanded(
+                child: Text(
+                  'المباراة القادمة',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  '${_tRoundLabel(match.round)} · مباراة ${_tArabic(match.position + 1)}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 11),
+          Row(
+            children: [
+              Expanded(
+                child: _V10UpcomingTeam(
+                  name: teamA.name,
+                  color: _v10TeamColor(indexA < 0 ? 0 : indexA),
+                ),
+              ),
+              Container(
+                width: 34,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.paper1,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: const Text(
+                  'VS',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _V10UpcomingTeam(
+                  name: teamB.name,
+                  color: _v10TeamColor(indexB < 0 ? 1 : indexB),
+                  reverse: true,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _V10UpcomingTeam extends StatelessWidget {
+  const _V10UpcomingTeam({
+    required this.name,
+    required this.color,
+    this.reverse = false,
+  });
+
+  final String name;
+  final Color color;
+  final bool reverse;
+
+  @override
+  Widget build(BuildContext context) {
+    final nameWidget = Expanded(
+      child: Text(
+        name,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+        textAlign: reverse ? TextAlign.start : TextAlign.end,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
       ),
-    ],
+    );
+    final dot = _V10TeamDot(color: color, size: 12);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: reverse
+            ? [dot, const SizedBox(width: 7), nameWidget]
+            : [nameWidget, const SizedBox(width: 7), dot],
+      ),
+    );
+  }
+}
+
+final class _V10StagePill extends StatelessWidget {
+  const _V10StagePill({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: AppColors.primary,
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Text(
+      label,
+      style: const TextStyle(
+        color: AppColors.ink,
+        fontSize: 10.5,
+        fontWeight: FontWeight.w900,
+      ),
+    ),
   );
 }
 
@@ -2222,52 +2478,319 @@ final class _V10TournamentCreateBody extends StatelessWidget {
   final ValueChanged<int> onCapacity;
   final VoidCallback onNext;
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      const Text(
-        '١ من ٣ • تجهيز البطولة',
-        style: TextStyle(fontSize: 13, color: AppColors.inkMuted),
-      ),
-      const SizedBox(height: 24),
-      TextField(
-        key: const ValueKey('tournament-name-field'),
-        controller: controller,
-        enabled: enabled,
-        decoration: InputDecoration(
-          labelText: 'اسم البطولة',
-          hintText: 'مثال: كأس الحي',
-          errorText: error,
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).height < 820;
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _V10WizardProgress(
+          current: 1,
+          total: 3,
+          label: 'أساسيات البطولة',
         ),
+        SizedBox(
+          height: keyboardVisible
+              ? 12
+              : compact
+              ? 18
+              : 24,
+        ),
+        if (!keyboardVisible) ...[
+          const _V10CreationIntro(),
+          SizedBox(height: compact ? 18 : 22),
+        ],
+        const _V10SectionLabel(
+          title: 'اسم البطولة',
+          caption: 'اسم واضح يظهر لكل الفرق',
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          key: const ValueKey('tournament-name-field'),
+          controller: controller,
+          enabled: enabled,
+          textInputAction: TextInputAction.done,
+          maxLength: 60,
+          maxLines: 1,
+          decoration: InputDecoration(
+            hintText: 'مثال: بطولة الأساطير الشتوية',
+            errorText: error,
+            counterText: '',
+            prefixIcon: const Icon(Icons.emoji_events_outlined, size: 20),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+        ),
+        SizedBox(
+          height: keyboardVisible
+              ? 14
+              : compact
+              ? 18
+              : 22,
+        ),
+        const _V10SectionLabel(
+          title: 'حجم البطولة',
+          caption: 'يمكنك إضافة أسماء الفرق في الخطوة التالية',
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: textScale > 1.2
+              ? 128
+              : textScale > 1
+              ? 120
+              : keyboardVisible || compact
+              ? 104
+              : 116,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final value in const [4, 8]) ...[
+                Expanded(
+                  child: _V10CapacityChoice(
+                    value: value,
+                    selected: capacity == value,
+                    onPressed: enabled ? () => onCapacity(value) : null,
+                  ),
+                ),
+                if (value == 4) const SizedBox(width: 12),
+              ],
+            ],
+          ),
+        ),
+        SizedBox(
+          height: keyboardVisible
+              ? 14
+              : compact
+              ? 20
+              : 26,
+        ),
+        _V10TournamentCta(
+          key: const ValueKey('tournament-create-primary'),
+          label: 'التالي: إضافة الفرق',
+          icon: Icons.arrow_forward_rounded,
+          onPressed: enabled ? onNext : null,
+        ),
+      ],
+    );
+  }
+}
+
+final class _V10WizardProgress extends StatelessWidget {
+  const _V10WizardProgress({
+    required this.current,
+    required this.total,
+    required this.label,
+  });
+
+  final int current;
+  final int total;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: 'الخطوة $current من $total، $label',
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(14, 11, 14, 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: .72),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.hairline.withValues(alpha: .78)),
       ),
-      const SizedBox(height: 24),
-      const Text(
-        'حجم البطولة',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-      const SizedBox(height: 12),
-      IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (final value in const [4, 8]) ...[
-              Expanded(
-                child: _V10CapacityChoice(
-                  value: value,
-                  selected: capacity == value,
-                  onPressed: enabled ? () => onCapacity(value) : null,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEAF6D8),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  'الخطوة ${_tArabic(current)} من ${_tArabic(total)}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF1E7647),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
-              if (value == 4) const SizedBox(width: 16),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              for (var i = 1; i <= total; i++) ...[
+                Expanded(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: i <= current
+                          ? const Color(0xFF1E874B)
+                          : AppColors.paper2,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                ),
+                if (i != total) const SizedBox(width: 6),
+              ],
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+final class _V10CreationIntro extends StatelessWidget {
+  const _V10CreationIntro();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(minHeight: 96),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
+        colors: [Color(0xFF183F32), Color(0xFF102A23)],
+      ),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: const Color(0xFF386451)),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x17191714),
+          blurRadius: 18,
+          offset: Offset(0, 7),
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        const PositionedDirectional(
+          start: -18,
+          bottom: -38,
+          child: Icon(
+            Icons.emoji_events_rounded,
+            size: 118,
+            color: Color(0x1239A968),
+          ),
+        ),
+        Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFD8FFA0), width: 1.5),
+              ),
+              child: const Icon(
+                Icons.emoji_events_rounded,
+                color: AppColors.ink,
+                size: 25,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'أساسيات البطولة',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    'جهّز طريق الكأس',
+                    style: TextStyle(
+                      color: AppColors.paper0,
+                      fontSize: 17,
+                      height: 1.15,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'اختر اسمًا وحجمًا، وسنجهّز لك المواجهات.',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Color(0xFFD6E2DA),
+                      fontSize: 11,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
+      ],
+    ),
+  );
+}
+
+final class _V10SectionLabel extends StatelessWidget {
+  const _V10SectionLabel({required this.title, required this.caption});
+
+  final String title;
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Container(
+        width: 4,
+        height: 18,
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E874B),
+          borderRadius: BorderRadius.circular(999),
+        ),
       ),
-      const SizedBox(height: 24),
-      _V10TournamentCta(
-        key: const ValueKey('tournament-create-primary'),
-        label: 'التالي',
-        onPressed: enabled ? onNext : null,
+      const SizedBox(width: 8),
+      Text(
+        title,
+        style: const TextStyle(fontSize: 15.5, fontWeight: FontWeight.w900),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          caption,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.inkMuted,
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     ],
   );
@@ -2283,29 +2806,91 @@ final class _V10CapacityChoice extends StatelessWidget {
   final bool selected;
   final VoidCallback? onPressed;
   @override
-  Widget build(BuildContext context) => OutlinedButton(
-    onPressed: onPressed,
-    style: OutlinedButton.styleFrom(
-      backgroundColor: Colors.white,
-      side: BorderSide(
-        color: selected ? const Color(0xFF1E874B) : AppColors.hairline,
-        width: selected ? 2 : 1,
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: selected,
+    label: '$value فرق',
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        color: selected ? const Color(0xFFF0F7E7) : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: selected ? const Color(0xFF1E874B) : AppColors.hairline,
+          width: selected ? 1.8 : 1,
+        ),
+        boxShadow: selected
+            ? const [
+                BoxShadow(
+                  color: Color(0x142E7D4F),
+                  blurRadius: 14,
+                  offset: Offset(0, 5),
+                ),
+              ]
+            : null,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          _tArabic(value),
-          style: TextStyle(
-            color: selected ? const Color(0xFF1E874B) : AppColors.inkMuted,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(17),
+          overlayColor: WidgetStatePropertyAll(
+            AppColors.primary.withValues(alpha: .14),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _tArabic(value),
+                        style: TextStyle(
+                          color: selected
+                              ? const Color(0xFF1E874B)
+                              : AppColors.ink,
+                          fontSize: 27,
+                          height: 1,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      const Text(
+                        'فرق',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        value == 4 ? 'بطولة سريعة' : 'مواجهات أكثر',
+                        style: const TextStyle(
+                          color: AppColors.inkMuted,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (selected)
+                  const PositionedDirectional(
+                    end: 0,
+                    top: 0,
+                    child: Icon(
+                      Icons.check_circle_rounded,
+                      color: Color(0xFF1E874B),
+                      size: 19,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
-        const Text('فرق رياضية', style: TextStyle(fontWeight: FontWeight.w700)),
-      ],
+      ),
     ),
   );
 }
@@ -2323,37 +2908,132 @@ final class _V10TournamentTeamsBody extends StatelessWidget {
   final VoidCallback? onDraw;
   @override
   Widget build(BuildContext context) => _TournamentBody(
-    action: _V10TournamentCta(label: 'ابدأ القرعة', onPressed: onDraw),
+    action: _V10TournamentCta(
+      label: 'ابدأ القرعة',
+      icon: Icons.casino_outlined,
+      onPressed: onDraw,
+    ),
     children: [
-      Text(
-        '${tournament.teams.length} من ${tournament.rules.capacity} فرق',
-        style: const TextStyle(fontSize: 14, color: AppColors.inkMuted),
+      _V10RosterProgress(
+        count: tournament.teams.length,
+        capacity: tournament.rules.capacity,
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 14),
       for (var i = 0; i < tournament.teams.length; i++) ...[
         _V10TournamentTeamRow(
           team: tournament.teams[i],
           color: _v10TeamColor(i),
+          index: i,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 9),
       ],
-      OutlinedButton.icon(
-        onPressed: enabled ? onAdd : null,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('إضافة فريق'),
+      SizedBox(
+        height: 48,
+        child: OutlinedButton.icon(
+          onPressed: enabled ? onAdd : null,
+          icon: const Icon(Icons.add_rounded),
+          label: const Text('إضافة فريق'),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: AppColors.hairline),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
       ),
     ],
   );
 }
 
+final class _V10RosterProgress extends StatelessWidget {
+  const _V10RosterProgress({required this.count, required this.capacity});
+
+  final int count;
+  final int capacity;
+
+  @override
+  Widget build(BuildContext context) {
+    final complete = count >= capacity;
+    return Container(
+      padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(
+        color: complete ? const Color(0xFFF0F7E7) : AppColors.paper1,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: complete ? const Color(0xFFB9CDA6) : AppColors.hairline,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: complete ? const Color(0xFF1E874B) : AppColors.ink,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              complete ? Icons.check_rounded : Icons.groups_2_outlined,
+              color: complete ? Colors.white : AppColors.primary,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  complete ? 'قائمة الفرق مكتملة' : 'أكمل قائمة الفرق',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  complete
+                      ? 'جاهزة للقرعة وتحديد المواجهات'
+                      : 'أضف الفرق قبل سحب القرعة',
+                  style: const TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 54,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '${_tArabic(count)} / ${_tArabic(capacity)}',
+                textDirection: TextDirection.ltr,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 final class _V10TournamentTeamRow extends StatelessWidget {
-  const _V10TournamentTeamRow({required this.team, required this.color});
+  const _V10TournamentTeamRow({
+    required this.team,
+    required this.color,
+    required this.index,
+  });
   final TournamentTeam team;
   final Color color;
+  final int index;
   @override
   Widget build(BuildContext context) => Container(
-    height: 42,
-    padding: const EdgeInsets.symmetric(horizontal: 11),
+    height: 48,
+    padding: const EdgeInsets.symmetric(horizontal: 10),
     decoration: BoxDecoration(
       color: Colors.white,
       border: Border.all(color: AppColors.hairline),
@@ -2362,13 +3042,35 @@ final class _V10TournamentTeamRow extends StatelessWidget {
     child: Row(
       children: [
         _V10TeamDot(color: color, size: 16),
-        const SizedBox(width: 10),
+        const SizedBox(width: 9),
         Expanded(
           child: Text(
             team.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+          ),
+        ),
+        const SizedBox(width: 8),
+        SizedBox(
+          width: 58,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.paper1,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                'جاهز · ${_tArabic(index + 1)}',
+                style: const TextStyle(
+                  color: AppColors.inkMuted,
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -2391,51 +3093,171 @@ final class _V10TournamentDrawBody extends StatelessWidget {
   Widget build(BuildContext context) => _TournamentBody(
     action: _V10TournamentCta(
       label: 'اسحب القرعة',
+      icon: Icons.casino_rounded,
       onPressed: enabled ? onGenerate : null,
     ),
     children: [
-      AhdashV10Panel(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Icon(Icons.emoji_events_outlined, size: 48),
-            const SizedBox(height: 16),
-            const Text(
-              'القرعة جاهزة',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+      _V10DrawHero(teamCount: teams.length),
+      const SizedBox(height: 18),
+      Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'وعاء القرعة',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'تُحدد المواجهات عشوائيًا عند سحب القرعة.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: AppColors.inkMuted,
-              ),
+          ),
+          Text(
+            '${_tArabic(teams.length)} فرق جاهزة',
+            style: const TextStyle(
+              color: AppColors.inkMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
             ),
-            if (!enabled)
-              const Padding(
-                padding: EdgeInsets.only(top: 12),
-                child: Text(
-                  'القرعة غير متاحة في الحالة الحالية أو لهذا الحساب.',
-                  textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final itemWidth = (constraints.maxWidth - 9) / 2;
+          return Wrap(
+            spacing: 9,
+            runSpacing: 9,
+            children: [
+              for (var i = 0; i < teams.length; i++)
+                SizedBox(
+                  width: itemWidth,
+                  child: _V10DrawTeamChip(
+                    team: teams[i],
+                    color: _v10TeamColor(i),
+                    index: i,
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+      if (!enabled)
+        const Padding(
+          padding: EdgeInsets.only(top: 12),
+          child: Text(
+            'القرعة غير متاحة في الحالة الحالية أو لهذا الحساب.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
+          ),
+        ),
+    ],
+  );
+}
+
+final class _V10DrawHero extends StatelessWidget {
+  const _V10DrawHero({required this.teamCount});
+
+  final int teamCount;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: AppColors.ink,
+      borderRadius: BorderRadius.circular(22),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x22000000),
+          blurRadius: 14,
+          offset: Offset(0, 6),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        Container(
+          width: 58,
+          height: 58,
+          decoration: const BoxDecoration(
+            color: AppColors.primary,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.casino_outlined,
+            color: AppColors.ink,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'لحظة تحديد الطريق',
+                style: TextStyle(
+                  color: AppColors.paper0,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                '${_tArabic(teamCount ~/ 2)} مواجهات تُرتّب عشوائيًا وبشفافية.',
+                style: const TextStyle(
+                  color: Color(0xBFFBF7EF),
+                  fontSize: 11.5,
+                  height: 1.35,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 24),
-      const Text(
-        'الفرق المشاركة',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-      const SizedBox(height: 12),
-      for (var i = 0; i < teams.length; i++) ...[
-        _V10TournamentTeamRow(team: teams[i], color: _v10TeamColor(i)),
-        const SizedBox(height: 12),
       ],
-    ],
+    ),
+  );
+}
+
+final class _V10DrawTeamChip extends StatelessWidget {
+  const _V10DrawTeamChip({
+    required this.team,
+    required this.color,
+    required this.index,
+  });
+
+  final TournamentTeam team;
+  final Color color;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 46,
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: AppColors.hairline),
+    ),
+    child: Row(
+      children: [
+        _V10TeamDot(color: color, size: 13),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(
+            team.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
+          ),
+        ),
+        Text(
+          _tArabic(index + 1),
+          style: const TextStyle(
+            color: AppColors.inkMuted,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -2459,27 +3281,69 @@ final class _V10TournamentBracketBody extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
+      Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: AppColors.paper1,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.hairline),
+        ),
+        child: Row(
+          children: [
+            for (var r = 1; r <= maxRound; r++)
+              Expanded(
+                child: _V10RoundTab(
+                  label: r == maxRound
+                      ? 'النهائي'
+                      : r == maxRound - 1
+                      ? 'نصف النهائي'
+                      : 'الدور ${_tArabic(r)}',
+                  selected: round == r,
+                  onPressed: () => onRound(r),
+                ),
+              ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 14),
+      Row(
         children: [
-          for (var r = 1; r <= maxRound; r++)
-            _V10RoundTab(
-              label: r == maxRound
-                  ? 'النهائي'
-                  : r == maxRound - 1
-                  ? 'نصف النهائي'
-                  : 'الدور ${_tArabic(r)}',
-              selected: round == r,
-              onPressed: () => onRound(r),
+          Container(
+            width: 30,
+            height: 30,
+            decoration: const BoxDecoration(
+              color: AppColors.ink,
+              shape: BoxShape.circle,
             ),
+            child: const Icon(
+              Icons.account_tree_outlined,
+              color: AppColors.primary,
+              size: 16,
+            ),
+          ),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              _tBracketStageTitle(round, maxRound),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+            ),
+          ),
+          Text(
+            '${_tArabic(matches.length)} ${matches.length == 1 ? "مباراة" : "مواجهات"}',
+            style: const TextStyle(
+              color: AppColors.inkMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 10),
       Expanded(
         child: ListView.separated(
           itemCount: matches.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          padding: const EdgeInsets.only(bottom: 4),
+          separatorBuilder: (_, _) => const SizedBox(height: 10),
           itemBuilder: (_, i) => _V10BracketCard(
             tournament: tournament,
             match: matches[i],
@@ -2487,9 +3351,10 @@ final class _V10TournamentBracketBody extends StatelessWidget {
           ),
         ),
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 12),
       _V10TournamentCta(
         label: 'الذهاب للمباراة القادمة',
+        icon: Icons.play_arrow_rounded,
         onPressed: readyMatch == null ? null : () => onMatch(readyMatch!),
       ),
     ],
@@ -2509,31 +3374,32 @@ final class _V10RoundTab extends StatelessWidget {
   Widget build(BuildContext context) => TextButton(
     onPressed: onPressed,
     style: TextButton.styleFrom(
-      foregroundColor: selected ? const Color(0xFF1E874B) : AppColors.inkMuted,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      foregroundColor: selected ? AppColors.ink : AppColors.inkMuted,
+      backgroundColor: selected ? Colors.white : Colors.transparent,
+      minimumSize: const Size(0, 42),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
+    child: FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (selected) ...[
+            const Icon(Icons.circle, size: 7, color: Color(0xFF1E874B)),
+            const SizedBox(width: 5),
+          ],
+          Text(
             label,
             maxLines: 1,
             softWrap: false,
             style: TextStyle(
-              fontSize: 13,
-              fontWeight: selected ? FontWeight.w900 : FontWeight.w500,
+              fontSize: 12,
+              fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
             ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          width: 32,
-          height: 3,
-          color: selected ? const Color(0xFF1E874B) : Colors.transparent,
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -2551,17 +3417,23 @@ final class _V10BracketCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final a = tournament.team(match.teamAId)?.name ?? 'بانتظار المتأهل';
     final b = tournament.team(match.teamBId)?.name ?? 'بانتظار المتأهل';
+    final aIndex = tournament.teams.indexWhere(
+      (team) => team.id == match.teamAId,
+    );
+    final bIndex = tournament.teams.indexWhere(
+      (team) => team.id == match.teamBId,
+    );
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: match.status == TournamentMatchStatus.pending ? null : onPressed,
         child: Container(
-          constraints: const BoxConstraints(minHeight: 104),
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+          constraints: const BoxConstraints(minHeight: 124),
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 11),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: AppColors.hairline),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x12000000),
@@ -2571,11 +3443,38 @@ final class _V10BracketCard extends StatelessWidget {
             ],
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _V10BracketTeam(name: a, score: match.scoreA),
-              const Divider(height: 1),
-              _V10BracketTeam(name: b, score: match.scoreB),
+              Row(
+                children: [
+                  Text(
+                    'مباراة ${_tArabic(match.position + 1)}',
+                    style: const TextStyle(
+                      color: AppColors.inkMuted,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  _V10MatchStatusBadge(status: match.status),
+                ],
+              ),
+              const SizedBox(height: 7),
+              _V10BracketTeam(
+                name: a,
+                score: match.scoreA,
+                color: _v10TeamColor(aIndex < 0 ? 0 : aIndex),
+                winner:
+                    match.winnerId != null && match.winnerId == match.teamAId,
+              ),
+              const Divider(height: 9),
+              _V10BracketTeam(
+                name: b,
+                score: match.scoreB,
+                color: _v10TeamColor(bIndex < 0 ? 1 : bIndex),
+                winner:
+                    match.winnerId != null && match.winnerId == match.teamBId,
+              ),
             ],
           ),
         ),
@@ -2585,27 +3484,46 @@ final class _V10BracketCard extends StatelessWidget {
 }
 
 final class _V10BracketTeam extends StatelessWidget {
-  const _V10BracketTeam({required this.name, required this.score});
+  const _V10BracketTeam({
+    required this.name,
+    required this.score,
+    required this.color,
+    required this.winner,
+  });
   final String name;
   final int? score;
+  final Color color;
+  final bool winner;
   @override
   Widget build(BuildContext context) => Row(
     children: [
+      _V10TeamDot(color: color, size: 12),
+      const SizedBox(width: 8),
       Expanded(
         child: Text(
           name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            color: winner ? const Color(0xFF1E874B) : AppColors.ink,
+          ),
         ),
       ),
+      if (winner) ...[
+        const Icon(
+          Icons.check_circle_rounded,
+          color: Color(0xFF1E874B),
+          size: 15,
+        ),
+        const SizedBox(width: 7),
+      ],
       Text(
         score == null ? '·' : _tArabic(score!),
         style: TextStyle(
-          color: score != null && score! > 1
-              ? const Color(0xFF1E874B)
-              : AppColors.inkMuted,
-          fontSize: 18,
+          color: winner ? const Color(0xFF1E874B) : AppColors.inkMuted,
+          fontSize: 17,
           fontWeight: FontWeight.w900,
         ),
       ),
@@ -2613,11 +3531,61 @@ final class _V10BracketTeam extends StatelessWidget {
   );
 }
 
+final class _V10MatchStatusBadge extends StatelessWidget {
+  const _V10MatchStatusBadge({required this.status});
+
+  final TournamentMatchStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, color, background) = switch (status) {
+      TournamentMatchStatus.completed => (
+        'انتهت',
+        const Color(0xFF1E874B),
+        const Color(0xFFEAF5DF),
+      ),
+      TournamentMatchStatus.ready => (
+        'جاهزة',
+        AppColors.ink,
+        AppColors.primary,
+      ),
+      TournamentMatchStatus.live => (
+        'مباشرة',
+        const Color(0xFFB52B34),
+        const Color(0xFFFFE8E7),
+      ),
+      TournamentMatchStatus.bye => (
+        'تأهل تلقائي',
+        AppColors.inkMuted,
+        AppColors.paper1,
+      ),
+      _ => ('بانتظار الفرق', AppColors.inkMuted, AppColors.paper1),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 9.5,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
 final class _V10TournamentMatchBody extends StatelessWidget {
   const _V10TournamentMatchBody({
     required this.match,
     required this.teamA,
     required this.teamB,
+    required this.scoreA,
+    required this.scoreB,
     required this.awaitingResult,
     required this.playable,
     required this.blocked,
@@ -2627,6 +3595,7 @@ final class _V10TournamentMatchBody extends StatelessWidget {
   });
   final TournamentMatch match;
   final TournamentTeam? teamA, teamB;
+  final int? scoreA, scoreB;
   final bool awaitingResult, playable, blocked, linked;
   final VoidCallback onPrimary;
   final VoidCallback? onExternal;
@@ -2641,6 +3610,7 @@ final class _V10TournamentMatchBody extends StatelessWidget {
               : linked
               ? 'استئناف المباراة'
               : 'ابدأ المباراة',
+          icon: awaitingResult ? Icons.check_rounded : Icons.play_arrow_rounded,
           onPressed: blocked ? null : onPrimary,
         ),
         const SizedBox(height: 12),
@@ -2651,57 +3621,231 @@ final class _V10TournamentMatchBody extends StatelessWidget {
       ],
     ),
     children: [
-      Text(
-        '${_tRoundLabel(match.round)} • مباراة ${_tArabic(match.position + 1)}',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 14, color: AppColors.inkMuted),
-      ),
-      const SizedBox(height: 24),
-      AhdashV10Panel(
-        child: Column(
-          children: [
-            _V10MatchTeam(team: teamA, color: _v10TeamColor(0)),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                'VS',
-                textDirection: TextDirection.ltr,
-                style: TextStyle(fontSize: 24, color: AppColors.inkMuted),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _V10MatchStatusBadge(status: match.status),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '${_tRoundLabel(match.round)} · مباراة ${_tArabic(match.position + 1)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.inkMuted,
+                fontWeight: FontWeight.w800,
               ),
             ),
-            _V10MatchTeam(team: teamB, color: _v10TeamColor(1)),
+          ),
+        ],
+      ),
+      const SizedBox(height: 14),
+      _V10MatchArena(
+        teamA: teamA,
+        teamB: teamB,
+        scoreA: scoreA,
+        scoreB: scoreB,
+      ),
+      const SizedBox(height: 14),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0F7E7),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFB9CDA6)),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.verified_outlined,
+              size: 19,
+              color: Color(0xFF1E874B),
+            ),
+            const SizedBox(width: 9),
+            Expanded(
+              child: Text(
+                awaitingResult
+                    ? 'راجع النتيجة ثم اعتمد المتأهل للدور التالي.'
+                    : playable
+                    ? 'الفائز يتأهل بعد اعتماد المنظم للنتيجة.'
+                    : 'حالة المباراة محفوظة داخل البطولة.',
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  height: 1.4,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           ],
         ),
-      ),
-      const SizedBox(height: 20),
-      Text(
-        playable
-            ? 'الفائز يتأهل بعد اعتماد المنظم للنتيجة'
-            : 'حالة المباراة محفوظة في البطولة',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 14, height: 1.5),
       ),
     ],
   );
 }
 
+final class _V10MatchArena extends StatelessWidget {
+  const _V10MatchArena({
+    required this.teamA,
+    required this.teamB,
+    required this.scoreA,
+    required this.scoreB,
+  });
+
+  final TournamentTeam? teamA, teamB;
+  final int? scoreA, scoreB;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 246,
+    padding: const EdgeInsets.fromLTRB(14, 20, 14, 16),
+    decoration: BoxDecoration(
+      color: AppColors.ink,
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x26000000),
+          blurRadius: 18,
+          offset: Offset(0, 8),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        const Row(
+          children: [
+            Icon(Icons.stadium_outlined, color: AppColors.primary, size: 17),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                'ساحة أحدعش',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.paper1,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'مواجهة إقصائية',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                style: TextStyle(
+                  color: Color(0xA6FBF7EF),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: _V10MatchTeam(
+                team: teamA,
+                color: _v10TeamColor(0),
+                score: scoreA,
+              ),
+            ),
+            Container(
+              width: 46,
+              height: 46,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFDBFF9D), width: 3),
+              ),
+              child: const Text(
+                'VS',
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  color: AppColors.ink,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            Expanded(
+              child: _V10MatchTeam(
+                team: teamB,
+                color: _v10TeamColor(1),
+                score: scoreB,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        const Text(
+          'الفوز هنا يفتح الطريق للدور التالي',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xA6FBF7EF),
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 final class _V10MatchTeam extends StatelessWidget {
-  const _V10MatchTeam({required this.team, required this.color});
+  const _V10MatchTeam({
+    required this.team,
+    required this.color,
+    required this.score,
+  });
   final TournamentTeam? team;
   final Color color;
+  final int? score;
   @override
   Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      _V10TeamDot(color: color, size: 40),
-      const SizedBox(height: 8),
+      Container(
+        width: 54,
+        height: 54,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 3),
+          boxShadow: const [BoxShadow(color: Color(0x44000000), blurRadius: 8)],
+        ),
+        child: score == null
+            ? const Icon(Icons.shield_outlined, color: Colors.white, size: 25)
+            : Text(
+                _tArabic(score!),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+      ),
+      const SizedBox(height: 10),
       SizedBox(
-        width: 280,
+        width: 118,
         child: Text(
           team?.name ?? 'بانتظار الفريق',
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+          style: const TextStyle(
+            color: AppColors.paper0,
+            fontSize: 16,
+            height: 1.2,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ),
     ],
@@ -2730,48 +3874,40 @@ final class _V10TournamentChampionBody extends StatelessWidget {
       action: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AhdashV10PrimaryButton(
-            label: 'عرض نتائج البطولة',
-            onPressed: onHistory,
-          ),
-          const SizedBox(height: 12),
+          _V10ChampionButton(label: 'عرض نتائج البطولة', onPressed: onHistory),
+          const SizedBox(height: 10),
           OutlinedButton(onPressed: onDone, child: const Text('تم')),
         ],
       ),
       children: [
-        const SizedBox(height: 16),
-        const Icon(Icons.emoji_events_outlined, color: AppColors.ink, size: 80),
-        const SizedBox(height: 24),
-        Text(
-          tournament.name,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 14, color: AppColors.inkMuted),
-        ),
-        const SizedBox(height: 12),
-        const Text(
-          'بطل البطولة',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          champion.name,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 34,
-            height: 1.3,
-            fontWeight: FontWeight.w900,
+        _V10ChampionHero(tournament: tournament, champion: champion),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.fromLTRB(15, 13, 15, 13),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFE5C270)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x16B77A00),
+                blurRadius: 12,
+                offset: Offset(0, 5),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 24),
-        AhdashV10Panel(
           child: Column(
             children: [
-              _V10ChampionRow(label: 'البطل', value: champion.name),
-              const Divider(height: 24),
+              _V10ChampionRow(
+                label: 'البطل',
+                value: champion.name,
+                icon: Icons.emoji_events_rounded,
+              ),
+              const Divider(height: 20),
               _V10ChampionRow(
                 label: 'الوصيف',
                 value: runnerUp?.name ?? '—',
+                icon: Icons.workspace_premium_outlined,
                 muted: true,
               ),
             ],
@@ -2782,18 +3918,172 @@ final class _V10TournamentChampionBody extends StatelessWidget {
   }
 }
 
+final class _V10ChampionHero extends StatelessWidget {
+  const _V10ChampionHero({required this.tournament, required this.champion});
+
+  final Tournament tournament;
+  final TournamentTeam champion;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    height: 312,
+    clipBehavior: Clip.antiAlias,
+    decoration: BoxDecoration(
+      color: AppColors.ink,
+      borderRadius: BorderRadius.circular(28),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x28000000),
+          blurRadius: 20,
+          offset: Offset(0, 9),
+        ),
+      ],
+    ),
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        const PositionedDirectional(
+          start: 22,
+          top: 35,
+          child: _V10ConfettiDot(color: AppColors.primary, size: 8),
+        ),
+        const PositionedDirectional(
+          end: 28,
+          top: 72,
+          child: _V10ConfettiDot(color: AppColors.gold, size: 7),
+        ),
+        const PositionedDirectional(
+          start: 43,
+          bottom: 72,
+          child: _V10ConfettiDot(color: AppColors.gold, size: 5),
+        ),
+        const PositionedDirectional(
+          end: 50,
+          bottom: 42,
+          child: _V10ConfettiDot(color: AppColors.primary, size: 6),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/visuals/home_mode_tournament.png',
+              width: 132,
+              height: 118,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              tournament.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: AppColors.gold,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 7),
+            const Text(
+              'بطل البطولة',
+              style: TextStyle(
+                color: Color(0xBFFBF7EF),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                champion.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppColors.paper0,
+                  fontSize: 34,
+                  height: 1.15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+final class _V10ConfettiDot extends StatelessWidget {
+  const _V10ConfettiDot({required this.color, required this.size});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Transform.rotate(
+    angle: .55,
+    child: Container(
+      width: size,
+      height: size * 2.4,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(2),
+      ),
+    ),
+  );
+}
+
+final class _V10ChampionButton extends StatelessWidget {
+  const _V10ChampionButton({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 56,
+    child: FilledButton.icon(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        foregroundColor: AppColors.ink,
+        backgroundColor: AppColors.gold,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+      icon: const Icon(Icons.stars_rounded, size: 20),
+      label: Text(label),
+    ),
+  );
+}
+
 final class _V10ChampionRow extends StatelessWidget {
   const _V10ChampionRow({
     required this.label,
     required this.value,
+    required this.icon,
     this.muted = false,
   });
   final String label;
   final String value;
+  final IconData icon;
   final bool muted;
   @override
   Widget build(BuildContext context) => Row(
     children: [
+      Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: muted ? AppColors.paper1 : const Color(0xFFFFF3D4),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: muted ? AppColors.inkMuted : const Color(0xFFD49300),
+          size: 16,
+        ),
+      ),
+      const SizedBox(width: 9),
       Expanded(
         child: Text(
           value,
@@ -2803,20 +4093,39 @@ final class _V10ChampionRow extends StatelessWidget {
           ),
         ),
       ),
-      Text(
-        label,
-        style: TextStyle(
-          color: muted ? AppColors.inkMuted : const Color(0xFFFFB62E),
-          fontWeight: FontWeight.w900,
-        ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: muted ? AppColors.inkMuted : const Color(0xFFD49300),
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          Text(
+            muted ? 'المركز الثاني' : 'المركز الأول',
+            style: const TextStyle(
+              color: AppColors.inkMuted,
+              fontSize: 8.5,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     ],
   );
 }
 
 final class _V10OutlineAction extends StatelessWidget {
-  const _V10OutlineAction({required this.label, required this.onPressed});
+  const _V10OutlineAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
   final String label;
+  final IconData icon;
   final VoidCallback onPressed;
   @override
   Widget build(BuildContext context) => OutlinedButton(
@@ -2824,11 +4133,23 @@ final class _V10OutlineAction extends StatelessWidget {
     style: OutlinedButton.styleFrom(
       backgroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 14),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      minimumSize: const Size(0, 48),
+      side: const BorderSide(color: AppColors.hairline),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Container(
+          width: 30,
+          height: 30,
+          decoration: const BoxDecoration(
+            color: AppColors.paper1,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 16),
+        ),
+        const SizedBox(width: 9),
         Expanded(
           child: Text(
             label,
@@ -2851,13 +4172,15 @@ final class _V10TournamentCta extends StatelessWidget {
   const _V10TournamentCta({
     required this.label,
     required this.onPressed,
+    this.icon,
     super.key,
   });
   final String label;
   final VoidCallback? onPressed;
+  final IconData? icon;
   @override
   Widget build(BuildContext context) =>
-      AhdashV10PrimaryButton(label: label, onPressed: onPressed);
+      AhdashV10PrimaryButton(label: label, icon: icon, onPressed: onPressed);
 }
 
 final class _V10TeamDot extends StatelessWidget {
@@ -2894,27 +4217,41 @@ String _tArabic(int value) {
 
 String _tRoundLabel(int round) => round == 1 ? 'الدور الأول' : 'الدور $round';
 
+String _tBracketStageTitle(int round, int maxRound) => round == maxRound
+    ? 'نهائي البطولة'
+    : round == maxRound - 1
+    ? 'طريق النهائي'
+    : 'مواجهات الدور ${_tArabic(round)}';
+
 /// Shared body keeps the real action reachable while long content can scroll.
 final class _TournamentBody extends StatelessWidget {
-  const _TournamentBody({required this.children, required this.action});
+  const _TournamentBody({
+    required this.children,
+    required this.action,
+    this.bottomInset = 0,
+  });
   final List<Widget> children;
   final Widget action;
+  final double bottomInset;
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Expanded(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 8, bottom: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: children,
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.only(bottom: bottomInset),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 8, bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children,
+            ),
           ),
         ),
-      ),
-      const SizedBox(height: 12),
-      action,
-    ],
+        const SizedBox(height: 12),
+        action,
+      ],
+    ),
   );
 }
 
@@ -2934,8 +4271,15 @@ final class _TournamentScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BrandScaffold(
     showDevelopmentBadge: false,
-    body: ColoredBox(
-      color: AppColors.paper0,
+    body: DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [AppColors.paper0, Color(0xFFF8F1E5), AppColors.paper0],
+          stops: [0, .64, 1],
+        ),
+      ),
       child: SafeArea(
         child: AhdashV10Frame(
           padding: EdgeInsets.fromLTRB(
@@ -2955,13 +4299,23 @@ final class _TournamentScaffold extends StatelessWidget {
                             : context.go('/home')
                       : null,
                   trailing: showMark
-                      ? const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(Icons.emoji_events_outlined, size: 24),
+                      ? Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColors.ink,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFF39352E)),
+                          ),
+                          child: const Icon(
+                            Icons.emoji_events_outlined,
+                            color: AppColors.gold,
+                            size: 20,
+                          ),
                         )
                       : null,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
               ],
               Expanded(
                 child: keyboardSafe

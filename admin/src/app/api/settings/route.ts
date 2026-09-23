@@ -21,6 +21,14 @@ export async function PATCH(request: Request) {
     const supabase = await createServerSupabaseClient();
     if (!supabase) return Response.json({ success: true, developmentFallback: true, affected: body.settings.length });
 
+    const keys = body.settings.map((setting) => setting.key);
+    if (new Set(keys).size !== keys.length) return Response.json({ error: "تكرر أحد مفاتيح الإعدادات." }, { status: 400 });
+    const current = await supabase.from("game_settings").select("key,value").in("key", keys);
+    if (current.error) return Response.json({ error: "تعذر التحقق من الإعدادات الحالية." }, { status: 503 });
+    if (body.settings.some((setting) => !current.data?.some((row) => row.key === setting.key && typeof row.value === "number" && Number.isFinite(row.value)))) {
+      return Response.json({ error: "يمكن تعديل الإعدادات الرقمية الموجودة فقط من هذه الصفحة." }, { status: 400 });
+    }
+
     for (const setting of body.settings) {
       const { data, error } = await supabase
         .from("game_settings")

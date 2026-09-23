@@ -6,22 +6,92 @@ void main() {
   String source(String path) => File(path).readAsStringSync();
 
   test(
-    'Profile UI exposes identity and preferences without fake statistics',
+    'Profile UI binds identity, preferences, and stats to authenticated data',
     () {
-      final value = source(
+      final screen = source(
         'lib/features/profile/presentation/profile_screen.dart',
       );
-      for (final token in [
+      final controller = source(
+        'lib/features/profile/presentation/profile_controller.dart',
+      );
+      final model = source('lib/features/profile/domain/player_profile.dart');
+
+      expect(screen, contains('ref.watch(playerProfileProvider)'));
+      expect(controller, contains('authControllerProvider.future'));
+      expect(controller, contains('auth == null || auth.isGuest'));
+      expect(controller, contains('profile.id != auth.id'));
+      expect(
+        controller,
+        contains("remote.rpc<Object?>('get_my_profile_summary')"),
+      );
+      expect(
+        controller,
+        contains("remote.rpc<Object?>('get_my_tournament_stats')"),
+      );
+      expect(controller, contains('PlayerProfile.fromJson(merged)'));
+      expect(controller, isNot(contains('PlayerProfile.fromJson({')));
+
+      for (final mapping in [
+        "json['level']",
+        "json['matches']",
+        "json['wins']",
+        "json['tournaments_won']",
+        "json['questions_answered']",
+        "json['favorite_league_data']",
+        "json['favorite_club_data']",
+        "json['show_football_preferences']",
+        'if (json[key] is num) key',
+      ]) {
+        expect(model, contains(mapping));
+      }
+
+      for (final binding in [
+        'profile.publicName',
+        'profile.username',
+        'profile.avatarUrl',
+        'profile.level',
         'profile.matches',
         'profile.wins',
-        'profile.xp',
-        'profile.level',
-        'profile.rating',
+        'profile.tournamentsWon',
+        'profile.questionsAnswered',
+        'profile.favoriteLeagueData',
+        'profile.favoriteClubData',
+        'profile.showFootballPreferences',
       ]) {
-        expect(value, isNot(contains(token)));
+        expect(screen, contains(binding));
       }
-      expect(value, contains('AhdashPlayer11Avatar'));
-      expect(value, contains('favoriteLeagueData'));
+
+      for (final availableStat in [
+        "profile.availableStats.contains('matches')",
+        "profile.availableStats.contains('wins')",
+        "profile.availableStats.contains('tournaments_won')",
+        "profile.availableStats.contains('questions_answered')",
+      ]) {
+        expect(screen, contains(availableStat));
+      }
+
+      expect(
+        screen,
+        isNot(
+          contains(
+            RegExp(
+              r'''_ProfileStat\([^)]*value:\s*['"]\d+(?:[.,]\d+)?['"]''',
+              multiLine: true,
+            ),
+          ),
+        ),
+      );
+      expect(
+        screen,
+        isNot(
+          contains(
+            RegExp(
+              r'''['"](?:(?:المستوى|مستوى|الترتيب|ترتيب|التقييم|تقييم)\s*[:#-]?\s*\d+|\d+(?:[.,]\d+)?\s*(?:XP|نقطة|نقاط|مباراة|مباريات|فوز|انتصار|انتصارات|خسارة|خسائر|%|٪))['"]''',
+            ),
+          ),
+        ),
+      );
+      expect(screen, contains('AhdashPlayer11Avatar'));
     },
   );
 

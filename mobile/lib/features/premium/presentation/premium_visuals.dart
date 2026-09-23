@@ -200,13 +200,33 @@ final class PremiumBenefitVisual extends StatelessWidget {
   final PremiumArtworkScene scene;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 66,
-    height: 54,
-    child: CustomPaint(
-      painter: _FootballArtworkPainter(scene: scene, progress: 1),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final asset = switch (scene) {
+      PremiumArtworkScene.categories =>
+        'assets/visuals/premium_benefit_categories_v1.png',
+      PremiumArtworkScene.noAds =>
+        'assets/visuals/premium_benefit_no_ads_v1.png',
+      _ => null,
+    };
+    return SizedBox(
+      width: 88,
+      height: 62,
+      child: asset == null
+          ? CustomPaint(
+              painter: _FootballArtworkPainter(scene: scene, progress: 1),
+            )
+          : ExcludeSemantics(
+              child: Image.asset(
+                asset,
+                key: ValueKey('premium-benefit-${scene.name}-artwork'),
+                fit: BoxFit.contain,
+                alignment: AlignmentDirectional.centerStart,
+                filterQuality: FilterQuality.high,
+                cacheWidth: 300,
+              ),
+            ),
+    );
+  }
 }
 
 final class _FootballArtworkPainter extends CustomPainter {

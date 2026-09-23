@@ -8,6 +8,8 @@ const repositoryRoot = resolve(scriptDirectory, '..');
 const mobileRoot = resolve(repositoryRoot, 'mobile');
 const androidRoot = resolve(mobileRoot, 'android');
 const androidAppRoot = resolve(androidRoot, 'app');
+const iosRoot = resolve(mobileRoot, 'ios');
+const iosRunnerRoot = resolve(iosRoot, 'Runner');
 const expectedPackage = 'com.ahdash.eleven';
 const googleTestPublisher = '3940256099942544';
 
@@ -34,6 +36,9 @@ function parseArguments(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--env-file') {
       result.envFile = argv[index + 1];
+      index += 1;
+    } else if (argv[index] === '--platform') {
+      result.platform = argv[index + 1];
       index += 1;
     }
   }
@@ -148,16 +153,69 @@ export function collectEnvironmentChecks(env) {
   };
 }
 
-function loadEnvironment(envFile) {
+export function collectIosEnvironmentChecks(env) {
+  const common = collectEnvironmentChecks(env);
+  return {
+    APP_ENV: common.APP_ENV,
+    SUPABASE_URL: common.SUPABASE_URL,
+    SUPABASE_ANON_KEY: common.SUPABASE_ANON_KEY,
+    FIREBASE_ENABLED: common.FIREBASE_ENABLED,
+    GOOGLE_AUTH_ENABLED: common.GOOGLE_AUTH_ENABLED,
+    APPLE_AUTH_ENABLED: presentOrInvalid(
+      env.APPLE_AUTH_ENABLED,
+      (value) => value === 'true',
+    ),
+    REVENUECAT_IOS_API_KEY: presentOrInvalid(env.REVENUECAT_IOS_API_KEY),
+    REVENUECAT_ENTITLEMENT_ID: common.REVENUECAT_ENTITLEMENT_ID,
+    ADMOB_ENABLED: common.ADMOB_ENABLED,
+    ADMOB_IOS_APP_ID: presentOrInvalid(env.ADMOB_IOS_APP_ID, adMobAppId),
+    ADMOB_REWARDED_IOS_ID: presentOrInvalid(
+      env.ADMOB_REWARDED_IOS_ID,
+      adMobUnitId,
+    ),
+    ADMOB_INTERSTITIAL_IOS_ID: presentOrInvalid(
+      env.ADMOB_INTERSTITIAL_IOS_ID,
+      adMobUnitId,
+    ),
+    ADMOB_INTERSTITIAL_EVERY_MATCHES:
+      common.ADMOB_INTERSTITIAL_EVERY_MATCHES,
+    PRIVACY_POLICY_URL: common.PRIVACY_POLICY_URL,
+    TERMS_URL: common.TERMS_URL,
+    PREMIUM_VOUCHERS_ENABLED_OFF: common.PREMIUM_VOUCHERS_ENABLED_OFF,
+    PREMIUM_VOUCHERS_POLICY_APPROVED_OFF:
+      common.PREMIUM_VOUCHERS_POLICY_APPROVED_OFF,
+  };
+}
+
+function loadEnvironment(envFile, checkNames) {
   const fileValues = existsSync(envFile)
     ? parseEnvText(readFileSync(envFile, 'utf8'))
     : {};
   const merged = { ...fileValues };
-  for (const key of Object.keys(collectEnvironmentChecks({}))) {
+  for (const key of checkNames) {
     const sourceKey = key.endsWith('_OFF') ? key.slice(0, -4) : key;
     if (Object.hasOwn(process.env, sourceKey)) merged[sourceKey] = process.env[sourceKey];
   }
   return merged;
+}
+
+function decodeXmlText(value) {
+  return value
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', "'")
+    .replaceAll('&amp;', '&');
+}
+
+export function parsePlistStringValues(text) {
+  const values = {};
+  const entries =
+    /<key>\s*([^<]+?)\s*<\/key>\s*<string>\s*([^<]*?)\s*<\/string>/gs;
+  for (const match of text.matchAll(entries)) {
+    values[decodeXmlText(match[1].trim())] = decodeXmlText(match[2].trim());
+  }
+  return values;
 }
 
 function loadGoogleServicesChecks() {
@@ -211,6 +269,47 @@ function loadGoogleServicesChecks() {
       FIREBASE_PROJECT_METADATA: 'INVALID',
       FCM_SENDER_METADATA: 'INVALID',
       GOOGLE_SIGN_IN_ANDROID_CLIENT: 'INVALID',
+    };
+  }
+}
+
+function loadIosFirebaseChecks() {
+  const file = resolve(iosRunnerRoot, 'GoogleService-Info.plist');
+  if (!existsSync(file)) {
+    return {
+      FIREBASE_IOS_CONFIG: 'MISSING',
+      FIREBASE_IOS_BUNDLE_ID: 'MISSING',
+      FIREBASE_IOS_PROJECT_METADATA: 'MISSING',
+      GOOGLE_SIGN_IN_IOS_CLIENT: 'MISSING',
+      GOOGLE_SIGN_IN_IOS_REVERSED_CLIENT: 'MISSING',
+    };
+  }
+  try {
+    const values = parsePlistStringValues(readFileSync(file, 'utf8'));
+    return {
+      FIREBASE_IOS_CONFIG: 'PRESENT',
+      FIREBASE_IOS_BUNDLE_ID:
+        values.BUNDLE_ID === expectedPackage ? 'PRESENT' : 'INVALID',
+      FIREBASE_IOS_PROJECT_METADATA:
+        usable(values.PROJECT_ID) && usable(values.GOOGLE_APP_ID)
+          ? 'PRESENT'
+          : 'INVALID',
+      GOOGLE_SIGN_IN_IOS_CLIENT: usable(values.CLIENT_ID)
+        ? 'PRESENT'
+        : 'INVALID',
+      GOOGLE_SIGN_IN_IOS_REVERSED_CLIENT: usable(values.REVERSED_CLIENT_ID)
+        ? 'PRESENT'
+        : 'INVALID',
+      _clientId: values.CLIENT_ID ?? '',
+      _reversedClientId: values.REVERSED_CLIENT_ID ?? '',
+    };
+  } catch {
+    return {
+      FIREBASE_IOS_CONFIG: 'INVALID',
+      FIREBASE_IOS_BUNDLE_ID: 'INVALID',
+      FIREBASE_IOS_PROJECT_METADATA: 'INVALID',
+      GOOGLE_SIGN_IN_IOS_CLIENT: 'INVALID',
+      GOOGLE_SIGN_IN_IOS_REVERSED_CLIENT: 'INVALID',
     };
   }
 }
@@ -314,12 +413,132 @@ function sourceChecks() {
   };
 }
 
+function iosSourceChecks(firebaseChecks, environment) {
+  const infoFile = resolve(iosRunnerRoot, 'Info.plist');
+  const entitlementsFile = resolve(iosRunnerRoot, 'Runner.entitlements');
+  const projectFile = resolve(iosRoot, 'Runner.xcodeproj', 'project.pbxproj');
+  const podfile = resolve(iosRoot, 'Podfile');
+  const frameworkInfoFile = resolve(iosRoot, 'Flutter', 'AppFrameworkInfo.plist');
+  if (
+    !existsSync(infoFile) ||
+    !existsSync(entitlementsFile) ||
+    !existsSync(projectFile) ||
+    !existsSync(podfile) ||
+    !existsSync(frameworkInfoFile)
+  ) {
+    return {
+      IOS_APPLICATION_ID: 'MISSING',
+      IOS_DEPLOYMENT_TARGET: 'MISSING',
+      IOS_RELEASE_ENTITLEMENTS: 'MISSING',
+      IOS_APPLE_SIGN_IN_ENTITLEMENT: 'MISSING',
+      IOS_APS_ENTITLEMENT: 'MISSING',
+      IOS_FIREBASE_RESOURCE: 'MISSING',
+      GOOGLE_SIGN_IN_IOS_INFO_CLIENT: 'MISSING',
+      GOOGLE_SIGN_IN_IOS_URL_SCHEME: 'MISSING',
+      RELEASE_ADMOB_IOS_APP_ID: 'MISSING',
+      IOS_CRASHLYTICS_DSYM_UPLOAD: 'MISSING',
+    };
+  }
+
+  const infoText = readFileSync(infoFile, 'utf8');
+  const infoValues = parsePlistStringValues(infoText);
+  const entitlements = readFileSync(entitlementsFile, 'utf8');
+  const project = readFileSync(projectFile, 'utf8');
+  const podfileText = readFileSync(podfile, 'utf8');
+  const frameworkInfo = parsePlistStringValues(
+    readFileSync(frameworkInfoFile, 'utf8'),
+  );
+  const bundleDeclarations =
+    project.match(/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/g) ?? [];
+  const bundleIdsMatch =
+    bundleDeclarations.length > 0 &&
+    bundleDeclarations.every((entry) =>
+      entry.includes('PRODUCT_BUNDLE_IDENTIFIER = ' + expectedPackage + ';'),
+    );
+  const clientId = firebaseChecks._clientId ?? '';
+  const reversedClientId = firebaseChecks._reversedClientId ?? '';
+
+  return {
+    IOS_APPLICATION_ID: bundleIdsMatch ? 'PRESENT' : 'INVALID',
+    IOS_DEPLOYMENT_TARGET:
+      !project.includes('IPHONEOS_DEPLOYMENT_TARGET = 13.0;') &&
+      project.includes('IPHONEOS_DEPLOYMENT_TARGET = 15.0;') &&
+      podfileText.includes("platform :ios, '15.0'") &&
+      podfileText.includes(
+        "config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'",
+      ) &&
+      frameworkInfo.MinimumOSVersion === '15.0'
+        ? 'PRESENT'
+        : 'INVALID',
+    IOS_RELEASE_ENTITLEMENTS:
+      project.includes('CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;')
+        ? 'PRESENT'
+        : 'INVALID',
+    IOS_APPLE_SIGN_IN_ENTITLEMENT:
+      /<key>\s*com\.apple\.developer\.applesignin\s*<\/key>\s*<array>\s*<string>\s*Default\s*<\/string>\s*<\/array>/s.test(
+        entitlements,
+      )
+        ? 'PRESENT'
+        : 'INVALID',
+    IOS_APS_ENTITLEMENT:
+      /<key>\s*aps-environment\s*<\/key>\s*<string>\s*\$\(APS_ENVIRONMENT\)\s*<\/string>/s.test(
+        entitlements,
+      )
+        ? 'PRESENT'
+        : 'INVALID',
+    IOS_FIREBASE_RESOURCE:
+      project.includes('GoogleService-Info.plist in Resources')
+        ? 'PRESENT'
+        : 'INVALID',
+    GOOGLE_SIGN_IN_IOS_INFO_CLIENT:
+      usable(clientId) && infoValues.GIDClientID === clientId
+        ? 'PRESENT'
+        : 'INVALID',
+    GOOGLE_SIGN_IN_IOS_URL_SCHEME:
+      usable(reversedClientId) &&
+      infoText.includes('<string>' + reversedClientId + '</string>')
+        ? 'PRESENT'
+        : 'INVALID',
+    RELEASE_ADMOB_IOS_APP_ID:
+      adMobAppId(infoValues.GADApplicationIdentifier ?? '') &&
+      infoValues.GADApplicationIdentifier === environment.ADMOB_IOS_APP_ID
+        ? 'PRESENT'
+        : 'INVALID',
+    IOS_CRASHLYTICS_DSYM_UPLOAD:
+      project.includes('FirebaseCrashlytics/run') ? 'PRESENT' : 'INVALID',
+  };
+}
+
 export function runValidator(argv = process.argv.slice(2)) {
   const argumentsMap = parseArguments(argv);
+  const platform = argumentsMap.platform ?? 'android';
+  if (platform !== 'android' && platform !== 'ios') {
+    console.log('INVALID RELEASE_PLATFORM');
+    return false;
+  }
   const envFile = argumentsMap.envFile
     ? resolve(process.cwd(), argumentsMap.envFile)
     : resolve(mobileRoot, '.env');
-  const environmentChecks = collectEnvironmentChecks(loadEnvironment(envFile));
+  const collector =
+    platform === 'ios' ? collectIosEnvironmentChecks : collectEnvironmentChecks;
+  const checkNames = Object.keys(collector({}));
+  const environment = loadEnvironment(envFile, checkNames);
+  const environmentChecks = collector(environment);
+  if (platform === 'ios') {
+    const firebaseChecks = loadIosFirebaseChecks();
+    const source = iosSourceChecks(firebaseChecks, environment);
+    delete firebaseChecks._clientId;
+    delete firebaseChecks._reversedClientId;
+    const checks = {
+      ...environmentChecks,
+      ...firebaseChecks,
+      ...source,
+    };
+    for (const [name, status] of Object.entries(checks)) {
+      console.log(status + ' ' + name);
+    }
+    return Object.values(checks).every((status) => status === 'PRESENT');
+  }
   const googleChecks = loadGoogleServicesChecks();
   const signingChecks = inspectSigning(googleChecks);
   delete googleChecks._oauthFingerprints;

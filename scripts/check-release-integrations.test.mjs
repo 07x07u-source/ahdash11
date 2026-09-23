@@ -7,7 +7,9 @@ import test from 'node:test';
 
 import {
   collectEnvironmentChecks,
+  collectIosEnvironmentChecks,
   parseEnvText,
+  parsePlistStringValues,
 } from './check-release-integrations.mjs';
 
 test('env parser keeps values private and ignores comments', () => {
@@ -50,6 +52,33 @@ test('voucher gates fail when either Production switch is enabled', () => {
   });
   assert.equal(checks.PREMIUM_VOUCHERS_ENABLED_OFF, 'INVALID');
   assert.equal(checks.PREMIUM_VOUCHERS_POLICY_APPROVED_OFF, 'INVALID');
+});
+
+test('iOS Production inputs require Apple, RevenueCat, and iOS AdMob values', () => {
+  const checks = collectIosEnvironmentChecks({
+    APP_ENV: 'production',
+    FIREBASE_ENABLED: 'true',
+    GOOGLE_AUTH_ENABLED: 'true',
+    APPLE_AUTH_ENABLED: 'true',
+    ADMOB_ENABLED: 'true',
+    REVENUECAT_ENTITLEMENT_ID: 'premium',
+    ADMOB_IOS_APP_ID: 'ca-app-pub-3940256099942544~1458002511',
+  });
+  assert.equal(checks.APP_ENV, 'PRESENT');
+  assert.equal(checks.APPLE_AUTH_ENABLED, 'PRESENT');
+  assert.equal(checks.REVENUECAT_IOS_API_KEY, 'MISSING');
+  assert.equal(checks.ADMOB_IOS_APP_ID, 'INVALID');
+});
+
+test('plist parser reads public Firebase metadata without logging values', () => {
+  const values = parsePlistStringValues(
+    '<dict><key>BUNDLE_ID</key><string>com.ahdash.eleven</string>' +
+      '<key>CLIENT_ID</key><string>client&amp;id</string></dict>',
+  );
+  assert.deepEqual(values, {
+    BUNDLE_ID: 'com.ahdash.eleven',
+    CLIENT_ID: 'client&id',
+  });
 });
 
 test('command-line validator executes and blocks an incomplete environment', () => {

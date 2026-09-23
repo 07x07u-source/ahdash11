@@ -25,8 +25,22 @@ SOURCE = PROJECT / "tmp" / "v10_atlas_source"
 OUTPUT = PROJECT / "docs" / "v10_complete_ui_atlas"
 EXPECTED_OUTPUT = Path(r"C:\dev\ahdash11\docs\v10_complete_ui_atlas")
 
+# Keep the hand-refined Arabic gallery chrome while rebuilding every generated
+# card and image from the current Flutter renders.  The body is always rebuilt
+# below, so no stale screenshot reference can survive a refresh.
+_existing_index = OUTPUT / "INDEX.html"
+_existing_index_prefix = ""
+if _existing_index.is_file():
+    _existing_index_text = _existing_index.read_text(encoding="utf-8")
+    if (
+        _existing_index_text.startswith('<!doctype html>\n<html lang="ar" dir="rtl">')
+        and "<body>" in _existing_index_text
+    ):
+        _existing_index_prefix = _existing_index_text.split("<body>", 1)[0]
+
 PHASE_A = MOBILE / "test" / "visual" / "goldens" / "v10_phase_a"
-AUTH_REPAIR = MOBILE / "test" / "visual" / "goldens" / "auth_ux_repair"
+PHASE_D = MOBILE / "test" / "visual" / "goldens" / "v10_phase_d"
+AUTH_PRIMARY = SOURCE / "auth_primary"
 RESPONSIVE = SOURCE / "responsive"
 HOME = SOURCE / "home"
 AUTH_STATES = SOURCE / "auth_states"
@@ -306,8 +320,8 @@ def _add_primary_screens() -> None:
     for step in range(1, 5):
         add_full(PHASE_A / f"onboarding{step}_390x844.png", f"01_launch_onboarding/02_onboarding_step_{step}_primary_390x844.png", feature="Launch & Onboarding", screen="02 Onboarding", state=f"Step {step}")
 
-    add_full(AUTH_REPAIR / "03_sign_in_primary_390x844.png", "02_auth/03_sign_in_empty_primary_390x844.png", feature="Authentication", screen="03 Sign In", state="Empty / Google available / password hidden")
-    add_full(AUTH_REPAIR / "04_create_account_primary_390x844.png", "02_auth/04_create_account_empty_primary_390x844.png", feature="Authentication", screen="04 Create Account", state="Empty / social auth / password hidden")
+    add_full(AUTH_PRIMARY / "01_sign_in_390x844.png", "02_auth/03_sign_in_empty_primary_390x844.png", feature="Authentication", screen="03 Sign In", state="Empty / social auth / password hidden")
+    add_full(AUTH_PRIMARY / "02_create_account_390x844.png", "02_auth/04_create_account_empty_primary_390x844.png", feature="Authentication", screen="04 Create Account", state="Empty / social auth / password hidden")
     add_full(home("home_account"), "03_home/05_home_signed_in_primary_390x844.png", feature="Home", screen="05 Home", state="Signed in", fixture=True)
 
     party = [
@@ -330,7 +344,7 @@ def _add_primary_screens() -> None:
         ("howTo", "07_saved_games/17_how_to_play_primary_390x844.png", "Saved Games & Help", "17 How to Play", "Default"),
         ("savedGames", "07_saved_games/18_saved_party_games_primary_390x844.png", "Saved Games & Help", "18 Saved Party Games", "Current list"),
         ("matchSetup", "09_solo/28_match_setup_primary_390x844.png", "Solo", "28 Match Setup", "Default"),
-        ("solo", "09_solo/29_solo_setup_limited_primary_390x844.png", "Solo", "29 Solo Setup", "Limited"),
+        ("solo", "09_solo/29_solo_setup_primary_390x844.png", "Solo", "29 Solo Setup", "Configured"),
         ("teamChallenge", "10_team_challenge/33_team_challenge_primary_390x844.png", "Team Challenge", "33 Team Challenge", "Current availability"),
         ("ranking", "11_ranking/34_ranking_primary_390x844.png", "Ranking", "34 Ranking", "Current"),
         ("friends", "12_friends/35_friends_primary_390x844.png", "Friends", "35 Friends", "Search idle"),
@@ -345,6 +359,9 @@ def _add_primary_screens() -> None:
     ]
     for stem, dest, feature, screen, state in account:
         add_full(responsive("account", stem), dest, feature=feature, screen=screen, state=state, fixture=True)
+
+    add_full(PHASE_D / "teamChallengeResult_390x844.png", "10_team_challenge/33_team_challenge_result_primary_390x844.png", feature="Team Challenge", screen="33 Team Challenge", state="Verified result", fixture=True)
+    add_full(PHASE_D / "teamChallengeUnavailable_390x844.png", "10_team_challenge/33_team_challenge_unavailable_primary_390x844.png", feature="Team Challenge", screen="33 Team Challenge", state="Unavailable", fixture=True)
 
     tournament = [
         ("hub", "08_tournament/19_tournament_hub_populated_primary_390x844.png", "Tournament", "19 Tournament Hub", "Populated"),
@@ -365,8 +382,8 @@ def _add_compact_screens() -> None:
     add_full(PHASE_A / "launch_360x800.png", "26_compact/01_launch_compact_360x800.png", feature="Launch & Onboarding", screen="01 Launch", state="Default", variant="Compact")
     for step in range(1, 5):
         add_full(PHASE_A / f"onboarding{step}_360x800.png", f"26_compact/02_onboarding_step_{step}_compact_360x800.png", feature="Launch & Onboarding", screen="02 Onboarding", state=f"Step {step}", variant="Compact")
-    add_full(AUTH_REPAIR / "03_sign_in_compact_360x800.png", "26_compact/03_sign_in_compact_360x800.png", feature="Authentication", screen="03 Sign In", state="Empty", variant="Compact")
-    add_full(AUTH_REPAIR / "04_create_account_compact_360x800.png", "26_compact/04_create_account_compact_360x800.png", feature="Authentication", screen="04 Create Account", state="Empty", variant="Compact")
+    add_full(AUTH_PRIMARY / "04_sign_in_compact_360x800.png", "26_compact/03_sign_in_compact_360x800.png", feature="Authentication", screen="03 Sign In", state="Empty", variant="Compact")
+    add_full(AUTH_PRIMARY / "06_create_account_compact_360x800.png", "26_compact/04_create_account_compact_360x800.png", feature="Authentication", screen="04 Create Account", state="Empty", variant="Compact")
     add_full(home("home_account", "360x800"), "26_compact/05_home_signed_in_compact_360x800.png", feature="Home", screen="05 Home", state="Signed in", variant="Compact", fixture=True)
 
     maps = [
@@ -407,11 +424,14 @@ def _add_compact_screens() -> None:
     for group, stem, name, feature, screen in maps:
         add_full(responsive(group, stem, "360x800"), f"26_compact/{name}", feature=feature, screen=screen, state="Representative", variant="Compact", fixture=True)
 
+    add_full(PHASE_D / "teamChallengeResult_360x800.png", "26_compact/33_team_challenge_result_compact_360x800.png", feature="Team Challenge", screen="33 Team Challenge", state="Verified result", variant="Compact", fixture=True)
+    add_full(PHASE_D / "teamChallengeUnavailable_360x800.png", "26_compact/33_team_challenge_unavailable_compact_360x800.png", feature="Team Challenge", screen="33 Team Challenge", state="Unavailable", variant="Compact", fixture=True)
+
 
 def _add_keyboard_and_scale() -> None:
     keyboards = [
-        (AUTH_REPAIR / "03_sign_in_keyboard_390x844.png", "03_sign_in_keyboard_390x844.png", "Authentication", "03 Sign In", True),
-        (AUTH_REPAIR / "04_create_account_keyboard_390x844.png", "04_create_account_keyboard_390x844.png", "Authentication", "04 Create Account", True),
+        (AUTH_PRIMARY / "03_sign_in_keyboard_390x844.png", "03_sign_in_keyboard_390x844.png", "Authentication", "03 Sign In", True),
+        (AUTH_PRIMARY / "05_create_account_keyboard_390x844.png", "04_create_account_keyboard_390x844.png", "Authentication", "04 Create Account", True),
         (responsive("party", "06_search_keyboard"), "06_category_search_keyboard_390x844.png", "Categories", "06 Category Selection", True),
         (responsive("party", "08_teams_keyboard"), "08_team_setup_keyboard_390x844.png", "Party Setup", "08 Team Setup", True),
         (responsive("party", "09_splitter_keyboard"), "09_team_splitter_keyboard_390x844.png", "Party Setup", "09 Team Splitter", True),
@@ -778,7 +798,15 @@ def _write_html() -> None:
             meta = html.escape(f"{item.variant} · {item.width}×{item.height} · text {item.text_scale} · {'TEST-ONLY fixture' if item.fixture else 'no fixture'}")
             cards.append(f'<article class="card"><a href="{safe_file}"><img loading="lazy" src="{safe_file}" alt="{title}"></a><h3>{title}</h3><p>{meta}</p><code>{safe_file}</code></article>')
         sections.append(f'<section id="{folder}"><h2>{html.escape(folder)} <span>{len(items)}</span></h2><div class="grid">{"".join(cards)}</div></section>')
-    page = f"""<!doctype html>
+    if _existing_index_prefix:
+        page = (
+            _existing_index_prefix
+            + "<body><header><h1>AHDASH | 11 — V10 Complete UI Atlas</h1>"
+            + f"<p>{len(records)} verified, unique PNG files · offline index · exact renders and crops</p>"
+            + f"</header><main>{''.join(sections)}</main></body></html>\n"
+        )
+    else:
+        page = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">

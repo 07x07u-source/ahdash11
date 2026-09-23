@@ -30,6 +30,7 @@ final class SocialHero extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.compact = false,
+    this.artwork,
     super.key,
   });
 
@@ -39,14 +40,84 @@ final class SocialHero extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
   final bool compact;
+  final Widget? artwork;
 
   @override
   Widget build(BuildContext context) {
     final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final panelHeight = compact
+        ? (textScale >= 1.2
+              ? (artwork != null ? 192 : 168)
+              : (artwork != null ? 156 : 138))
+        : (textScale >= 1.2 ? 218 : 184);
+    final copy = Column(
+      mainAxisSize: artwork != null ? MainAxisSize.min : MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'AHDASH / SOCIAL 11',
+          textDirection: TextDirection.ltr,
+          style: TextStyle(
+            color: AppColors.primary,
+            fontSize: 9,
+            height: 1,
+            letterSpacing: 1.15,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 9),
+        Text(
+          title,
+          maxLines: compact ? 1 : 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: AppColors.paper0,
+            fontSize: compact ? 20 : 24,
+            height: 1.12,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          subtitle,
+          maxLines: compact && artwork == null ? 1 : 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: AppColors.paper3,
+            fontSize: 10.5,
+            height: 1.35,
+          ),
+        ),
+        if (artwork != null) const SizedBox(height: 12) else const Spacer(),
+        if (actionLabel != null && onAction != null)
+          SizedBox(
+            height: artwork != null ? 44 : 36,
+            child: FilledButton.icon(
+              onPressed: onAction,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                side: const BorderSide(color: AppColors.paper0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: const Icon(Icons.add_rounded, size: 16),
+              label: Text(
+                actionLabel!,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
     final panel = Container(
-      height: compact
-          ? (textScale >= 1.2 ? 168 : 138)
-          : (textScale >= 1.2 ? 218 : 184),
+      height: artwork == null ? panelHeight.toDouble() : null,
+      constraints: artwork != null
+          ? BoxConstraints(minHeight: panelHeight.toDouble())
+          : null,
       decoration: BoxDecoration(
         color: AppColors.ink,
         borderRadius: BorderRadius.circular(24),
@@ -54,7 +125,7 @@ final class SocialHero extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
-        fit: StackFit.expand,
+        fit: artwork != null ? StackFit.loose : StackFit.expand,
         children: [
           const PositionedDirectional(
             top: 0,
@@ -68,81 +139,34 @@ final class SocialHero extends StatelessWidget {
             bottom: 13,
             end: 10,
             width: compact ? 128 : 150,
-            child: ExcludeSemantics(child: SocialArtwork(scene: scene)),
-          ),
-          PositionedDirectional(
-            top: 16,
-            bottom: 14,
-            start: 18,
-            end: compact ? 132 : 154,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'AHDASH / SOCIAL 11',
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 9,
-                    height: 1,
-                    letterSpacing: 1.15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 9),
-                Text(
-                  title,
-                  maxLines: compact ? 1 : 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: AppColors.paper0,
-                    fontSize: compact ? 20 : 24,
-                    height: 1.12,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  maxLines: compact ? 1 : 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.paper3,
-                    fontSize: 10.5,
-                    height: 1.35,
-                  ),
-                ),
-                const Spacer(),
-                if (actionLabel != null && onAction != null)
-                  SizedBox(
-                    height: 36,
-                    child: FilledButton.icon(
-                      onPressed: onAction,
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        side: const BorderSide(color: AppColors.paper0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      icon: const Icon(Icons.add_rounded, size: 16),
-                      label: Text(
-                        actionLabel!,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+            child: ExcludeSemantics(
+              child: artwork ?? SocialArtwork(scene: scene),
             ),
           ),
-          const PositionedDirectional(
-            top: 12,
-            start: 15,
-            child: SizedBox(width: 18, child: Divider(color: AppColors.gold)),
-          ),
+          if (artwork != null)
+            Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(
+                18,
+                16,
+                compact ? 132 : 154,
+                14,
+              ),
+              child: copy,
+            )
+          else
+            PositionedDirectional(
+              top: 16,
+              bottom: 14,
+              start: 18,
+              end: compact ? 132 : 154,
+              child: copy,
+            ),
+          if (artwork == null)
+            const PositionedDirectional(
+              top: 12,
+              start: 15,
+              child: SizedBox(width: 18, child: Divider(color: AppColors.gold)),
+            ),
         ],
       ),
     );
@@ -166,6 +190,8 @@ final class SocialEmptyState extends StatelessWidget {
     required this.message,
     required this.scene,
     this.actionLabel,
+    this.actionIcon = Icons.add_rounded,
+    this.artwork,
     this.onAction,
     super.key,
   });
@@ -174,6 +200,8 @@ final class SocialEmptyState extends StatelessWidget {
   final String message;
   final SocialArtworkScene scene;
   final String? actionLabel;
+  final IconData actionIcon;
+  final Widget? artwork;
   final VoidCallback? onAction;
 
   @override
@@ -182,53 +210,58 @@ final class SocialEmptyState extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 360),
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
-        decoration: BoxDecoration(
-          color: AppColors.paper1,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.hairline),
-        ),
+        decoration: artwork == null
+            ? BoxDecoration(
+                color: AppColors.paper1,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: AppColors.hairline),
+              )
+            : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 96,
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: AppColors.ink,
-                      borderRadius: BorderRadius.circular(17),
+            if (artwork != null)
+              ExcludeSemantics(child: artwork!)
+            else
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 96,
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.ink,
+                        borderRadius: BorderRadius.circular(17),
+                      ),
+                      child: SocialArtwork(scene: scene),
                     ),
-                    child: SocialArtwork(scene: scene),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Container(
-                  width: 54,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(17),
-                    border: Border.all(color: AppColors.ink),
-                  ),
-                  alignment: Alignment.center,
-                  child: const RotatedBox(
-                    quarterTurns: 3,
-                    child: Text(
-                      'SOCIAL 11',
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        fontSize: 10,
-                        letterSpacing: 1.2,
-                        fontWeight: FontWeight.w900,
+                  const SizedBox(width: 10),
+                  Container(
+                    width: 54,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(17),
+                      border: Border.all(color: AppColors.ink),
+                    ),
+                    alignment: Alignment.center,
+                    child: const RotatedBox(
+                      quarterTurns: 3,
+                      child: Text(
+                        'SOCIAL 11',
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             const SizedBox(height: 14),
             Text(
               title,
@@ -262,7 +295,7 @@ final class SocialEmptyState extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  icon: const Icon(Icons.add_rounded, size: 18),
+                  icon: Icon(actionIcon, size: 18),
                   label: Text(actionLabel!),
                 ),
               ),

@@ -38,6 +38,7 @@ abstract final class AhdashSizing {
   static const inputWide = 52.0;
   static const utilityGlyphCompact = 20.0;
   static const utilityGlyphWide = 22.0;
+  static const floatingDockContentInset = 104.0;
 }
 
 abstract final class AppMotion {
@@ -144,7 +145,12 @@ abstract final class AppTheme {
       brightness: brightness,
       colorScheme: scheme,
       extensions: [palette],
+      materialTapTargetSize: MaterialTapTargetSize.padded,
       scaffoldBackgroundColor: palette.background,
+      focusColor: palette.focus.withValues(alpha: .12),
+      hoverColor: palette.primary.withValues(alpha: .07),
+      highlightColor: palette.primary.withValues(alpha: .08),
+      splashColor: palette.primary.withValues(alpha: .10),
       fontFamily: AppTypography.bodyFamily,
       fontFamilyFallback: const ['Noto Sans Arabic', 'sans-serif'],
       textTheme: baseText.apply(
@@ -185,6 +191,7 @@ abstract final class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: palette.primary,
           foregroundColor: palette.primaryForeground,
+          overlayColor: palette.primaryForeground.withValues(alpha: .10),
           disabledBackgroundColor: palette.disabled.withValues(alpha: 0.32),
           disabledForegroundColor: palette.textMuted,
           minimumSize: const Size(0, AhdashSizing.primaryActionCompact),
@@ -195,6 +202,9 @@ abstract final class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
+          elevation: 0,
+          shadowColor: palette.textPrimary.withValues(alpha: .14),
+          animationDuration: AppMotion.selection,
           textStyle: baseText.labelLarge,
         ),
       ),
@@ -202,16 +212,20 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(0, AhdashSizing.secondaryActionCompact),
           foregroundColor: palette.textPrimary,
+          backgroundColor: palette.surface.withValues(alpha: .72),
+          overlayColor: palette.primary.withValues(alpha: .10),
           side: BorderSide(color: palette.borderStrong),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
           ),
           textStyle: baseText.labelLarge,
+          animationDuration: AppMotion.selection,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: palette.textPrimary,
+          overlayColor: palette.primary.withValues(alpha: .10),
           minimumSize: const Size(
             AhdashSizing.minimumTouchTarget,
             AhdashSizing.minimumTouchTarget,
@@ -222,12 +236,16 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: palette.surface,
+        focusColor: palette.selected.withValues(alpha: .72),
+        hoverColor: palette.surfaceElevated.withValues(alpha: .58),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
           vertical: AppSpacing.sm,
         ),
         labelStyle: TextStyle(color: palette.textMuted),
         hintStyle: TextStyle(color: palette.textMuted),
+        prefixIconColor: palette.textMuted,
+        suffixIconColor: palette.textMuted,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.medium),
           borderSide: BorderSide(color: palette.border),
@@ -240,6 +258,14 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.medium),
           borderSide: BorderSide(color: palette.primary, width: 1.5),
         ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.medium),
+          borderSide: BorderSide(color: palette.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppRadius.medium),
+          borderSide: BorderSide(color: palette.error, width: 1.5),
+        ),
         constraints: const BoxConstraints(minHeight: AhdashSizing.inputCompact),
       ),
       iconTheme: IconThemeData(color: palette.textPrimary, size: 21),
@@ -247,7 +273,13 @@ abstract final class AppTheme {
         style: IconButton.styleFrom(
           minimumSize: const Size.square(AhdashSizing.minimumTouchTarget),
           iconSize: AhdashSizing.utilityGlyphWide,
+          overlayColor: palette.primary.withValues(alpha: .12),
         ),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: palette.primary,
+        selectionColor: palette.primary.withValues(alpha: .28),
+        selectionHandleColor: palette.primary,
       ),
       checkboxTheme: CheckboxThemeData(
         visualDensity: VisualDensity.compact,
@@ -293,6 +325,10 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.small),
         ),
         textStyle: baseText.labelMedium?.copyWith(color: palette.background),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
         waitDuration: const Duration(milliseconds: 450),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -311,6 +347,8 @@ abstract final class AppTheme {
         backgroundColor: palette.surfaceElevated,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
+        dragHandleColor: palette.borderStrong,
+        dragHandleSize: const Size(36, 4),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadius.large),
@@ -320,8 +358,21 @@ abstract final class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
+        elevation: 12,
+        shadowColor: palette.textPrimary.withValues(alpha: .16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.large),
+          side: BorderSide(color: palette.border),
+        ),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: palette.surfaceElevated,
+        surfaceTintColor: Colors.transparent,
+        elevation: 10,
+        shadowColor: palette.textPrimary.withValues(alpha: .14),
+        textStyle: baseText.bodyMedium?.copyWith(color: palette.textPrimary),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.medium),
           side: BorderSide(color: palette.border),
         ),
       ),

@@ -12,7 +12,7 @@ void main() {
       'Party',
       'Tournament',
       'Other Play',
-      'Social',
+      'Teams and Safety',
       'Account',
     });
     expect(
@@ -54,8 +54,6 @@ void main() {
         'Team Challenge',
         'Social Hub',
         'Team Join',
-        'Friends',
-        'Search',
         'Blocked Players',
         'Team Detail',
         'Profile',
@@ -75,7 +73,7 @@ void main() {
       for (final feature in const [
         'Party',
         'Tournament',
-        'Social',
+        'Teams and Safety',
         'Account',
       ]) {
         final entry = v10FeatureFixtureCoverage.singleWhere(
@@ -121,11 +119,16 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  test('Online remains absent from the active fixture inventory', () {
-    final names = v10FeatureFixtureCoverage
-        .expand((entry) => entry.screens)
-        .map((value) => value.toLowerCase());
-    expect(names, isNot(contains('online')));
-    expect(names, isNot(contains('private room')));
-  });
+  test(
+    'Friends and Online remain absent from the active fixture inventory',
+    () {
+      final names = v10FeatureFixtureCoverage
+          .expand((entry) => entry.screens)
+          .map((value) => value.toLowerCase());
+      expect(names, isNot(contains('online')));
+      expect(names, isNot(contains('private room')));
+      expect(names, isNot(contains('friends')));
+      expect(names, isNot(contains('search')));
+    },
+  );
 }

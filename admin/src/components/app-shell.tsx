@@ -27,12 +27,13 @@ import {
   TicketCheck,
   Swords,
   Gamepad2,
+  Globe2,
   UsersRound,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { AdminContext } from "@/lib/auth/context";
-import { roleLabel } from "@/lib/auth/roles";
+import { hasMinimumRole, roleLabel } from "@/lib/auth/roles";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "./logout-button";
 import { CommandPalette } from "./command-palette";
@@ -42,6 +43,10 @@ interface NavigationGroup { label: string; items: NavigationItem[] }
 
 const navigation: NavigationGroup[] = [
   { label: "نظرة عامة", items: [{ href: "/dashboard", label: "لوحة المؤشرات", icon: Gauge }] },
+  { label: "الموقع العام", items: [
+    { href: "/", label: "فتح موقع اللاعبين", icon: Globe2 },
+    { href: "/championships", label: "واجهة البطولات", icon: Trophy },
+  ] },
   { label: "المحتوى", items: [
     { href: "/categories", label: "التصنيفات", icon: Boxes },
     { href: "/questions", label: "الأسئلة", icon: CircleHelp },
@@ -49,7 +54,7 @@ const navigation: NavigationGroup[] = [
     { href: "/content", label: "محتوى التطبيق", icon: PanelsTopLeft },
     { href: "/media", label: "مكتبة الوسائط", icon: Images },
     { href: "/branding", label: "هوية التطبيق", icon: Palette },
-    { href: "/football-data", label: "Football Data", icon: DatabaseZap },
+    { href: "/football-data", label: "بيانات كرة القدم", icon: DatabaseZap },
   ] },
   { label: "اللعبة والمستخدمون", items: [
     { href: "/party-game", label: "لعبة الجلسة", icon: Gamepad2 },
@@ -58,11 +63,11 @@ const navigation: NavigationGroup[] = [
     { href: "/users", label: "المستخدمون", icon: UsersRound },
     { href: "/reports", label: "بلاغات الأسئلة", icon: MessageSquareWarning },
     { href: "/user-reports", label: "بلاغات المستخدمين", icon: ClipboardList },
-    { href: "/social", label: "Social", icon: ShieldAlert },
+    { href: "/social", label: "الفرق والإشراف", icon: ShieldAlert },
   ] },
   { label: "الاقتصاد والتفاعل", items: [
-    { href: "/store", label: "المتجر والاقتصاد", icon: ShoppingBag },
-    { href: "/premium-vouchers", label: "قسائم Premium", icon: TicketCheck },
+    { href: "/store", label: "المتجر · مؤجل / قراءة", icon: ShoppingBag },
+    { href: "/premium-vouchers", label: "قسائم Premium · متوقفة", icon: TicketCheck },
     { href: "/notifications", label: "الإشعارات", icon: BellRing },
   ] },
   { label: "المراقبة", items: [
@@ -87,8 +92,8 @@ function SidebarContent({ admin, close }: { admin: AdminContext; close?: () => v
       {navigation.map((group) => <section key={group.label} className="mb-5">
         <p className="mb-2 px-3 text-[10px] font-extrabold tracking-wider text-[#5f6c7a]">{group.label}</p>
         <nav className="space-y-1" aria-label={group.label}>
-          {group.items.map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          {group.items.filter((item) => !["/settings", "/party-game", "/notifications", "/audit", "/premium-vouchers"].includes(item.href) || hasMinimumRole(admin.role, "admin")).map((item) => {
+            const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`);
             const Icon = item.icon;
             return <Link key={item.href} href={item.href} onClick={close} className={cn("group flex min-h-11 items-center gap-3 rounded-md px-3 text-[13px] font-bold transition", active ? "bg-[#5f8f0f]/16 text-[#e8dcc8] shadow-[inset_-2px_0_0_#78a91b]" : "text-[#a79d90] hover:bg-white/[0.045] hover:text-white")}><Icon size={18} className={active ? "text-[#78a91b]" : "text-[#756d63] group-hover:text-[#d7c6ac]"} /><span className="flex-1">{item.label}</span></Link>;
           })}
@@ -119,15 +124,16 @@ export function AppShell({ admin, children }: { admin: AdminContext; children: R
       window.removeEventListener("keydown", closeOnEscape);
     };
   }, [mobileOpen]);
-  return <div className="min-h-screen">
-    <aside className="fixed inset-y-0 right-0 z-30 hidden w-72 flex-col border-l border-white/7 bg-[#171613] lg:flex"><SidebarContent admin={admin} /></aside>
-    {mobileOpen ? <div className="fixed inset-0 z-50 lg:hidden"><button type="button" aria-label="إغلاق القائمة" className="absolute inset-0 bg-black/45" onClick={() => setMobileOpen(false)} /><aside className="absolute inset-y-0 right-0 flex w-[min(88vw,20rem)] flex-col border-l border-white/8 bg-[#171613]"><SidebarContent admin={admin} close={() => setMobileOpen(false)} /></aside></div> : null}
+  return <div className="admin-workspace min-h-screen">
+    <a href="#admin-content" className="admin-skip-link">انتقل إلى المحتوى</a>
+    <aside className="admin-sidebar fixed inset-y-0 right-0 z-30 hidden w-72 flex-col border-l border-white/7 lg:flex"><SidebarContent admin={admin} /></aside>
+    {mobileOpen ? <div className="fixed inset-0 z-50 lg:hidden"><button type="button" aria-label="إغلاق القائمة" className="absolute inset-0 bg-black/45" onClick={() => setMobileOpen(false)} /><aside className="admin-sidebar absolute inset-y-0 right-0 flex w-[min(88vw,20rem)] flex-col border-l border-white/8"><SidebarContent admin={admin} close={() => setMobileOpen(false)} /></aside></div> : null}
     <div className="lg:mr-72">
-      <header className="surface-glass sticky top-0 z-20 flex h-16 items-center justify-between border-x-0 border-t-0 px-4 sm:px-6 lg:px-8">
+      <header className="admin-topbar sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--border)] px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3"><button type="button" onClick={() => setMobileOpen(true)} className="grid size-10 place-items-center rounded-xl border border-black/10 bg-white text-[#27313b] lg:hidden" aria-label="فتح القائمة"><Menu size={20} /></button><div><p className="text-[10px] font-bold text-[var(--muted)]">{formattedDate}</p><p className="text-xs font-extrabold text-[var(--foreground)]">مرحبًا، {admin.displayName.split(" ")[0]}</p></div></div>
-        <div className="flex items-center gap-2"><CommandPalette /><Link href="/system-health" className="hidden items-center gap-2 rounded-full border border-[#74b512]/20 bg-[#74b512]/7 px-3 py-1.5 text-[10px] font-bold text-[#527f0c] md:flex"><span className="size-1.5 rounded-full bg-[#74b512]" />مراقبة الأنظمة</Link><Link href="/notifications" className="grid size-10 place-items-center rounded-xl border border-black/10 bg-white text-[#4d5965] hover:text-black" aria-label="الإشعارات"><BellRing size={18} /></Link></div>
+        <div className="flex items-center gap-2"><Link href="/" className="hidden min-h-10 items-center gap-2 rounded-xl border border-black/10 bg-[#171914] px-3 text-[11px] font-black text-white sm:flex"><Globe2 size={16} className="text-[#aaff3d]" />الموقع العام</Link><CommandPalette /><Link href="/system-health" className="hidden items-center gap-2 rounded-full border border-[#74b512]/20 bg-[#74b512]/7 px-3 py-1.5 text-[10px] font-bold text-[#527f0c] md:flex"><span className="size-1.5 rounded-full bg-[#74b512]" />مراقبة الأنظمة</Link><Link href="/notifications" className="grid size-10 place-items-center rounded-xl border border-black/10 bg-white text-[#4d5965] hover:text-black" aria-label="الإشعارات"><BellRing size={18} /></Link></div>
       </header>
-      <main className="brand-grid min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8"><div className="mx-auto max-w-[1520px]">{children}</div></main>
+      <main id="admin-content" tabIndex={-1} className="admin-main min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8"><div className="mx-auto max-w-[1520px]">{children}</div></main>
     </div>
   </div>;
 }

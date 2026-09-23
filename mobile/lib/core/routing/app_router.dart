@@ -31,7 +31,6 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/ranking/presentation/ranking_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/social/presentation/blocked_players_screen.dart';
-import '../../features/social/presentation/friends_screen.dart';
 import '../../features/social/presentation/social_hub_screen.dart';
 import '../../features/social/presentation/social_join_team_screen.dart';
 import '../../features/social/presentation/social_team_screen.dart';
@@ -42,6 +41,7 @@ import '../../features/tournament/presentation/tournament_flow.dart';
 import '../../features/tournament/presentation/tournament_join_screen.dart';
 import '../../features/tournament/presentation/tournament_registrations_screen.dart';
 import '../../features/tournament/presentation/tournament_screens.dart';
+import '../../shared/presentation/app_shell.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   Future<String?> setupRedirect(
@@ -126,6 +126,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             : null;
       }
       if (const {'/launch', '/onboarding', '/auth'}.contains(path) ||
+          path == '/friends' ||
           path == '/online' ||
           path.startsWith('/online/') ||
           path.startsWith('/room/')) {
@@ -156,10 +157,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               .firstOrNull,
         ),
       ),
-      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-      GoRoute(
-        path: '/tournaments',
-        builder: (_, _) => const TournamentHubScreen(),
+      ShellRoute(
+        builder: (_, state, child) =>
+            AppShell(location: state.uri.path, child: child),
+        routes: [
+          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+          GoRoute(path: '/play', builder: (_, _) => const PlayScreen()),
+          GoRoute(
+            path: '/tournaments',
+            builder: (_, _) => const TournamentHubScreen(),
+          ),
+          GoRoute(path: '/teams', builder: (_, _) => const SocialHubScreen()),
+          GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+        ],
       ),
       GoRoute(
         path: '/tournaments/create',
@@ -272,7 +282,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const PartyGamesScreen(),
       ),
       GoRoute(path: '/how-to-play', builder: (_, _) => const HowToPlayScreen()),
-      GoRoute(path: '/play', builder: (_, _) => const PlayScreen()),
       GoRoute(
         path: '/play/setup/:gameType',
         builder: (_, state) {
@@ -312,17 +321,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (_, _) => const PremiumVoucherScreen(),
       ),
       GoRoute(path: '/wallet', redirect: (_, _) => '/store'),
-      GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
-      GoRoute(
-        path: '/friends',
-        builder: (_, state) =>
-            FriendsScreen(inviteTeamId: state.uri.queryParameters['teamId']),
-      ),
+      GoRoute(path: '/friends', redirect: (_, _) => '/home'),
       GoRoute(
         path: '/football-preferences',
         builder: (_, _) => const FootballPreferencesScreen(),
       ),
-      GoRoute(path: '/teams', builder: (_, _) => const SocialHubScreen()),
       GoRoute(
         path: '/teams/join',
         builder: (_, state) => SocialJoinTeamScreen(

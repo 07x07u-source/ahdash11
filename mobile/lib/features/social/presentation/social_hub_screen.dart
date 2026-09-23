@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../shared/presentation/app_shell.dart';
 import '../../../shared/presentation/app_states.dart';
 import '../../../shared/presentation/brand_identity.dart';
 import '../../../shared/presentation/components.dart';
@@ -24,125 +23,109 @@ final class SocialHubScreen extends ConsumerWidget {
     final metrics = LandscapeMetrics.of(context);
     final portrait =
         MediaQuery.sizeOf(context).height > MediaQuery.sizeOf(context).width;
-    return AppShell(
-      index: 2,
-      child: AhdashGameWorld(
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(metrics.gutter),
-            child: hub.when(
-              loading: () => const Center(child: ElevenLoader(size: 42)),
-              error: (_, _) => AppMessageState(
-                icon: Icons.groups_3_outlined,
-                title: 'تعذر تحميل الفِرق',
-                message: 'تحقق من اتصالك ثم حاول مجددًا.',
-                actionLabel: 'إعادة المحاولة',
-                onAction: () => ref.invalidate(socialHubProvider),
-              ),
-              data: (value) {
-                final title = CompactSectionTitle(
-                  eyebrow: 'مساحة لعب خاصة',
-                  title: value.team?.name ?? 'الفِرق',
-                  trailing: Row(
-                    children: [
-                      IconButton(
-                        tooltip: 'تحديث',
-                        onPressed: () => ref.invalidate(socialHubProvider),
-                        icon: const Icon(Icons.refresh_rounded),
-                      ),
-                      FilledButton.tonalIcon(
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(0, 36),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        onPressed: () => context.push('/friends'),
-                        icon: const Icon(Icons.people_alt_outlined),
-                        label: const Text('ربعك'),
-                      ),
-                    ],
-                  ),
-                );
-                if (portrait) {
-                  return Column(
-                    children: [
-                      title,
-                      SizedBox(height: metrics.panelGap),
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            SizedBox(
-                              height: 300,
-                              child: _SocialHero(
-                                team: value.team,
-                                compact: false,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            SizedBox(
-                              height: 360,
-                              child: value.team == null
-                                  ? const _NoTeamActions()
-                                  : _TeamCard(
-                                      team: value.team!,
-                                      compact: false,
-                                    ),
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            SizedBox(
-                              height: 300,
-                              child: _InvitesAndPrivacy(
-                                invites: value.invites,
-                                compact: false,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                return AccessibilityViewport(
-                  child: Column(
-                    children: [
-                      title,
-                      SizedBox(height: metrics.panelGap),
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: _SocialHero(
-                                team: value.team,
-                                compact: metrics.compact,
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              flex: 4,
-                              child: value.team == null
-                                  ? const _NoTeamActions()
-                                  : _TeamCard(
-                                      team: value.team!,
-                                      compact: metrics.compact,
-                                    ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Expanded(
-                              flex: 3,
-                              child: _InvitesAndPrivacy(
-                                invites: value.invites,
-                                compact: metrics.compact,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+    return AhdashGameWorld(
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(metrics.gutter),
+          child: hub.when(
+            loading: () => const Center(child: ElevenLoader(size: 42)),
+            error: (_, _) => AppMessageState(
+              icon: Icons.groups_3_outlined,
+              title: 'تعذر تحميل الفِرق',
+              message: 'تحقق من اتصالك ثم حاول مجددًا.',
+              actionLabel: 'إعادة المحاولة',
+              onAction: () => ref.invalidate(socialHubProvider),
             ),
+            data: (value) {
+              final title = CompactSectionTitle(
+                eyebrow: 'مساحة لعب خاصة',
+                title: value.team?.name ?? 'الفِرق',
+                trailing: IconButton(
+                  tooltip: 'تحديث',
+                  onPressed: () => ref.invalidate(socialHubProvider),
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+              );
+              if (portrait) {
+                return Column(
+                  children: [
+                    title,
+                    SizedBox(height: metrics.panelGap),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.only(
+                          bottom: AhdashSizing.floatingDockContentInset,
+                        ),
+                        children: [
+                          SizedBox(
+                            height: 300,
+                            child: _SocialHero(
+                              team: value.team,
+                              compact: false,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          SizedBox(
+                            height: 360,
+                            child: value.team == null
+                                ? const _NoTeamActions()
+                                : _TeamCard(team: value.team!, compact: false),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          SizedBox(
+                            height: 300,
+                            child: _InvitesAndPrivacy(
+                              invites: value.invites,
+                              compact: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return AccessibilityViewport(
+                child: Column(
+                  children: [
+                    title,
+                    SizedBox(height: metrics.panelGap),
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: _SocialHero(
+                              team: value.team,
+                              compact: metrics.compact,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            flex: 4,
+                            child: value.team == null
+                                ? const _NoTeamActions()
+                                : _TeamCard(
+                                    team: value.team!,
+                                    compact: metrics.compact,
+                                  ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            flex: 3,
+                            child: _InvitesAndPrivacy(
+                              invites: value.invites,
+                              compact: metrics.compact,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),

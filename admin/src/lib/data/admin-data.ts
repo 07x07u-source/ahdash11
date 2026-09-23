@@ -292,10 +292,10 @@ export async function getGameSettings(): Promise<{ mode: DataMode; rows: GameSet
   const supabase = await createServerSupabaseClient();
   if (supabase) {
     const { data, error } = await supabase.from("game_settings").select("key, value, description_ar, is_public").order("key");
-    if (!error && data?.length) return { mode: "live", rows: data.map((row) => ({
-      key: String(row.key), value: typeof row.value === "number" ? row.value : Number((row.value as { value?: unknown } | null)?.value ?? row.value ?? 0),
+    if (!error) return { mode: "live", rows: (data ?? []).filter((row) => typeof row.value === "number" && Number.isFinite(row.value)).map((row) => ({
+      key: String(row.key), value: row.value as number,
       description: String(row.description_ar ?? row.key), isPublic: Boolean(row.is_public),
     })) };
   }
-  return { mode: "development", rows: fallbackSettings };
+  return { mode: "development", rows: !supabase && useDemoData ? fallbackSettings : [] };
 }

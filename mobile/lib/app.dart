@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +10,7 @@ import 'core/routing/app_router.dart';
 import 'core/services/app_services.dart';
 import 'core/services/notification_service.dart';
 import 'core/settings/app_preferences.dart';
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/domain/guest_capability_policy.dart';
 import 'features/auth/presentation/capability_provider.dart';
@@ -118,18 +120,29 @@ final class _AhdashAppState extends ConsumerState<AhdashApp>
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      builder: (context, child) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            disableAnimations:
-                MediaQuery.disableAnimationsOf(context) ||
-                preferences.reducedMotion,
-            textScaler: MediaQuery.textScalerOf(
-              context,
-            ).clamp(minScaleFactor: 0.9, maxScaleFactor: 1.6),
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark.copyWith(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: AppColors.paper0,
+          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarContrastEnforced: false,
+        ),
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              disableAnimations:
+                  MediaQuery.disableAnimationsOf(context) ||
+                  preferences.reducedMotion,
+              textScaler: MediaQuery.textScalerOf(
+                context,
+              ).clamp(minScaleFactor: 0.9, maxScaleFactor: 1.6),
+            ),
+            child: child ?? const SizedBox.shrink(),
           ),
-          child: child ?? const SizedBox.shrink(),
         ),
       ),
     );

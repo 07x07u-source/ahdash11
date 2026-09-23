@@ -211,7 +211,7 @@ final class AhdashButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = loading
+    final content = loading
         ? const SizedBox.square(
             dimension: 20,
             child: CircularProgressIndicator(strokeWidth: 2),
@@ -224,12 +224,28 @@ final class AhdashButton extends StatelessWidget {
                 Icon(icon, size: 20),
                 const SizedBox(width: AppSpacing.xs),
               ],
-              Text(label),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           );
-    return secondary
-        ? OutlinedButton(onPressed: loading ? null : onPressed, child: child)
-        : FilledButton(onPressed: loading ? null : onPressed, child: child);
+    final enabled = !loading && onPressed != null;
+    final button = secondary
+        ? OutlinedButton(onPressed: enabled ? onPressed : null, child: content)
+        : FilledButton(onPressed: enabled ? onPressed : null, child: content);
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      liveRegion: loading,
+      label: loading ? '$label، جارٍ التنفيذ' : label,
+      onTap: enabled ? onPressed : null,
+      child: ExcludeSemantics(child: button),
+    );
   }
 }
 

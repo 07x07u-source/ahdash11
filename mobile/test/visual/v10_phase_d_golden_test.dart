@@ -15,13 +15,14 @@ import 'package:ahdash_11/features/social/presentation/blocked_players_screen.da
 import 'package:ahdash_11/features/social/presentation/friends_screen.dart';
 import 'package:ahdash_11/features/social/presentation/social_team_screen.dart';
 import 'package:ahdash_11/features/social/presentation/team_challenge_screen.dart';
+import 'package:ahdash_11/shared/domain/category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/fake_social_repository.dart';
-import '../helpers/party_phase4_fixture.dart';
+import '../fixtures/v10_feature_fixtures.dart';
 import '../helpers/test_app.dart';
 import '../helpers/visual_test_variant.dart';
 
@@ -93,27 +94,35 @@ void registerVisualTests({VisualTestVariant? variant}) {
               partyGameControllerProvider.overrideWithBuild(
                 (ref, notifier) => PartyGameState(
                   restored: true,
-                  session: phase4BoardSession,
+                  session: _savedVisualSession(phase4BoardSession),
                   history: [
-                    PartyGameSession.fromJson({
-                      ...phase4CompletedSession().toJson(),
-                      'id': 'phase4-history-fixture',
-                    }).copyWith(
-                      teams: [
-                        phase4Teams[0].copyWith(name: 'عميد جدة'),
-                        phase4Teams[1].copyWith(name: 'فارس نجد'),
-                      ],
-                      scores: const [300, 300],
+                    _savedVisualSession(
+                      PartyGameSession.fromJson({
+                        ...phase4CompletedSession().toJson(),
+                        'id': 'phase4-history-fixture',
+                      }).copyWith(
+                        teams: [
+                          phase4Teams[0].copyWith(name: 'عميد جدة'),
+                          phase4Teams[1].copyWith(name: 'فارس نجد'),
+                        ],
+                        scores: const [300, 300],
+                      ),
                     ),
                   ],
                 ),
               ),
               categoriesProvider.overrideWithBuild(
-                (ref, notifier) async => const [],
+                (ref, notifier) async => _soloCategories,
               ),
-              leaderboardProvider.overrideWith((ref) async => const []),
+              leaderboardProvider.overrideWith(
+                (ref) async => V10FeatureFixtures.ranking,
+              ),
               socialRepositoryProvider.overrideWithValue(
-                FakeSocialRepository(dashboard: _friendsDashboard),
+                FakeSocialRepository(
+                  dashboard: _friendsDashboard,
+                  challengeQuestion: teamChallengeQuestionFixture,
+                  challengeResult: teamChallengeResultFixture,
+                ),
               ),
               blockedPlayersProvider.overrideWith(
                 (ref) async => _blockedPlayers,
@@ -142,10 +151,30 @@ void registerVisualTests({VisualTestVariant? variant}) {
         );
         await tester.pumpAndSettle(const Duration(milliseconds: 100));
         if (keyboard) {
-          await tester.tap(find.byType(TextField).first);
+          await tester.showKeyboard(find.byType(TextField).first);
           await tester.pumpAndSettle();
         }
         expect(tester.takeException(), isNull);
+        if (const {
+          _PhaseDVisual.savedGames,
+          _PhaseDVisual.matchSetup,
+          _PhaseDVisual.solo,
+          _PhaseDVisual.ranking,
+          _PhaseDVisual.friends,
+          _PhaseDVisual.friendsKeyboard,
+          _PhaseDVisual.blocked,
+        }.contains(visual)) {
+          final images = tester.widgetList<Image>(find.byType(Image)).toList();
+          if (images.isNotEmpty) {
+            final context = tester.element(find.byType(MaterialApp));
+            await tester.runAsync(
+              () => Future.wait(
+                images.map((widget) => precacheImage(widget.image, context)),
+              ),
+            );
+            await tester.pump();
+          }
+        }
         await verifyVisual(
           tester,
           find.byType(MaterialApp),
@@ -161,7 +190,9 @@ Widget _screen(_PhaseDVisual visual) => switch (visual) {
   _PhaseDVisual.howTo => const HowToPlayScreen(),
   _PhaseDVisual.savedGames => const PartyGamesScreen(),
   _PhaseDVisual.matchSetup => const PlayScreen(),
-  _PhaseDVisual.solo => const SoloSetupScreen(),
+  _PhaseDVisual.solo => const SoloSetupScreen(
+    initialCategoryId: 'solo-category-0',
+  ),
   _PhaseDVisual.teamChallenge => const TeamChallengeScreen(
     challengeId: 'challenge-fixture',
     enableCountdown: false,
@@ -172,6 +203,67 @@ Widget _screen(_PhaseDVisual visual) => switch (visual) {
   _PhaseDVisual.blocked => const BlockedPlayersScreen(),
   _PhaseDVisual.teamDetail => const SocialTeamScreen(teamId: 'team-fixture'),
 };
+
+const _savedCoverAssets = [
+  'assets/images/v10_h3_visual_fixtures/saudi_league.png',
+  'assets/images/v10_h3_visual_fixtures/champions_league.png',
+  'assets/images/v10_h3_visual_fixtures/world_cup.png',
+  'assets/images/v10_h3_visual_fixtures/legends.png',
+  'assets/images/v10_h3_visual_fixtures/transfer_market.png',
+  'assets/images/v10_h3_visual_fixtures/tactics.png',
+];
+
+const _soloCategories = [
+  QuizCategory(
+    id: 'solo-category-0',
+    name: 'الدوري السعودي',
+    description: 'أسئلة من الدوري المحلي',
+    iconName: 'sports_soccer',
+    accentColor: Color(0xFF246B53),
+    imageUrl: 'assets/images/v10_h3_visual_fixtures/saudi_league.png',
+  ),
+  QuizCategory(
+    id: 'solo-category-1',
+    name: 'دوري الأبطال',
+    description: 'ليالي أوروبا الكبرى',
+    iconName: 'emoji_events',
+    accentColor: Color(0xFF4B8DE8),
+    imageUrl: 'assets/images/v10_h3_visual_fixtures/champions_league.png',
+  ),
+  QuizCategory(
+    id: 'solo-category-2',
+    name: 'أساطير الكرة',
+    description: 'نجوم صنعوا التاريخ',
+    iconName: 'workspace_premium',
+    accentColor: Color(0xFFFFC857),
+    imageUrl: 'assets/images/v10_h3_visual_fixtures/legends.png',
+  ),
+  QuizCategory(
+    id: 'solo-category-3',
+    name: 'كأس العالم',
+    description: 'ذاكرة المونديال',
+    iconName: 'public',
+    accentColor: Color(0xFFE84B8A),
+    imageUrl: 'assets/images/v10_h3_visual_fixtures/world_cup.png',
+  ),
+];
+
+PartyGameSession _savedVisualSession(PartyGameSession source) =>
+    source.copyWith(
+      categories: [
+        for (var index = 0; index < source.categories.length; index++)
+          PartyCategorySnapshot(
+            id: source.categories[index].id,
+            name: source.categories[index].name,
+            colorValue: source.categories[index].colorValue,
+            ownerTeamIndex: source.categories[index].ownerTeamIndex,
+            imageUrl: _savedCoverAssets[index % _savedCoverAssets.length],
+            focalX: source.categories[index].focalX,
+            focalY: source.categories[index].focalY,
+            questions: source.categories[index].questions,
+          ),
+      ],
+    );
 
 const _config = AppConfig(
   environment: AppEnvironment.production,

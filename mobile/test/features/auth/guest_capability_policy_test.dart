@@ -50,7 +50,6 @@ void main() {
     'identity-bound destinations and future unknown routes are closed by default',
     () {
       for (final route in [
-        '/friends?teamId=abc',
         '/blocked-players',
         '/teams',
         '/teams/join?code=ABC',
@@ -83,6 +82,8 @@ void main() {
       '//example.com/home',
       '/auth?next=/friends',
       '/account-required',
+      '/friends',
+      '/friends?teamId=legacy-team',
       '/online',
       '/unknown',
       '/teams/../home',
@@ -98,7 +99,7 @@ void main() {
     }
   });
   test('safe intent survives encoding and account-mode selection', () {
-    const destination = '/friends?teamId=existing-team';
+    const destination = '/tournaments/join?code=A11CUP26';
     final gate = Uri.parse(GuestCapabilityPolicy.gateLocation(destination));
     expect(gate.path, '/account-required');
     expect(gate.queryParameters['next'], destination);

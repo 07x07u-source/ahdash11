@@ -50,7 +50,6 @@ abstract final class NotificationNavigation {
     '/profile',
     '/store',
     '/ranking',
-    '/friends',
     '/teams',
     '/tournaments',
   };

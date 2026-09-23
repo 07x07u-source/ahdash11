@@ -6,9 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/services/purchase_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../shared/presentation/app_states.dart';
 import '../../../shared/presentation/utility_v9.dart';
-import '../../../shared/presentation/v10_portrait.dart';
 import '../domain/premium_access.dart';
 import 'premium_controller.dart';
 import 'premium_visuals.dart';
@@ -25,11 +23,8 @@ final class PremiumScreen extends ConsumerWidget {
           skipLoadingOnRefresh: false,
           skipLoadingOnReload: false,
           loading: () => const PremiumLoadingView(),
-          error: (_, _) => AppMessageState(
-            title: 'تعذر تحميل الاشتراك',
-            message: 'تحقق من الاتصال وأعد المحاولة.',
-            actionLabel: 'أعد المحاولة',
-            onAction: () => ref.invalidate(premiumControllerProvider),
+          error: (_, _) => _PremiumError(
+            onRetry: () => ref.invalidate(premiumControllerProvider),
           ),
           data: (value) {
             final controller = ref.read(premiumControllerProvider.notifier);
@@ -84,6 +79,9 @@ final class PremiumContentView extends StatelessWidget {
   Widget build(BuildContext context) {
     final active = value.hasAccess;
     final canPurchase = value.available && value.plans.isNotEmpty && !active;
+    final selectedPlan = value.plans
+        .where((plan) => plan.period == value.selected)
+        .firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -114,49 +112,14 @@ final class PremiumContentView extends StatelessWidget {
                   const SizedBox(height: 10),
                   _InlineMessage(value.message!),
                 ],
-                if (showVoucherEntry && onVoucher != null) ...[
-                  const SizedBox(height: 12),
-                  const Row(
-                    children: [
-                      Expanded(child: Divider(color: AppColors.hairline)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 9),
-                        child: Text(
-                          'خيارات الاشتراك',
-                          style: TextStyle(
-                            color: AppColors.inkMuted,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Divider(color: AppColors.hairline)),
-                    ],
-                  ),
-                  TextButton.icon(
-                    key: const ValueKey('premium-voucher-entry'),
-                    onPressed: value.busy ? null : onVoucher,
-                    icon: const Icon(Icons.confirmation_number_outlined),
-                    label: const Text('عندك رمز؟ استخدام قسيمة'),
-                  ),
-                ],
-                const SizedBox(height: 4),
-                TextButton.icon(
-                  key: const ValueKey('premium-restore'),
-                  onPressed: value.busy || !value.available
-                      ? null
-                      : () => onRestore(),
-                  icon: value.operation == PremiumOperation.restoring
-                      ? const SizedBox.square(
-                          dimension: 15,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.restore_rounded, size: 18),
-                  label: Text(
-                    value.operation == PremiumOperation.restoring
-                        ? 'جارٍ الاستعادة…'
-                        : 'استعادة المشتريات',
-                  ),
+                const SizedBox(height: 12),
+                _PremiumUtilities(
+                  busy: value.busy,
+                  available: value.available,
+                  restoring: value.operation == PremiumOperation.restoring,
+                  showVoucher: showVoucherEntry && onVoucher != null,
+                  onVoucher: onVoucher,
+                  onRestore: onRestore,
                 ),
               ],
             ),
@@ -164,14 +127,10 @@ final class PremiumContentView extends StatelessWidget {
         ),
         if (canPurchase) ...[
           const SizedBox(height: 10),
-          AhdashV10PrimaryButton(
-            key: const ValueKey('premium-subscribe'),
-            icon: Icons.lock_open_rounded,
-            label: value.operation == PremiumOperation.buying
-                ? 'جارٍ إتمام الشراء…'
-                : 'اشترك الآن',
-            loading: value.operation == PremiumOperation.buying,
-            onPressed: value.busy ? null : () => onPurchase(),
+          _PremiumPurchaseDock(
+            plan: selectedPlan ?? value.plans.first,
+            buying: value.operation == PremiumOperation.buying,
+            onPurchase: value.busy ? null : onPurchase,
           ),
         ],
       ],
@@ -242,15 +201,15 @@ final class _PremiumHero extends StatelessWidget {
     final textScale = media.textScaler.scale(1);
     final width = media.size.width;
     final heroHeight = switch ((textScale, width)) {
-      (>= 1.3, <= 360) => 350.0,
-      (>= 1.3, < 420) => 315.0,
-      (>= 1.3, _) => 290.0,
-      (>= 1.2, <= 360) => 330.0,
-      (>= 1.2, < 420) => 300.0,
-      (>= 1.2, _) => 280.0,
-      (_, <= 360) => 250.0,
-      (_, < 420) => 230.0,
-      _ => 220.0,
+      (>= 1.3, <= 360) => 260.0,
+      (>= 1.3, < 420) => 238.0,
+      (>= 1.3, _) => 224.0,
+      (>= 1.2, <= 360) => 238.0,
+      (>= 1.2, < 420) => 218.0,
+      (>= 1.2, _) => 204.0,
+      (_, <= 360) => 208.0,
+      (_, < 420) => 196.0,
+      _ => 188.0,
     };
     return Container(
       key: const ValueKey('premium-hero'),
@@ -265,41 +224,18 @@ final class _PremiumHero extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           PositionedDirectional(
-            top: 0,
-            bottom: 0,
+            top: 10,
+            bottom: 10,
             end: 0,
-            width: 184,
+            width: 148,
             child: ExcludeSemantics(
-              child: AhdashFootballArtwork(
-                scene: active
-                    ? PremiumArtworkScene.unlockedCategories
-                    : PremiumArtworkScene.premium,
-                animateEntrance: true,
-              ),
-            ),
-          ),
-          PositionedDirectional(
-            top: -54,
-            start: -42,
-            child: Container(
-              width: 158,
-              height: 158,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: .08),
-              ),
-            ),
-          ),
-          const PositionedDirectional(
-            start: 16,
-            bottom: -18,
-            child: Text(
-              '١١',
-              style: TextStyle(
-                color: Color(0x18FFFFFF),
-                fontSize: 82,
-                height: 1,
-                fontWeight: FontWeight.w900,
+              child: Image.asset(
+                'assets/visuals/premium_membership_passes_v1.png',
+                key: const ValueKey('premium-hero-artwork'),
+                fit: BoxFit.contain,
+                alignment: AlignmentDirectional.centerEnd,
+                filterQuality: FilterQuality.high,
+                cacheWidth: 440,
               ),
             ),
           ),
@@ -311,57 +247,32 @@ final class _PremiumHero extends StatelessWidget {
             child: ColoredBox(color: AppColors.gold),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(18, 18, 166, 16),
+            padding: const EdgeInsetsDirectional.fromSTEB(18, 17, 126, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'AHDASH / PREMIUM 11',
-                  textDirection: TextDirection.ltr,
+                Text(
+                  active ? 'عضويتك فعّالة' : 'تجربة أهدأ',
                   style: TextStyle(
                     color: AppColors.gold,
-                    fontSize: 9,
-                    letterSpacing: 1.15,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                const SizedBox(height: 8),
-                if (active)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 9,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: const Text(
-                      'Premium مفعّل',
-                      style: TextStyle(
-                        color: AppColors.ink,
-                        fontSize: 11,
-                        height: 1,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  )
-                else
-                  const PremiumCategoryBadge(),
-                const SizedBox(height: 8),
+                const SizedBox(height: 9),
                 const Text(
-                  'أحدعش\nPremium',
+                  'Premium',
                   style: TextStyle(
                     color: AppColors.paper0,
-                    fontSize: 28,
-                    height: 0.98,
+                    fontSize: 31,
+                    height: 1,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 const SizedBox(height: 7),
                 const Text(
-                  'فئات حصرية، ولعب متواصل بدون فواصل إعلانية',
+                  'فئات أكثر. إعلانات أقل.',
                   maxLines: 2,
                   style: TextStyle(
                     color: AppColors.paper2,
@@ -382,36 +293,42 @@ final class _PremiumBenefits extends StatelessWidget {
   const _PremiumBenefits();
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      const Text(
-        'داخل Premium',
-        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-      ),
-      const SizedBox(height: 8),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Expanded(
-            child: _BenefitCard(
-              scene: PremiumArtworkScene.categories,
-              title: 'فئات حصرية',
-              description: 'الوصول إلى الفئات المخصصة لمشتركي Premium',
-            ),
+  Widget build(BuildContext context) {
+    final vertical = MediaQuery.textScalerOf(context).scale(14) > 18;
+    const categories = _BenefitCard(
+      scene: PremiumArtworkScene.categories,
+      title: 'فئات حصرية',
+      description: 'محتوى إضافي للعضوية.',
+    );
+    const noAds = _BenefitCard(
+      scene: PremiumArtworkScene.noAds,
+      title: 'بدون إعلانات',
+      description: 'لعب متواصل بلا فواصل.',
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'مزايا العضوية',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 8),
+        if (vertical) ...[
+          categories,
+          const SizedBox(height: 9),
+          noAds,
+        ] else
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: categories),
+              SizedBox(width: 10),
+              Expanded(child: noAds),
+            ],
           ),
-          SizedBox(width: 10),
-          Expanded(
-            child: _BenefitCard(
-              scene: PremiumArtworkScene.noAds,
-              title: 'بدون إعلانات',
-              description: 'استمتع باللعب بدون إعلانات',
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }
 
 final class _BenefitCard extends StatelessWidget {
@@ -431,8 +348,8 @@ final class _BenefitCard extends StatelessWidget {
     padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
       color: scene == PremiumArtworkScene.categories
-          ? AppColors.paper1
-          : AppColors.paper2,
+          ? const Color(0xFFFFF4DA)
+          : const Color(0xFFEAF5D7),
       borderRadius: BorderRadius.circular(18),
       border: Border.all(color: AppColors.hairline),
     ),
@@ -472,18 +389,32 @@ final class _PlanSelector extends StatelessWidget {
         key: const ValueKey('premium-packages-unavailable'),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.paper1,
+          color: const Color(0xFFFFF4DA),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.hairline),
+          border: Border.all(color: AppColors.gold.withValues(alpha: .6)),
         ),
         child: const Row(
           children: [
-            Icon(Icons.storefront_outlined, color: AppColors.inkMuted),
-            SizedBox(width: 10),
+            CircleAvatar(
+              radius: 21,
+              backgroundColor: AppColors.ink,
+              child: Icon(Icons.storefront_outlined, color: AppColors.gold),
+            ),
+            SizedBox(width: 11),
             Expanded(
-              child: Text(
-                'الأسعار غير متاحة من المتجر الآن',
-                style: TextStyle(color: AppColors.inkMuted),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'الخطط غير متاحة الآن',
+                    style: TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'يمكنك إعادة المحاولة أو استعادة اشتراك سابق.',
+                    style: TextStyle(color: AppColors.inkMuted, fontSize: 10),
+                  ),
+                ],
               ),
             ),
           ],
@@ -492,39 +423,47 @@ final class _PlanSelector extends StatelessWidget {
     }
     final monthly = _plan(PremiumPlanPeriod.monthly);
     final yearly = _plan(PremiumPlanPeriod.yearly);
+    final vertical = MediaQuery.textScalerOf(context).scale(14) > 18;
+    final monthlyCard = monthly == null
+        ? null
+        : _PlanCard(
+            plan: monthly,
+            selected: value.selected == PremiumPlanPeriod.monthly,
+            busy: value.busy,
+            onTap: () => onSelect(PremiumPlanPeriod.monthly),
+          );
+    final yearlyCard = yearly == null
+        ? null
+        : _PlanCard(
+            plan: yearly,
+            selected: value.selected == PremiumPlanPeriod.yearly,
+            busy: value.busy,
+            emphasized: true,
+            onTap: () => onSelect(PremiumPlanPeriod.yearly),
+          );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
-          'اختر اشتراكك',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+          'اختر خطتك',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (monthly != null)
-              Expanded(
-                child: _PlanCard(
-                  plan: monthly,
-                  selected: value.selected == PremiumPlanPeriod.monthly,
-                  busy: value.busy,
-                  onTap: () => onSelect(PremiumPlanPeriod.monthly),
-                ),
-              ),
-            if (monthly != null && yearly != null) const SizedBox(width: 10),
-            if (yearly != null)
-              Expanded(
-                child: _PlanCard(
-                  plan: yearly,
-                  selected: value.selected == PremiumPlanPeriod.yearly,
-                  busy: value.busy,
-                  emphasized: true,
-                  onTap: () => onSelect(PremiumPlanPeriod.yearly),
-                ),
-              ),
-          ],
-        ),
+        if (vertical) ...[
+          ?monthlyCard,
+          if (monthlyCard != null && yearlyCard != null)
+            const SizedBox(height: 9),
+          ?yearlyCard,
+        ] else
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (monthlyCard != null) Expanded(child: monthlyCard),
+              if (monthlyCard != null && yearlyCard != null)
+                const SizedBox(width: 10),
+              if (yearlyCard != null) Expanded(child: yearlyCard),
+            ],
+          ),
       ],
     );
   }
@@ -557,12 +496,14 @@ final class _PlanCard extends StatelessWidget {
       label: '${yearly ? 'اشتراك سنوي' : 'اشتراك شهري'}، ${plan.price}',
       child: Material(
         key: ValueKey('premium-plan-${plan.period.name}'),
-        color: selected ? const Color(0xFFFFF4D8) : AppColors.paper0,
+        color: selected ? AppColors.ink : AppColors.paper0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(
             color: selected
                 ? (emphasized ? AppColors.gold : AppColors.palm)
+                : emphasized
+                ? AppColors.gold.withValues(alpha: .5)
                 : AppColors.hairline,
             width: selected ? 1.7 : 1,
           ),
@@ -572,21 +513,8 @@ final class _PlanCard extends StatelessWidget {
           onTap: busy ? null : onTap,
           child: Stack(
             children: [
-              PositionedDirectional(
-                end: -2,
-                bottom: -13,
-                child: Text(
-                  yearly ? '١٢' : '١',
-                  style: TextStyle(
-                    color: AppColors.ink.withValues(alpha: .055),
-                    fontSize: 62,
-                    height: 1,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -597,17 +525,24 @@ final class _PlanCard extends StatelessWidget {
                               ? Icons.radio_button_checked
                               : Icons.radio_button_off,
                           size: 19,
+                          color: selected
+                              ? (emphasized
+                                    ? AppColors.gold
+                                    : AppColors.primary)
+                              : AppColors.ink,
                         ),
                         const Spacer(),
                         if (yearly)
-                          const Flexible(
+                          Flexible(
                             child: Text(
                               'اشتراك سنوي',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 9,
-                                color: AppColors.inkMuted,
+                                color: selected
+                                    ? AppColors.paper2
+                                    : AppColors.inkMuted,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -617,7 +552,8 @@ final class _PlanCard extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       yearly ? 'سنوي' : 'شهري',
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: selected ? AppColors.paper0 : AppColors.ink,
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
                       ),
@@ -628,7 +564,12 @@ final class _PlanCard extends StatelessWidget {
                       alignment: AlignmentDirectional.centerStart,
                       child: Text(
                         plan.price,
-                        style: const TextStyle(
+                        style: TextStyle(
+                          color: selected
+                              ? (emphasized
+                                    ? AppColors.gold
+                                    : AppColors.primary)
+                              : AppColors.ink,
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
                         ),
@@ -636,9 +577,9 @@ final class _PlanCard extends StatelessWidget {
                     ),
                     Text(
                       yearly ? 'كل سنة' : 'كل شهر',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
-                        color: AppColors.inkMuted,
+                        color: selected ? AppColors.paper2 : AppColors.inkMuted,
                       ),
                     ),
                   ],
@@ -680,9 +621,13 @@ final class _ActiveSubscriberPanel extends StatelessWidget {
     key: const ValueKey('premium-active-subscriber'),
     padding: const EdgeInsets.all(15),
     decoration: BoxDecoration(
-      color: const Color(0xFFEAF3EC),
+      gradient: const LinearGradient(
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
+        colors: [Color(0xFF243025), Color(0xFF151814)],
+      ),
       borderRadius: BorderRadius.circular(19),
-      border: Border.all(color: AppColors.success.withValues(alpha: 0.5)),
+      border: Border.all(color: AppColors.gold.withValues(alpha: .72)),
     ),
     child: Row(
       children: [
@@ -700,7 +645,11 @@ final class _ActiveSubscriberPanel extends StatelessWidget {
             children: [
               const Text(
                 'Premium مفعّل',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                style: TextStyle(
+                  color: AppColors.paper0,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
@@ -708,18 +657,230 @@ final class _ActiveSubscriberPanel extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 11,
                   height: 1.4,
-                  color: AppColors.inkMuted,
+                  color: AppColors.paper2,
                 ),
               ),
             ],
           ),
         ),
         if (onManage != null)
-          TextButton(
+          OutlinedButton(
             onPressed: busy ? null : onManage,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.gold,
+              side: BorderSide(color: AppColors.gold.withValues(alpha: .7)),
+              padding: const EdgeInsets.symmetric(horizontal: 11),
+            ),
             child: const Text('إدارة'),
           ),
       ],
+    ),
+  );
+}
+
+final class _PremiumUtilities extends StatelessWidget {
+  const _PremiumUtilities({
+    required this.busy,
+    required this.available,
+    required this.restoring,
+    required this.showVoucher,
+    required this.onVoucher,
+    required this.onRestore,
+  });
+
+  final bool busy;
+  final bool available;
+  final bool restoring;
+  final bool showVoucher;
+  final VoidCallback? onVoucher;
+  final Future<bool> Function() onRestore;
+
+  @override
+  Widget build(BuildContext context) {
+    final vertical = MediaQuery.textScalerOf(context).scale(14) > 18;
+    final restore = OutlinedButton.icon(
+      key: const ValueKey('premium-restore'),
+      onPressed: busy || !available ? null : () => onRestore(),
+      icon: restoring
+          ? const SizedBox.square(
+              dimension: 15,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.restore_rounded, size: 18),
+      label: Text(restoring ? 'جارٍ الاستعادة…' : 'استعادة المشتريات'),
+    );
+    final voucher = OutlinedButton.icon(
+      key: const ValueKey('premium-voucher-entry'),
+      onPressed: busy ? null : onVoucher,
+      icon: const Icon(Icons.confirmation_number_outlined, size: 18),
+      label: const Text('استخدام قسيمة'),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'خيارات أخرى',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
+        ),
+        const SizedBox(height: 7),
+        if (!showVoucher)
+          restore
+        else if (vertical) ...[
+          voucher,
+          const SizedBox(height: 8),
+          restore,
+        ] else
+          Row(
+            children: [
+              Expanded(child: voucher),
+              const SizedBox(width: 8),
+              Expanded(child: restore),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+final class _PremiumPurchaseDock extends StatelessWidget {
+  const _PremiumPurchaseDock({
+    required this.plan,
+    required this.buying,
+    required this.onPurchase,
+  });
+
+  final PremiumPlan plan;
+  final bool buying;
+  final Future<bool> Function()? onPurchase;
+
+  @override
+  Widget build(BuildContext context) {
+    final vertical = MediaQuery.textScalerOf(context).scale(14) > 18;
+    final summary = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          plan.period == PremiumPlanPeriod.yearly
+              ? 'الخطة السنوية'
+              : 'الخطة الشهرية',
+          style: const TextStyle(
+            color: AppColors.inkMuted,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 1),
+        const Text(
+          'جاهزة للاشتراك',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
+        ),
+      ],
+    );
+    final button = SizedBox(
+      height: 52,
+      child: FilledButton.icon(
+        key: const ValueKey('premium-subscribe'),
+        onPressed: buying || onPurchase == null ? null : () => onPurchase!(),
+        icon: buying
+            ? const SizedBox.square(
+                dimension: 17,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.ink,
+                ),
+              )
+            : const Icon(Icons.lock_open_rounded, size: 19),
+        label: Text(buying ? 'جارٍ إتمام الشراء…' : 'اشترك الآن'),
+      ),
+    );
+    return Container(
+      key: const ValueKey('premium-purchase-dock'),
+      padding: const EdgeInsets.all(9),
+      decoration: BoxDecoration(
+        color: AppColors.paper1,
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(color: AppColors.hairline),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: .08),
+            blurRadius: 18,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: vertical
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 4,
+                    bottom: 7,
+                  ),
+                  child: summary,
+                ),
+                button,
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(child: summary),
+                const SizedBox(width: 10),
+                SizedBox(width: 168, child: button),
+              ],
+            ),
+    );
+  }
+}
+
+final class _PremiumError extends StatelessWidget {
+  const _PremiumError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Container(
+      key: const ValueKey('premium-error'),
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF4DA),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.gold.withValues(alpha: .6)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircleAvatar(
+            radius: 28,
+            backgroundColor: AppColors.ink,
+            child: Icon(
+              Icons.wifi_off_rounded,
+              color: AppColors.gold,
+              size: 27,
+            ),
+          ),
+          const SizedBox(height: 13),
+          const Text(
+            'تعذر تحميل الاشتراك',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 5),
+          const Text(
+            'تحقق من الاتصال وحاول مرة أخرى.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
+          ),
+          const SizedBox(height: 15),
+          FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('إعادة المحاولة'),
+          ),
+        ],
+      ),
     ),
   );
 }

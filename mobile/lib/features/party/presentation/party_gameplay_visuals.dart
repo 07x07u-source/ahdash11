@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-enum PartyGameplayArtworkScene { category, ready, imageFallback, result }
+enum PartyGameplayArtworkScene {
+  category,
+  setup,
+  splitter,
+  ready,
+  imageFallback,
+  result,
+}
 
 /// Rights-safe procedural football artwork used by the local Party flow.
 ///
@@ -64,6 +71,12 @@ final class _PartyGameplayArtworkPainter extends CustomPainter {
       case PartyGameplayArtworkScene.category:
         _paintPitch(canvas, size, reveal);
         _paintFlight(canvas, size, reveal, rising: true);
+      case PartyGameplayArtworkScene.setup:
+        _paintPitch(canvas, size, reveal);
+        _paintTeamMarkers(canvas, size, reveal);
+      case PartyGameplayArtworkScene.splitter:
+        _paintPitch(canvas, size, reveal);
+        _paintLineup(canvas, size, reveal);
       case PartyGameplayArtworkScene.ready:
         _paintFloodlights(canvas, size, reveal);
         _paintPitch(canvas, size, reveal);
@@ -226,6 +239,30 @@ final class _PartyGameplayArtworkPainter extends CustomPainter {
       radius,
       Paint()..color = AppColors.gold.withValues(alpha: 0.88 * reveal),
     );
+  }
+
+  void _paintLineup(Canvas canvas, Size size, double reveal) {
+    final radius = math.max(2.4, size.shortestSide * 0.025);
+    final colors = [accent, AppColors.gold];
+    for (var side = 0; side < 2; side++) {
+      final x = size.width * (side == 0 ? 0.3 : 0.7);
+      for (var index = 0; index < 3; index++) {
+        final y = size.height * (0.34 + index * 0.16);
+        canvas.drawCircle(
+          Offset(x, y),
+          radius,
+          Paint()..color = colors[side].withValues(alpha: 0.9 * reveal),
+        );
+        canvas.drawLine(
+          Offset(x + radius * 1.8, y),
+          Offset(x + radius * 4.8 * reveal, y),
+          Paint()
+            ..color = line.withValues(alpha: line.a * reveal)
+            ..strokeWidth = math.max(1, radius * 0.42)
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
   }
 
   void _paintFrameCorners(Canvas canvas, Size size, double reveal) {

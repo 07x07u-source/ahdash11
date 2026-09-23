@@ -21,7 +21,7 @@ export function MetricCard({
   }[accent];
 
   return (
-    <article className="surface-card surface-card-hover p-4 sm:p-5">
+    <article className="surface-card admin-metric p-4 sm:p-5" data-accent={accent}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-bold text-[var(--muted)]">{label}</p>

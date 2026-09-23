@@ -18,55 +18,69 @@ final class AhdashPageHeader extends StatelessWidget {
   final VoidCallback? onBack;
   final Widget? trailing;
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      if (onBack != null) ...[
-        IconButton.outlined(
-          tooltip: 'رجوع',
-          onPressed: onBack,
-          style: IconButton.styleFrom(
-            foregroundColor: AppColors.ink,
-            backgroundColor: AppColors.paper0,
-            minimumSize: const Size(44, 44),
-            side: const BorderSide(color: AppColors.hairline),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+  Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final compact = MediaQuery.sizeOf(context).width < 390;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (onBack != null) ...[
+          IconButton.outlined(
+            tooltip: 'رجوع',
+            onPressed: onBack,
+            style: IconButton.styleFrom(
+              foregroundColor: AppColors.ink,
+              backgroundColor: AppColors.paper0,
+              minimumSize: const Size.square(AhdashSizing.touchTarget),
+              fixedSize: const Size.square(AhdashSizing.touchTarget),
+              overlayColor: AppColors.brandLime.withValues(alpha: .16),
+              side: const BorderSide(color: AppColors.hairline),
+              shape: const CircleBorder(),
             ),
+            icon: const Icon(Icons.arrow_back_rounded, size: 21),
           ),
-          icon: const Icon(Icons.arrow_back_rounded, size: 20),
-        ),
-        const SizedBox(width: 12),
-      ],
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 22,
-                height: 1.3,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            if (subtitle != null && subtitle!.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                subtitle!,
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.5,
-                  color: AppColors.inkMuted,
+          const SizedBox(width: 12),
+        ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: compact ? 21 : 22,
+                    height: 1.25,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
+              if (subtitle != null && subtitle!.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  maxLines: textScale > 1.2 ? 3 : 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: AppColors.inkMuted,
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
-      if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-    ],
-  );
+        if (trailing != null) ...[
+          SizedBox(width: textScale > 1.2 ? 6 : 10),
+          Padding(padding: const EdgeInsets.only(top: 1), child: trailing!),
+        ],
+      ],
+    );
+  }
 }
 
 /// Shared shell for the final V10 product surfaces. It intentionally keeps
@@ -109,36 +123,50 @@ final class AhdashV10Page extends StatelessWidget {
         child: child,
       );
     }
+    final headerActions = actions.isEmpty
+        ? null
+        : Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.end,
+            children: actions,
+          );
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.paper0,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: maxWidth),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                metrics.gutter,
-                metrics.gutter,
-                metrics.gutter,
-                0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AhdashPageHeader(
-                    title: title,
-                    subtitle: subtitle,
-                    onBack: onBack,
-                  ),
-                  if (actions.isNotEmpty)
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: Wrap(spacing: AppSpacing.xs, children: actions),
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.paper0, Color(0xFFF8F2E7), AppColors.paper0],
+            stops: [0, .62, 1],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  metrics.gutter,
+                  metrics.gutter,
+                  metrics.gutter,
+                  0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AhdashPageHeader(
+                      title: title,
+                      subtitle: subtitle,
+                      onBack: onBack,
+                      trailing: headerActions,
                     ),
-                  SizedBox(height: metrics.sectionGap),
-                  Expanded(child: content),
-                ],
+                    SizedBox(height: metrics.sectionGap),
+                    Expanded(child: content),
+                  ],
+                ),
               ),
             ),
           ),
@@ -182,7 +210,15 @@ final class AhdashV10Panel extends StatelessWidget {
           color: selected
               ? (selectedBorderColor ?? AppColors.ink)
               : AppColors.hairline,
+          width: selected ? 1.35 : 1,
         ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0C191714),
+            blurRadius: 14,
+            offset: Offset(0, 5),
+          ),
+        ],
       ),
       child: InkWell(
         onTap: onTap,
@@ -304,34 +340,58 @@ final class AhdashV10PrimaryButton extends StatelessWidget {
   final bool loading;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    height: 56,
-    child: FilledButton(
-      onPressed: loading ? null : onPressed,
-      child: loading
-          ? const SizedBox.square(
-              dimension: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (icon != null) ...[
-                  const SizedBox(width: AppSpacing.xs),
-                  Icon(icon, size: 20),
-                ],
-              ],
+  Widget build(BuildContext context) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final enabled = !loading && onPressed != null;
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      liveRegion: loading,
+      label: loading ? '$label، جارٍ التنفيذ' : label,
+      onTap: enabled ? onPressed : null,
+      child: ExcludeSemantics(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: double.infinity,
+            minHeight: textScale > 1.2 ? 60 : 56,
+          ),
+          child: FilledButton(
+            onPressed: enabled ? onPressed : null,
+            child: AnimatedSwitcher(
+              duration: reduceMotion ? Duration.zero : AppMotion.selection,
+              switchInCurve: AppMotion.enterCurve,
+              switchOutCurve: AppMotion.exitCurve,
+              child: loading
+                  ? const SizedBox.square(
+                      key: ValueKey('v10-primary-loading'),
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Row(
+                      key: const ValueKey('v10-primary-label'),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            label,
+                            maxLines: textScale > 1.2 ? 2 : 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        if (icon != null) ...[
+                          const SizedBox(width: AppSpacing.xs),
+                          Icon(icon, size: 20),
+                        ],
+                      ],
+                    ),
             ),
-    ),
-  );
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 final class AhdashV10ScreenTitle extends StatelessWidget {

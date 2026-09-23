@@ -6,12 +6,12 @@ This atlas documents the current active V10 Flutter UI using exact logical-pixel
 
 - Active screens expected: 38
 - Active screens represented: 38
-- Total PNG files: 242
-- Full-screen renders: 152
+- Total PNG files: 246
+- Full-screen renders: 156
 - Detail crops: 56
 - Component crops: 30
 - Keyboard renders: 9
-- Compact renders: 42
+- Compact renders: 44
 
 Use [INDEX.html](INDEX.html) for visual browsing, [SCREENSHOT_MANIFEST.csv](SCREENSHOT_MANIFEST.csv) for per-file provenance and SHA-256, and [COVERAGE.md](COVERAGE.md) for known state-level gaps.
 

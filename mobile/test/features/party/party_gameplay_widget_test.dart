@@ -28,6 +28,7 @@ void main() {
     }
     expect(find.byIcon(Icons.check_rounded), findsOneWidget);
     expect(find.text('دور صقور الجزيرة'), findsOneWidget);
+    expect(find.textContaining('تبقى'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -244,6 +245,25 @@ void main() {
     );
   });
 
+  testWidgets('pass reveal only offers the real answering team', (
+    tester,
+  ) async {
+    final session = phase4RevealSession().copyWith(
+      armedHelper: PartyHelperId.pass,
+      answeringTeamIndex: 1,
+    );
+    await _pump(tester, session: session, location: '/party/reveal');
+
+    expect(
+      find.widgetWithText(OutlinedButton, session.teams[1].name),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(OutlinedButton, session.teams[0].name),
+      findsNothing,
+    );
+  });
+
   testWidgets(
     'No one creates the real no-score event without arbitrary award',
     (tester) async {
@@ -280,6 +300,7 @@ void main() {
     expect(find.text('4700'), findsOneWidget);
     expect(find.text('4100'), findsOneWidget);
     expect(find.byKey(const ValueKey('party-play-again')), findsOneWidget);
+    expect(find.textContaining('عرض سجل الاحتساب'), findsOneWidget);
   });
 
   testWidgets('Final Result renders a tie without declaring a winner', (

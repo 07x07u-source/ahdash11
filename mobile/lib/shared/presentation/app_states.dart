@@ -26,7 +26,19 @@ final class _LoadingSkeletonState extends State<LoadingSkeleton>
     _controller = AnimationController(
       vsync: this,
       duration: AppMotion.loadingPulse,
-    )..repeat(reverse: true);
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller
+        ..stop()
+        ..value = .5;
+    } else if (!_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    }
   }
 
   @override
@@ -39,22 +51,29 @@ final class _LoadingSkeletonState extends State<LoadingSkeleton>
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
     final colors = context.ahdashColors;
-    if (reduceMotion) {
-      return _SkeletonLines(
-        lines: widget.lines,
-        lineHeight: widget.lineHeight,
-        color: colors.surfaceMuted,
-      );
-    }
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) =>
-          Opacity(opacity: 0.35 + (_controller.value * 0.35), child: child),
-      child: _SkeletonLines(
-        lines: widget.lines,
-        lineHeight: widget.lineHeight,
-        color: colors.surfaceMuted,
-      ),
+    final skeleton = reduceMotion
+        ? _SkeletonLines(
+            lines: widget.lines,
+            lineHeight: widget.lineHeight,
+            color: colors.surfaceMuted,
+          )
+        : AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) => Opacity(
+              opacity: 0.35 + (_controller.value * 0.35),
+              child: child,
+            ),
+            child: _SkeletonLines(
+              lines: widget.lines,
+              lineHeight: widget.lineHeight,
+              color: colors.surfaceMuted,
+            ),
+          );
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: 'جارٍ تحميل المحتوى',
+      child: ExcludeSemantics(child: skeleton),
     );
   }
 }

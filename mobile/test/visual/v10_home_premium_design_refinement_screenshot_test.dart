@@ -192,10 +192,7 @@ void main() {
     addTearDown(router.dispose);
     await tester.pump(const Duration(milliseconds: 380));
     expect(find.byKey(const ValueKey('home-party-hero')), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('ahdash-football-artwork-motion')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const ValueKey('home-motion-artwork')), findsOneWidget);
     expect(tester.takeException(), isNull);
     await _capture(tester, 'home_motion_keyframe_390x844');
 
@@ -215,11 +212,18 @@ void main() {
   ) async {
     final router = await _pumpHome(tester, reducedMotion: true);
     addTearDown(router.dispose);
+    expect(find.byKey(const ValueKey('home-motion-artwork')), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('ahdash-football-artwork-motion')),
-      findsNothing,
+      tester
+          .widget<TweenAnimationBuilder<double>>(
+            find.descendant(
+              of: find.byKey(const ValueKey('home-motion-artwork')),
+              matching: find.byType(TweenAnimationBuilder<double>),
+            ),
+          )
+          .duration,
+      Duration.zero,
     );
-    expect(find.byKey(const ValueKey('ahdash-football-artwork')), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 }
@@ -253,6 +257,8 @@ Future<void> _pumpSurface(WidgetTester tester, Widget child, Size size) async {
   );
   // A fixed final frame keeps intentionally spinning store/checkout loaders
   // deterministic without waiting for them to settle forever.
+  await tester.pump();
+  await _precacheImages(tester);
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 1000));
 }

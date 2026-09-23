@@ -15,15 +15,18 @@ import '../services/app_services.dart';
 import '../services/crash_reporter.dart';
 import '../services/notification_service.dart';
 import '../services/purchase_service.dart';
+import '../startup/startup_trace.dart';
 
 abstract final class AppBootstrap {
   static Future<AppServices> initialize(AppConfig config) async {
     final packageInfo = await PackageInfo.fromPlatform();
+    StartupTrace.mark('package_info_ready');
     if (config.hasSupabase) {
       await Supabase.initialize(
         url: config.supabaseUrl,
         publishableKey: config.supabaseKey,
       ).timeout(const Duration(seconds: 15));
+      StartupTrace.mark('supabase_client_ready');
     }
 
     final AppErrorReporter errorReporter = config.hasSupabase
@@ -40,6 +43,7 @@ abstract final class AppBootstrap {
     if (config.firebaseEnabled) {
       try {
         await Firebase.initializeApp().timeout(const Duration(seconds: 15));
+        StartupTrace.mark('firebase_ready');
         FirebaseMessaging.onBackgroundMessage(
           firebaseMessagingBackgroundHandler,
         );
@@ -88,19 +92,24 @@ abstract final class AppBootstrap {
           )
         : const NoopAdsService();
     if (ads.enabled) {
-      try {
-        await ads.initialize();
-      } catch (error, stackTrace) {
-        unawaited(
-          errorReporter.report(
-            severity: AppErrorSeverity.warning,
-            category: AppErrorCategory.startup,
-            feature: 'ads_initialization',
-            error: error,
-            stackTrace: stackTrace,
-          ),
-        );
-      }
+      // Consent and the ads SDK can take up to 12 seconds. They are not needed
+      // to decide or paint the first destination, so warm them in parallel.
+      unawaited(() async {
+        try {
+          await ads.initialize();
+          StartupTrace.mark('ads_ready');
+        } catch (error, stackTrace) {
+          unawaited(
+            errorReporter.report(
+              severity: AppErrorSeverity.warning,
+              category: AppErrorCategory.startup,
+              feature: 'ads_initialization',
+              error: error,
+              stackTrace: stackTrace,
+            ),
+          );
+        }
+      }());
     }
 
     PurchaseService purchases = config.revenueCatKey.isEmpty
@@ -112,6 +121,7 @@ abstract final class AppBootstrap {
     if (purchases.enabled) {
       try {
         await purchases.initialize();
+        StartupTrace.mark('purchases_ready');
       } catch (error, stackTrace) {
         unawaited(
           errorReporter.report(

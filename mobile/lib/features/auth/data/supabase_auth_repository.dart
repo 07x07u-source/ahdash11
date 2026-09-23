@@ -81,10 +81,15 @@ final class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<SocialSignInResult> signInWithSocial(SocialProvider provider) async {
     if (provider == SocialProvider.apple) {
-      await _client.auth.signInWithOAuth(
+      final launched = await _client.auth.signInWithOAuth(
         OAuthProvider.apple,
         redirectTo: 'com.ahdash.eleven://login-callback',
       );
+      if (!launched) {
+        throw const SocialSignInException(
+          SocialSignInFailureCode.configuration,
+        );
+      }
       return const SocialSignInRedirectStarted();
     }
 
