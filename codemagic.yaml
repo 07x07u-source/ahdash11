@@ -149,6 +149,11 @@ workflows:
           test -n "$FIREBASE_IOS_CONFIG" || { echo "FIREBASE_IOS_CONFIG is missing"; exit 1; }
           echo "$FIREBASE_IOS_CONFIG" | base64 --decode > mobile/ios/Runner/GoogleService-Info.plist
 
+      - name: Disable Swift Package Manager
+        script: |
+          cd mobile
+          flutter config --no-enable-swift-package-manager
+
       - name: Apply signing profiles
         script: xcode-project use-profiles
 
