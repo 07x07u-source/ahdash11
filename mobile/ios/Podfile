@@ -2,6 +2,10 @@ platform :ios, '15.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+# Keep CocoaPods' input/output file lists enabled. Xcode's [CP] build phases
+# rely on these files for framework and resource phases during Archive.
+install! 'cocoapods', :disable_input_output_paths => false
+
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,

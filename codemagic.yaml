@@ -133,8 +133,38 @@ workflows:
         - ~/Library/Caches/CocoaPods
 
     scripts:
-      - name: Install dependencies
-        script: cd mobile && flutter pub get
+      - name: Disable Swift Package Manager
+        script: flutter config --no-enable-swift-package-manager
+
+      - name: Install Flutter and CocoaPods dependencies
+        script: |
+          cd mobile
+          flutter pub get
+
+          test -f ios/Flutter/Debug.xcconfig || { echo "ios/Flutter/Debug.xcconfig is missing"; exit 1; }
+          test -f ios/Flutter/Release.xcconfig || { echo "ios/Flutter/Release.xcconfig is missing"; exit 1; }
+          test -f ios/Flutter/Generated.xcconfig || { echo "ios/Flutter/Generated.xcconfig was not generated"; exit 1; }
+          test -f ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme || { echo "Shared Runner scheme is missing"; exit 1; }
+          grep -Fq 'path = Flutter/Debug.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Debug.xcconfig is not mapped to ios/Flutter"; exit 1; }
+          grep -Fq 'path = Flutter/Release.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Release.xcconfig is not mapped to ios/Flutter"; exit 1; }
+          grep -Fq 'path = Flutter/Generated.xcconfig;' ios/Runner.xcodeproj/project.pbxproj || { echo "Generated.xcconfig is not mapped to ios/Flutter"; exit 1; }
+          grep -Fq 'ArchiveAction buildConfiguration = "Release"' ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme || { echo "Runner scheme does not archive Release"; exit 1; }
+          if grep -Eq 'XCRemoteSwiftPackageReference|XCLocalSwiftPackageReference|packageProductDependencies' ios/Runner.xcodeproj/project.pbxproj; then
+            echo "Swift Package Manager references are not allowed in the iOS project"
+            exit 1
+          fi
+
+          cd ios
+          pod install --repo-update
+
+          grep -Fq 'Pods/Pods.xcodeproj' Runner.xcworkspace/contents.xcworkspacedata || { echo "CocoaPods workspace reference is missing"; exit 1; }
+          for file in \
+            "Pods/Target Support Files/Pods-Runner/Pods-Runner-frameworks-Release-input-files.xcfilelist" \
+            "Pods/Target Support Files/Pods-Runner/Pods-Runner-frameworks-Release-output-files.xcfilelist" \
+            "Pods/Target Support Files/Pods-Runner/Pods-Runner-resources-Release-input-files.xcfilelist" \
+            "Pods/Target Support Files/Pods-Runner/Pods-Runner-resources-Release-output-files.xcfilelist"; do
+            test -f "$file" || { echo "$file is missing after pod install"; exit 1; }
+          done
 
       - name: Static analysis
         script: cd mobile && flutter analyze --fatal-infos
@@ -148,11 +178,6 @@ workflows:
         script: |
           test -n "$FIREBASE_IOS_CONFIG" || { echo "FIREBASE_IOS_CONFIG is missing"; exit 1; }
           echo "$FIREBASE_IOS_CONFIG" | base64 --decode > mobile/ios/Runner/GoogleService-Info.plist
-
-      - name: Disable Swift Package Manager
-        script: |
-          cd mobile
-          flutter config --no-enable-swift-package-manager
 
       - name: Apply signing profiles
         script: xcode-project use-profiles
