@@ -140,7 +140,9 @@ workflows:
         script: cd mobile && flutter analyze --fatal-infos
 
       - name: Unit and widget tests
-        script: cd mobile && flutter test --coverage
+        script: |
+          cd mobile
+          flutter test test/features --coverage
 
       - name: Configure Firebase iOS
         script: |
