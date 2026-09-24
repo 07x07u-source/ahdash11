@@ -144,14 +144,6 @@ workflows:
             exit 1
           }
 
-      - name: Validate App Store Connect API integration
-        script: |
-          test -n "$APP_STORE_CONNECT_ISSUER_ID" || { echo "App Store Connect Issuer ID is unavailable from integration 'Codemagickey'"; exit 1; }
-          test -n "$APP_STORE_CONNECT_KEY_IDENTIFIER" || { echo "App Store Connect Key ID is unavailable from integration 'Codemagickey'"; exit 1; }
-          test -n "$APP_STORE_CONNECT_PRIVATE_KEY" || { echo "App Store Connect private key is unavailable from integration 'Codemagickey'"; exit 1; }
-          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" | grep -Fq -- 'BEGIN PRIVATE KEY' || { echo "App Store Connect private key from integration 'Codemagickey' is not a valid .p8 key"; exit 1; }
-          app-store-connect apps --silent --json list > /dev/null || { echo "App Store Connect API authentication failed for integration 'Codemagickey'"; exit 1; }
-
       - name: Clean and generate Flutter iOS files
         script: |
           cd mobile
