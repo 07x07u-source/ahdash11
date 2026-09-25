@@ -6,20 +6,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('active Flutter and platform manifests are portraitUp only', () {
-    final main = File('lib/main.dart').readAsStringSync();
-    final android = File(
-      'android/app/src/main/AndroidManifest.xml',
-    ).readAsStringSync();
-    final ios = File('ios/Runner/Info.plist').readAsStringSync();
+  test(
+    'active Flutter and platform manifests keep phone portrait and iPad support',
+    () {
+      final main = File('lib/main.dart').readAsStringSync();
+      final android = File(
+        'android/app/src/main/AndroidManifest.xml',
+      ).readAsStringSync();
+      final ios = File('ios/Runner/Info.plist').readAsStringSync();
 
-    expect(main, contains('DeviceOrientation.portraitUp'));
-    expect(main, isNot(contains('DeviceOrientation.landscape')));
-    expect(main, isNot(contains('DeviceOrientation.portraitDown')));
-    expect(android, contains('android:screenOrientation="portrait"'));
-    expect(ios, isNot(contains('UIInterfaceOrientationLandscape')));
-    expect(ios, isNot(contains('UIInterfaceOrientationPortraitUpsideDown')));
-  });
+      final phoneOrientations = _orientationArray(
+        ios,
+        'UISupportedInterfaceOrientations',
+      );
+      final ipadOrientations = _orientationArray(
+        ios,
+        'UISupportedInterfaceOrientations~ipad',
+      );
+
+      expect(main, contains('DeviceOrientation.portraitUp'));
+      expect(main, isNot(contains('DeviceOrientation.landscape')));
+      expect(main, isNot(contains('DeviceOrientation.portraitDown')));
+      expect(android, contains('android:screenOrientation="portrait"'));
+      expect(phoneOrientations, ['UIInterfaceOrientationPortrait']);
+      expect(
+        ipadOrientations,
+        containsAll(const [
+          'UIInterfaceOrientationPortrait',
+          'UIInterfaceOrientationPortraitUpsideDown',
+          'UIInterfaceOrientationLandscapeLeft',
+          'UIInterfaceOrientationLandscapeRight',
+        ]),
+      );
+    },
+  );
 
   for (final size in const [
     Size(360, 800),
@@ -79,4 +99,14 @@ void main() {
       });
     }
   }
+}
+
+List<String> _orientationArray(String plist, String key) {
+  final match = RegExp(
+    '<key>${RegExp.escape(key)}</key>\\s*<array>(.*?)</array>',
+    dotAll: true,
+  ).firstMatch(plist);
+  return RegExp(
+    r'<string>(.*?)</string>',
+  ).allMatches(match?.group(1) ?? '').map((value) => value.group(1)!).toList();
 }

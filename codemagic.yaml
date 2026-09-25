@@ -229,9 +229,7 @@ workflows:
         auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
-        beta_groups:
-          - Internal Testers
-
+     
   pull-request-checks:
     name: Flutter quality checks
     max_build_duration: 30
