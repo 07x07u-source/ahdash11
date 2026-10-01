@@ -9,7 +9,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CreateTournamentPage() {
-  await requirePlayerPage("/championships/create");
+  await requirePlayerPage("/championships/create", "/account/register");
   return (
     <div className="site-paper-section min-h-screen">
       <div className="site-container py-10 sm:py-14">

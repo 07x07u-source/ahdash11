@@ -50,8 +50,8 @@ export const getPlayerContext = cache(async (): Promise<PlayerContext | null> =>
   };
 });
 
-export async function requirePlayerPage(returnTo: string): Promise<PlayerContext> {
+export async function requirePlayerPage(returnTo: string, authPath: "/account/login" | "/account/register" = "/account/login"): Promise<PlayerContext> {
   const player = await getPlayerContext();
-  if (!player) redirect(`/account/login?next=${encodeURIComponent(returnTo)}`);
+  if (!player) redirect(`${authPath}?next=${encodeURIComponent(returnTo)}`);
   return player;
 }

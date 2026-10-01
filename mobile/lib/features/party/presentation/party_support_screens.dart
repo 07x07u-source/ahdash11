@@ -15,12 +15,58 @@ import 'party_gameplay_visuals.dart';
 import 'party_setup_flow.dart';
 import 'party_v2_ui.dart';
 
-final class HowToPlayScreen extends ConsumerWidget {
+final class HowToPlayScreen extends ConsumerStatefulWidget {
   const HowToPlayScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HowToPlayScreen> createState() => _HowToPlayScreenState();
+}
+
+final class _HowToPlayScreenState extends ConsumerState<HowToPlayScreen> {
+  late final PageController _pageController;
+  var _step = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _selectStep(int value) {
+    final next = value.clamp(0, _instructionSteps.length - 1);
+    if (next == _step) return;
+    setState(() => _step = next);
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _pageController.jumpToPage(next);
+    } else {
+      _pageController.animateToPage(
+        next,
+        duration: PartyV2Motion.page,
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _next() {
+    if (_step < _instructionSteps.length - 1) {
+      _selectStep(_step + 1);
+      return;
+    }
+    ref.read(partyGameControllerProvider.notifier).beginNewGame();
+    context.go('/party/categories');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width <= 370;
+    final reducedMotion = MediaQuery.disableAnimationsOf(context);
+    final current = _instructionSteps[_step];
     return Scaffold(
       backgroundColor: AppColors.paper0,
       body: SafeArea(
@@ -29,55 +75,172 @@ final class HowToPlayScreen extends ConsumerWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               compact ? 20 : 24,
-              compact ? 14 : 16,
+              compact ? 12 : 16,
               compact ? 20 : 24,
               10,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'قواعد اللعب وكيفية البدء',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: compact ? 24 : 26,
-                    height: 1.1,
-                    fontWeight: FontWeight.w900,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: AppColors.ink,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.emoji_events_outlined,
+                        color: AppColors.gold,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'طريقة اللعب',
+                            style: TextStyle(
+                              fontSize: compact ? 23 : 26,
+                              height: 1.05,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '٦ خطوات قصيرة وتكونون جاهزين',
+                            style: TextStyle(
+                              color: context.ahdashColors.textMuted,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'رجوع',
+                      onPressed: () => context.pop(),
+                      style: IconButton.styleFrom(
+                        foregroundColor: AppColors.ink,
+                        side: const BorderSide(color: AppColors.hairline),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'من اختيار الفئات حتى تتويج الفريق الفائز',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: context.ahdashColors.textMuted,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: compact ? 12 : 14),
+                SizedBox(height: compact ? 10 : 14),
                 const _HowToPlayFacts(),
-                SizedBox(height: compact ? 10 : 12),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Text(
+                      'الخطوة ${_arabicDigits(_step + 1)} من ${_arabicDigits(_instructionSteps.length)}',
+                      style: const TextStyle(
+                        color: AppColors.inkMuted,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          for (
+                            var index = 0;
+                            index < _instructionSteps.length;
+                            index++
+                          ) ...[
+                            Expanded(
+                              child: AnimatedContainer(
+                                duration: reducedMotion
+                                    ? Duration.zero
+                                    : PartyV2Motion.page,
+                                height: index == _step ? 5 : 3,
+                                decoration: BoxDecoration(
+                                  color: index == _step
+                                      ? AppColors.primary
+                                      : AppColors.paper3,
+                                  borderRadius: BorderRadius.circular(99),
+                                ),
+                              ),
+                            ),
+                            if (index != _instructionSteps.length - 1)
+                              const SizedBox(width: 4),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
                 Expanded(
-                  child: ListView.separated(
+                  child: PageView.builder(
                     key: const ValueKey('how-to-play-scroll'),
-                    padding: const EdgeInsets.only(bottom: 6),
+                    controller: _pageController,
                     itemCount: _instructionSteps.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) =>
-                        _InstructionStep(data: _instructionSteps[index]),
+                    onPageChanged: (value) => setState(() => _step = value),
+                    itemBuilder: (context, index) => _InstructionPage(
+                      data: _instructionSteps[index],
+                      compact: compact,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                PartyPrimaryButton(
-                  label: 'فهمت، لنبدأ!',
-                  icon: Icons.play_arrow_rounded,
-                  onPressed: () {
-                    ref
-                        .read(partyGameControllerProvider.notifier)
-                        .beginNewGame();
-                    context.go('/party/categories');
-                  },
+                const SizedBox(height: 8),
+                AnimatedSwitcher(
+                  duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
+                  child: Text(
+                    current.tip,
+                    key: ValueKey(current.title),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.inkMuted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (_step > 0) ...[
+                      SizedBox(
+                        width: 92,
+                        child: OutlinedButton(
+                          onPressed: () => _selectStep(_step - 1),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.ink,
+                            side: const BorderSide(color: AppColors.ink),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text('السابق'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Expanded(
+                      child: PartyPrimaryButton(
+                        label: _step == _instructionSteps.length - 1
+                            ? 'ابدأ اللعب'
+                            : 'التالي',
+                        icon: _step == _instructionSteps.length - 1
+                            ? Icons.play_arrow_rounded
+                            : Icons.arrow_back_rounded,
+                        borderRadius: 999,
+                        onPressed: _next,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -92,9 +255,11 @@ const _instructionSteps = <_InstructionStepData>[
   _InstructionStepData(
     number: '١',
     title: 'اختر الفئات',
-    body: 'اختاروا ٦ فئات كروية؛ في كل فئة ٦ أسئلة بقيم مختلفة.',
+    body: 'اختاروا ٦ فئات كروية، ثلاث يختارها كل فريق، لتشكيل لوحة أسئلتكم.',
     icon: Icons.category_outlined,
     accent: Color(0xFF1E874B),
+    assetPath: 'assets/images/onboarding/onboarding_categories_ahdash.png',
+    tip: 'اختيار الفئة يحدد نوع الأسئلة في الجلسة.',
   ),
   _InstructionStepData(
     number: '٢',
@@ -102,20 +267,47 @@ const _instructionSteps = <_InstructionStepData>[
     body: 'سمّوا الفريقين، وزّعوا اللاعبين، ثم اختاروا ٣ مساعدات لكل فريق.',
     icon: Icons.groups_2_outlined,
     accent: Color(0xFFE43D74),
+    assetPath: 'assets/images/onboarding/onboarding_teams_ahdash.png',
+    tip: 'سمّوا الفرق بأسماء واضحة حتى تبقى النتيجة سهلة القراءة.',
   ),
   _InstructionStepData(
     number: '٣',
-    title: 'ابدأوا لوحة الأسئلة',
-    body: 'بعد شاشة الجاهزية اختاروا السؤال وتناوبوا مع المؤقت وفرصة الخصم.',
-    icon: Icons.grid_view_rounded,
-    accent: Color(0xFF4B8DE8),
+    title: 'اختر المساعدات',
+    body:
+        'لكل فريق ٣ مساعدات؛ استخدموا كل واحدة مرة واحدة وفي اللحظة المناسبة.',
+    icon: Icons.auto_awesome_rounded,
+    accent: Color(0xFF7C49D8),
+    assetPath: 'assets/images/onboarding/onboarding_helpers_ahdash.png',
+    tip: 'المساعدة قرار تكتيكي، فلا تهدرها على سؤال سهل.',
   ),
   _InstructionStepData(
     number: '٤',
+    title: 'راقبوا المؤقت',
+    body:
+        'اقرؤوا السؤال بسرعة وأجيبوا قبل انتهاء الوقت، ثم يأتي دور الفريق الآخر.',
+    icon: Icons.timer_outlined,
+    accent: Color(0xFF2B78D4),
+    assetPath: 'assets/images/onboarding/onboarding_timer_ahdash.png',
+    tip: 'السرعة مهمة، لكن الإجابة الدقيقة أهم من الاستعجال.',
+  ),
+  _InstructionStepData(
+    number: '٥',
+    title: 'جاوبوا واكشفوا',
+    body: 'اختاروا السؤال، ثبّتوا الإجابة، ثم اكشفوا الحل واعتمدوا النقاط.',
+    icon: Icons.help_outline_rounded,
+    accent: Color(0xFF4B8DE8),
+    assetPath: 'assets/images/onboarding/onboarding_answer_ahdash.png',
+    tip: 'كل سؤال فرصة جديدة لقلب نتيجة الجولة.',
+  ),
+  _InstructionStepData(
+    number: '٦',
     title: 'احسم الفوز',
-    body: 'اكشفوا الجواب واعتمدوا النقاط؛ ثم شاهدوا النتيجة وأعيدوا اللعب.',
+    body:
+        'اجمعوا النقاط، راقبوا لوحة النتيجة، ثم توّجوا الفريق الذي حسم المجلس.',
     icon: Icons.emoji_events_outlined,
     accent: AppColors.gold,
+    assetPath: 'assets/images/onboarding/onboarding_victory_ahdash.png',
+    tip: 'الفريق الأعلى نقاطاً عند نهاية الأسئلة هو بطل المجلس.',
   ),
 ];
 
@@ -126,6 +318,8 @@ final class _InstructionStepData {
     required this.body,
     required this.icon,
     required this.accent,
+    required this.assetPath,
+    required this.tip,
   });
 
   final String number;
@@ -133,96 +327,111 @@ final class _InstructionStepData {
   final String body;
   final IconData icon;
   final Color accent;
+  final String assetPath;
+  final String tip;
 }
 
-final class _InstructionStep extends StatelessWidget {
-  const _InstructionStep({required this.data});
+final class _InstructionPage extends StatelessWidget {
+  const _InstructionPage({required this.data, required this.compact});
 
   final _InstructionStepData data;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Semantics(
     container: true,
     label: '${data.number}، ${data.title}، ${data.body}',
-    child: Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(10, 12, 12, 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7EFE3),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: data.accent.withValues(alpha: 0.28)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F191714),
-            offset: Offset(0, 2),
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: data.accent,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.paper0, width: 2),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 16),
+            child: Image.asset(
+              data.assetPath,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+              excludeFromSemantics: true,
             ),
-            child: Text(
-              data.number,
-              style: TextStyle(
-                color: data.accent.computeLuminance() > 0.58
-                    ? AppColors.ink
-                    : Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 15),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF7EFE3),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: data.accent.withValues(alpha: .34)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14191714),
+                offset: Offset(0, 3),
+                blurRadius: 10,
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.title,
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    height: 1.1,
-                    fontWeight: FontWeight.w900,
-                  ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: data.accent,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.ink, width: 1.2),
                 ),
-                const SizedBox(height: 3),
-                Text(
-                  data.body,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.inkMuted,
-                    fontSize: 13,
-                    height: 1.3,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Icon(
+                  data.icon,
+                  color: data.accent.computeLuminance() > .58
+                      ? AppColors.ink
+                      : Colors.white,
+                  size: 20,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      data.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        height: 1.1,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      data.body,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.inkMuted,
+                        fontSize: 12.5,
+                        height: 1.35,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: data.accent.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            child: Icon(data.icon, color: data.accent, size: 19),
-          ),
-        ],
-      ),
+        ),
+      ],
     ),
   );
+}
+
+String _arabicDigits(int value) {
+  const western = '0123456789';
+  const arabic = '٠١٢٣٤٥٦٧٨٩';
+  return value.toString().split('').map((character) {
+    final index = western.indexOf(character);
+    return index < 0 ? character : arabic[index];
+  }).join();
 }
 
 final class _HowToPlayFacts extends StatelessWidget {

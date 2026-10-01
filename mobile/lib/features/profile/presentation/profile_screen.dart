@@ -84,29 +84,15 @@ final class _ProfileBody extends StatelessWidget {
         const SizedBox(height: 16),
         const _ProfileSectionTitle(
           title: 'مساحة اللعب',
-          subtitle: 'فريقك، ترتيبك، ومنافساتك في مكان واحد',
+          subtitle: 'فريقك وبطولاتك ومشاركاتك في مكان واحد',
         ),
         const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _ProfileDestinationCard(
-                icon: Icons.leaderboard_outlined,
-                label: 'الترتيب',
-                accent: AppColors.primary,
-                onTap: () => context.push('/ranking'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _ProfileDestinationCard(
-                icon: Icons.groups_3_outlined,
-                label: 'فريقي',
-                accent: AppColors.gold,
-                onTap: () => context.push('/teams'),
-              ),
-            ),
-          ],
+        _ProfileDestinationCard(
+          icon: Icons.groups_3_outlined,
+          label: 'فريقي',
+          subtitle: 'الأعضاء والدعوات وتحديات الفريق',
+          accent: AppColors.gold,
+          onTap: () => context.push('/teams'),
         ),
         const SizedBox(height: 10),
         _TournamentDestination(onTap: () => context.push('/tournaments')),
@@ -543,12 +529,14 @@ final class _ProfileDestinationCard extends StatelessWidget {
   const _ProfileDestinationCard({
     required this.icon,
     required this.label,
+    this.subtitle,
     required this.accent,
     required this.onTap,
   });
 
   final IconData icon;
   final String label;
+  final String? subtitle;
   final Color accent;
   final VoidCallback onTap;
 
@@ -562,8 +550,8 @@ final class _ProfileDestinationCard extends StatelessWidget {
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: onTap,
-      child: SizedBox(
-        height: 78,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 78),
         child: Padding(
           padding: const EdgeInsets.all(11),
           child: Row(
@@ -579,16 +567,39 @@ final class _ProfileDestinationCard extends StatelessWidget {
               ),
               const SizedBox(width: 9),
               Expanded(
-                child: Text(
-                  label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.25,
-                    fontWeight: FontWeight.w900,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 1.25,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    if (subtitle case final value?) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 10.5,
+                          color: AppColors.inkMuted,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
+              ),
+              const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 14,
+                color: AppColors.inkMuted,
               ),
             ],
           ),

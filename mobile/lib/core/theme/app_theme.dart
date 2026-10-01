@@ -201,6 +201,7 @@ abstract final class AppTheme {
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.medium),
+            side: BorderSide(color: palette.textPrimary, width: 1.2),
           ),
           elevation: 0,
           shadowColor: palette.textPrimary.withValues(alpha: .14),

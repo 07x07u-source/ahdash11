@@ -375,16 +375,27 @@ final class EditorialChoiceRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (active || correct || wrong)
-                Icon(
-                  correct
-                      ? Icons.check_rounded
-                      : wrong
-                      ? Icons.close_rounded
-                      : Icons.arrow_back_rounded,
-                  size: 20,
-                  color: signal,
+              AnimatedSwitcher(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : AppMotion.selection,
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(opacity: animation, child: child),
                 ),
+                child: (active || correct || wrong)
+                    ? Icon(
+                        key: ValueKey(state),
+                        correct
+                            ? Icons.check_rounded
+                            : wrong
+                            ? Icons.close_rounded
+                            : Icons.arrow_back_rounded,
+                        size: 20,
+                        color: signal,
+                      )
+                    : const SizedBox(key: ValueKey('choice-empty'), width: 20),
+              ),
             ],
           ),
         ),

@@ -99,21 +99,51 @@ final class ResultsScreen extends ConsumerWidget {
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(flex: 3, child: outcomeZone),
+                                Expanded(
+                                  flex: 3,
+                                  child: _ResultEntrance(child: outcomeZone),
+                                ),
                                 SizedBox(width: metrics.panelGap),
-                                Expanded(flex: 4, child: scoreZone),
+                                Expanded(
+                                  flex: 4,
+                                  child: _ResultEntrance(
+                                    delay: 80,
+                                    child: scoreZone,
+                                  ),
+                                ),
                                 SizedBox(width: metrics.panelGap),
-                                Expanded(flex: 4, child: stats),
+                                Expanded(
+                                  flex: 4,
+                                  child: _ResultEntrance(
+                                    delay: 160,
+                                    child: stats,
+                                  ),
+                                ),
                               ],
                             )
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(flex: 3, child: outcomeZone),
+                                Expanded(
+                                  flex: 3,
+                                  child: _ResultEntrance(child: outcomeZone),
+                                ),
                                 SizedBox(height: metrics.panelGap),
-                                Expanded(flex: 4, child: scoreZone),
+                                Expanded(
+                                  flex: 4,
+                                  child: _ResultEntrance(
+                                    delay: 80,
+                                    child: scoreZone,
+                                  ),
+                                ),
                                 SizedBox(height: metrics.panelGap),
-                                Expanded(flex: 5, child: stats),
+                                Expanded(
+                                  flex: 5,
+                                  child: _ResultEntrance(
+                                    delay: 160,
+                                    child: stats,
+                                  ),
+                                ),
                               ],
                             ),
                     );
@@ -138,6 +168,53 @@ final class ResultsScreen extends ConsumerWidget {
     } catch (_) {
       // Provider outages never block navigation.
     }
+  }
+}
+
+final class _ResultEntrance extends StatefulWidget {
+  const _ResultEntrance({required this.child, this.delay = 0});
+
+  final Widget child;
+  final int delay;
+
+  @override
+  State<_ResultEntrance> createState() => _ResultEntranceState();
+}
+
+final class _ResultEntranceState extends State<_ResultEntrance>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: AppMotion.emphasized,
+  );
+  late final Animation<Offset> _offset = Tween<Offset>(
+    begin: const Offset(0, 0.035),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(parent: _controller, curve: AppMotion.enterCurve));
+
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.disableAnimationsOf(context) && _controller.value != 1) {
+      _controller.value = 1;
+    }
+    return FadeTransition(
+      opacity: _controller,
+      child: SlideTransition(position: _offset, child: widget.child),
+    );
   }
 }
 

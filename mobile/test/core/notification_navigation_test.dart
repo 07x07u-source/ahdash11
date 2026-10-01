@@ -56,6 +56,10 @@ void main() {
         NotificationNavigation.resolve({'deep_link': '/friends'}),
         '/notifications',
       );
+      expect(
+        NotificationNavigation.resolve({'deep_link': '/ranking'}),
+        '/notifications',
+      );
     });
 
     test('legacy live-match invitations no longer open gameplay', () {

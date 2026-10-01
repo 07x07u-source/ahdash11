@@ -33,6 +33,7 @@ void main() {
     expect(find.textContaining('محفظة'), findsNothing);
     expect(find.textContaining('XP'), findsNothing);
     expect(find.text('طرق اللعب'), findsOneWidget);
+    expect(find.text('الترتيب'), findsNothing);
     expect(find.textContaining('عن بعد'), findsNothing);
     expect(find.byType(Scrollable), findsWidgets);
     expect(tester.takeException(), isNull);

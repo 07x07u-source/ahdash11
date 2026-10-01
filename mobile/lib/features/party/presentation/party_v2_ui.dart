@@ -131,6 +131,7 @@ final class PartyPrimaryButton extends ConsumerStatefulWidget {
     this.feedback = true,
     this.backgroundColor,
     this.foregroundColor,
+    this.borderRadius = 16,
     super.key,
   });
 
@@ -142,6 +143,7 @@ final class PartyPrimaryButton extends ConsumerStatefulWidget {
   final bool feedback;
   final Color? backgroundColor;
   final Color? foregroundColor;
+  final double borderRadius;
 
   @override
   ConsumerState<PartyPrimaryButton> createState() => _PartyPrimaryButtonState();
@@ -214,7 +216,7 @@ final class _PartyPrimaryButtonState extends ConsumerState<PartyPrimaryButton> {
                               )
                             : widget.backgroundColor ?? colors.primary
                       : colors.surfaceMuted,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
                   border: Border.all(
                     color: enabled ? const Color(0xFF191714) : colors.border,
                     width: _focused ? 2 : 1.35,

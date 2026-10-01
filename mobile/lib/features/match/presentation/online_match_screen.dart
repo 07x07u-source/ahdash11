@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/feedback_service.dart';
+import '../../../core/services/game_streak_service.dart';
 import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_game_theme.dart';
@@ -52,6 +53,7 @@ final class _OnlineMatchScreenState extends ConsumerState<OnlineMatchScreen>
   @override
   void initState() {
     super.initState();
+    unawaited(ref.read(gameStreakProvider.notifier).recordToday());
     WidgetsBinding.instance.addObserver(this);
     _controller = GameSessionController(
       matchId: widget.matchId,

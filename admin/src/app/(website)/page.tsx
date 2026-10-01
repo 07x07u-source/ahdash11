@@ -13,6 +13,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { websitePremium } from "@/lib/site/premium";
+import { WebsiteCategoryRail } from "@/components/website-category-rail";
 
 export const metadata = {
   title: "أحدعش 11 — لعبة Party كروية",
@@ -38,7 +39,7 @@ export default function WebsiteHomePage() {
             <h1 className="site-display">فريقان.<br />ست فئات.<br /><em>والملعب شاهد.</em></h1>
             <p>أحدعش 11 يجمع مجموعتك حول جهاز واحد: اختاروا الفئات، استخدموا المساعدات، وتنافسوا على 36 سؤالاً كروياً.</p>
             <div className="site-hero-actions">
-              <Link href="/play?mode=classic&format=local-party" className="site-action"><Gamepad2 size={20} />ابدأ Party كضيف<ArrowLeft size={18} /></Link>
+              <Link href="/play?mode=classic&format=local-party" className="site-action"><Gamepad2 size={20} />ابدأ اللعب بحسابك<ArrowLeft size={18} /></Link>
               <Link href="/games" className="site-action-secondary">اعرف طريقة اللعب</Link>
             </div>
             <div className="site-hero-proof" aria-label="ملخص التجربة">
@@ -46,7 +47,7 @@ export default function WebsiteHomePage() {
               <span><Check size={16} />Party محلي</span>
               <span><Check size={16} />كرة قدم فقط</span>
             </div>
-            <p className="site-availability-note"><ShieldCheck size={16} />Party وSolo المحليان متاحان على الكمبيوتر؛ بقية ميزات التطبيق تتطور على مراحل.</p>
+            <p className="site-availability-note"><ShieldCheck size={16} />Party وSolo المحليان متاحان من الموقع، وتُحفظ الجولات والبطولات داخل حسابك.</p>
           </div>
 
           <figure className="site-hero-art" aria-label="كرة قدم وكأس وبطاقات أسئلة تمثل جولة أحدعش">
@@ -77,7 +78,7 @@ export default function WebsiteHomePage() {
           <div><strong>2</strong><span>مسارا لعب متاحان</span></div>
           <div><strong>6</strong><span>فئات في Party</span></div>
           <div><strong>36</strong><span>سؤالاً في الجولة</span></div>
-          <div><strong>0</strong><span>حسابات مطلوبة للعب المحلي</span></div>
+          <div><strong>1</strong><span>حساب واحد يحفظ تقدمك</span></div>
         </div>
       </section>
 
@@ -85,7 +86,7 @@ export default function WebsiteHomePage() {
         <div className="site-container site-section-space">
           <div className="home-experience-heading">
             <div><span className="site-kicker site-kicker-dark">اختر مسارك</span><h2 id="home-experiences-title">كل جمعة لها طريقتها.</h2></div>
-            <p>ابدأ جولة محلية فوراً، تدرب وحدك، أو انتقل إلى بطولة بحسابك.</p>
+            <p>استكشف الأنماط، ثم سجّل حسابك لفتح اللعب ومزامنة تقدمك وبطولاتك.</p>
           </div>
           <div className="home-experience-grid">
             <Link href="/play?mode=classic&format=local-party" className="home-experience-card is-primary">
@@ -134,10 +135,12 @@ export default function WebsiteHomePage() {
           <div className="site-story-points">
             <article><span>01</span><div><h3>تجربة اجتماعية محلية</h3><p>لا غرف ولا بحث عن خصم؛ اجمعوا الفريقين وابدؤوا من المكان نفسه.</p></div></article>
             <article><span>02</span><div><h3>كرة قدم بهوية عربية</h3><p>سياق سعودي، قراءة RTL، وتفاصيل تحريرية هادئة بعيداً عن قوالب الألعاب الصاخبة.</p></div></article>
-            <article><span>03</span><div><h3>اللعب المحلي للضيف</h3><p>ابدأ Party أو Solo بلا حساب؛ الحساب والبطولات والعمليات الخاصة تبقى محمية.</p></div></article>
+            <article><span>03</span><div><h3>اللعب يبدأ من حسابك</h3><p>تظهر التجربة كاملة بعد التسجيل، مع حفظ التقدم والنتائج والبطولات في جلسة Supabase آمنة.</p></div></article>
           </div>
         </div>
       </section>
+
+      <WebsiteCategoryRail />
 
       <section className="site-paper-section">
         <div className="site-container site-section-space">

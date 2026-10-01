@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>أحدعش — احتفالات الاستريك</title>
+  <style>
+    :root {
+      --paper: #fbf7ef;
+      --paper-1: #f4ebdd;
+      --ink: #191714;
+      --muted: #756e63;
+      --line: #d3c6b2;
+      --lime: #b6ff3b;
+      --gold: #ffc857;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ece5d9;
+      font-family: "Arial", "Tahoma", sans-serif;
+    }
+    .page { max-width: 1280px; margin: 0 auto; padding: 32px 20px 64px; }
+    header {
+      display: flex; align-items: end; justify-content: space-between; gap: 20px;
+      margin-bottom: 28px;
+    }
+    h1 { margin: 0; font-size: clamp(26px, 4vw, 44px); letter-spacing: -.04em; }
+    header p { max-width: 520px; margin: 0; color: var(--muted); line-height: 1.8; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; background: rgba(251,247,239,.75); font-size: 12px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 22px; align-items: start; }
+    .preview { margin: 0; }
+    .phone {
+      position: relative; width: min(100%, 390px); aspect-ratio: 390 / 844;
+      margin: auto; overflow: hidden; border: 8px solid #12110f; border-radius: 34px;
+      background: rgba(251,247,239,.88); box-shadow: 0 18px 38px rgba(28,22,14,.18);
+    }
+    .phone::after { content: ""; position: absolute; inset: 0; pointer-events: none; border: 1px solid rgba(255,255,255,.22); border-radius: 26px; }
+    .screen { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; background: linear-gradient(180deg, #fbf7ef 0%, #f8f2e7 60%, #fbf7ef 100%); }
+    .screen::before, .screen::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; }
+    .screen::before { width: 220px; height: 220px; top: -100px; left: -70px; background: rgba(182,255,59,.15); }
+    .screen::after { width: 155px; height: 155px; bottom: -70px; right: -55px; background: rgba(255,200,87,.1); }
+    .identity-pattern { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .045; mix-blend-mode: multiply; pointer-events: none; }
+    .runner-scene { position: absolute; inset: 0; overflow: hidden; pointer-events: none; opacity: .14; }
+    .runner-scene::after { content: ""; position: absolute; left: 7%; right: 7%; bottom: 14%; height: 2px; background: rgba(182,255,59,.42); }
+    .runner-scene img { position: absolute; bottom: 7%; right: -72%; width: 66%; max-width: 270px; animation: runAcross 1.8s ease-in-out both; }
+    .modal { position: relative; width: 100%; padding: 23px 4px 20px; animation: enter .72s cubic-bezier(.2,.9,.25,1.2) both; }
+    .top { display: flex; align-items: center; justify-content: space-between; }
+    .tag { padding: 7px 11px; border-radius: 999px; color: var(--paper); background: var(--ink); font-size: 11px; font-weight: 800; }
+    .brand { font-size: 17px; font-weight: 900; letter-spacing: -.06em; }
+    .mark { display: inline-block; width: 8px; height: 19px; margin: 0 2px; vertical-align: -3px; background: var(--lime); transform: skewY(-25deg); }
+    .emblem { position: relative; width: 124px; height: 124px; margin: 23px auto 15px; display: grid; place-items: center; animation: float 2.6s ease-in-out infinite; }
+    .emblem::before { content: ""; position: absolute; inset: 0; border: 1px solid rgba(182,255,59,.42); border-radius: 50%; }
+    .emblem::after { content: ""; position: absolute; width: 98px; height: 98px; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--lime); box-shadow: 0 0 24px rgba(182,255,59,.25); }
+    .emoji { position: relative; z-index: 1; font-size: 51px; line-height: 1; }
+    .spark { position: absolute; z-index: 2; width: 10px; height: 10px; border-radius: 3px; background: var(--gold); transform: rotate(45deg); }
+    .spark.one { top: 4px; right: 17px; } .spark.two { bottom: 10px; left: 8px; width: 7px; height: 7px; background: var(--lime); }
+    .days { margin: 0; text-align: center; direction: ltr; font-size: 64px; line-height: .94; font-weight: 950; letter-spacing: -.08em; }
+    .title { margin: 9px 0 0; text-align: center; font-size: 24px; font-weight: 900; }
+    .copy { margin: 9px 0 19px; min-height: 46px; color: var(--muted); text-align: center; line-height: 1.6; font-size: 13px; }
+    .next { display: flex; align-items: center; gap: 8px; padding: 14px 2px 0; border-top: 1px solid var(--line); font-size: 12px; }
+    .next-icon { display: grid; place-items: center; width: 23px; height: 23px; border-radius: 50%; background: var(--ink); color: var(--lime); font-size: 13px; }
+    .next span:nth-child(2) { flex: 1; font-weight: 800; }
+    .ratio { direction: ltr; color: var(--muted); font-size: 11px; }
+    .button { display: grid; place-items: center; width: 124px; height: 38px; margin: 22px auto 0; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); background: var(--lime); font-size: 12px; font-weight: 900; box-shadow: 0 4px 0 rgba(25,23,20,.08); }
+    .trail { display: flex; align-items: center; gap: 7px; margin: 0 2px 16px; }
+    .trail-dot { width: 12px; height: 12px; border: 1px solid var(--ink); border-radius: 50%; background: var(--lime); }
+    .trail-dot.next { background: var(--paper-1); }
+    .trail-line { flex: 1; height: 3px; border-radius: 999px; background: linear-gradient(90deg, var(--lime) 0 28%, var(--line) 28% 100%); }
+    figcaption { display: flex; justify-content: space-between; gap: 12px; margin: 13px 3px 0; color: var(--muted); font-size: 12px; }
+    figcaption strong { color: var(--ink); }
+    .note { margin-top: 32px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(251,247,239,.72); color: var(--muted); line-height: 1.8; font-size: 13px; }
+    .actual-shots { margin-top: 46px; padding-top: 28px; border-top: 1px solid var(--line); }
+    .actual-shots h2 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.03em; }
+    .actual-shots > p { margin: 0 0 20px; color: var(--muted); line-height: 1.8; font-size: 13px; }
+    .actual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 18px; align-items: start; }
+    .actual-shot { margin: 0; }
+    .actual-shot img { display: block; width: min(100%, 390px); margin: auto; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 16px 30px rgba(28,22,14,.14); background: var(--paper); }
+    .actual-shot figcaption { margin-top: 10px; }
+    @keyframes enter { from { opacity: 0; transform: translateY(16px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-5px) rotate(1deg); } }
+    @keyframes runAcross { from { transform: translateX(0) scale(.98); } to { transform: translateX(-260%); } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+    @media (max-width: 700px) { .page { padding: 22px 14px 42px; } header { display: block; } header p { margin-top: 10px; } .gallery { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div><h1>احتفالات الاستريك</h1><p>معاينة شاشة الإنجاز التي تظهر للمستخدم عند بلوغ محطة جديدة في سلسلة الدخول اليومية.</p></div>
+      <div class="brand">أحدعش <span class="mark"></span> 11</div>
+    </header>
+    <div class="legend"><span class="chip">تصميم iOS / Apple-inspired</span><span class="chip">Blur + Scale + Fade</span><span class="chip">زر أخضر بحد أسود</span><span class="chip">RTL · 390×844</span></div>
+    <section class="gallery">
+      <figure class="preview"><div class="phone"><div class="screen"><img class="identity-pattern" src="../mobile/assets/branding/brand-pattern.png" alt="نقشة هوية أحدعش"><div class="runner-scene"><img src="../mobile/assets/visuals/streak_runner_cutout.png" alt="لاعب يركض بالكرة"></div><div class="modal"><div class="top"><span class="tag">إنجاز جديد</span><span class="brand">أحدعش <span class="mark"></span> 11</span></div><div class="emblem"><span class="spark one"></span><span class="spark two"></span><span class="emoji">🔥</span></div><p class="days" data-target="10">0</p><h2 class="title">يوم بدون انقطاع!</h2><p class="copy">أول عشرة أيام متتالية! حافظ على الشعلة وخلك حاضر كل يوم.</p><div class="trail"><span class="trail-dot"></span><span class="trail-line"></span><span class="trail-dot next"></span></div><div class="next"><span class="next-icon">✓</span><span>المحطة القادمة: 50 يوم</span><span class="ratio">10/50</span></div><div class="button" aria-label="أكمل اللعب">أكمل اللعب</div></div></div></div><figcaption><strong>المحطة الأولى</strong><span>10 أيام</span></figcaption></figure>
+      <figure class="preview"><div class="phone"><div class="screen"><img class="identity-pattern" src="../mobile/assets/branding/brand-pattern.png" alt="نقشة هوية أحدعش"><div class="runner-scene"><img src="../mobile/assets/visuals/streak_runner_cutout.png" alt="لاعب يركض بالكرة"></div><div class="modal"><div class="top"><span class="tag">إنجاز جديد</span><span class="brand">أحدعش <span class="mark"></span> 11</span></div><div class="emblem"><span class="spark one"></span><span class="spark two"></span><span class="emoji">🔥</span></div><p class="days" data-target="50">0</p><h2 class="title">يوم بدون انقطاع!</h2><p class="copy">خمسون يومًا من الاستمرار. هذا مو حظ، هذه عادة بطل.</p><div class="trail"><span class="trail-dot"></span><span class="trail-line"></span><span class="trail-dot next"></span></div><div class="next"><span class="next-icon">✓</span><span>المحطة القادمة: 100 يوم</span><span class="ratio">50/100</span></div><div class="button" aria-label="أكمل اللعب">أكمل اللعب</div></div></div></div><figcaption><strong>محطة الثبات</strong><span>50 يومًا</span></figcaption></figure>
+      <figure class="preview"><div class="phone"><div class="screen"><img class="identity-pattern" src="../mobile/assets/branding/brand-pattern.png" alt="نقشة هوية أحدعش"><div class="runner-scene"><img src="../mobile/assets/visuals/streak_runner_cutout.png" alt="لاعب يركض بالكرة"></div><div class="modal"><div class="top"><span class="tag">إنجاز جديد</span><span class="brand">أحدعش <span class="mark"></span> 11</span></div><div class="emblem"><span class="spark one"></span><span class="spark two"></span><span class="emoji">🏆</span></div><p class="days" data-target="100">0</p><h2 class="title">يوم بدون انقطاع!</h2><p class="copy">مئة يوم كاملة! إنجاز نادر يثبت أنك من نخبة لاعبي أحدعش.</p><div class="trail"><span class="trail-dot"></span><span class="trail-line"></span><span class="trail-dot next"></span></div><div class="next"><span class="next-icon">✓</span><span>المحطة القادمة: 200 يوم</span><span class="ratio">100/200</span></div><div class="button" aria-label="أكمل اللعب">أكمل اللعب</div></div></div></div><figcaption><strong>إنجاز النخبة</strong><span>100 يوم</span></figcaption></figure>
+      <figure class="preview"><div class="phone"><div class="screen"><img class="identity-pattern" src="../mobile/assets/branding/brand-pattern.png" alt="نقشة هوية أحدعش"><div class="runner-scene"><img src="../mobile/assets/visuals/streak_runner_cutout.png" alt="لاعب يركض بالكرة"></div><div class="modal"><div class="top"><span class="tag">إنجاز جديد</span><span class="brand">أحدعش <span class="mark"></span> 11</span></div><div class="emblem"><span class="spark one"></span><span class="spark two"></span><span class="emoji">👑</span></div><p class="days" data-target="365">0</p><h2 class="title">يوم بدون انقطاع!</h2><p class="copy">سنة كاملة من الحضور اليومي. إنجاز أسطوري يستحق الاحتفال.</p><div class="trail"><span class="trail-dot"></span><span class="trail-line"></span><span class="trail-dot next"></span></div><div class="next"><span class="next-icon">✓</span><span>المحطة القادمة: 400 يوم</span><span class="ratio">365/400</span></div><div class="button" aria-label="أكمل اللعب">أكمل اللعب</div></div></div></div><figcaption><strong>الإنجاز الأسطوري</strong><span>365 يومًا</span></figcaption></figure>
+    </section>
+    <section class="actual-shots" aria-labelledby="actual-title">
+      <h2 id="actual-title">لقطات فعلية من Flutter</h2>
+      <p>هذه الصور ملتقطة من الشاشة الحقيقية داخل التطبيق بمقاس 390×844، وتشمل عدّاد الصعود، هوية أحدعش، خلفية الملعب واللاعب المتحرك، وزر «أكمل اللعب».</p>
+      <div class="actual-grid">
+        <figure class="actual-shot"><img src="streak-screenshots/streak_10_days_390x844.png" alt="لقطة فعلية لاحتفال عشرة أيام"><figcaption><strong>10 أيام</strong><span>بداية السلسلة</span></figcaption></figure>
+        <figure class="actual-shot"><img src="streak-screenshots/streak_50_days_390x844.png" alt="لقطة فعلية لاحتفال خمسين يومًا"><figcaption><strong>50 يومًا</strong><span>محطة الثبات</span></figcaption></figure>
+        <figure class="actual-shot"><img src="streak-screenshots/streak_100_days_390x844.png" alt="لقطة فعلية لاحتفال مئة يوم"><figcaption><strong>100 يوم</strong><span>إنجاز النخبة</span></figcaption></figure>
+        <figure class="actual-shot"><img src="streak-screenshots/streak_365_days_390x844.png" alt="لقطة فعلية لاحتفال 365 يومًا"><figcaption><strong>365 يومًا</strong><span>الإنجاز الأسطوري</span></figcaption></figure>
+      </div>
+    </section>
+    <div class="note"><strong>ملاحظة:</strong> الرقم يبدأ من صفر ويصعد حتى المحطة المكتملة، ثم تظهر الشاشة كاملة بدون بطاقة خلفية. في التطبيق الحقيقي تظهر فوق الصفحة الرئيسية مع تعتيم وBlur للخلفية، وتُعرض مرة واحدة لكل محطة مكتملة.</div>
+  </main>
+  <script>
+    document.querySelectorAll('.days').forEach((node) => {
+      const target = Number(node.dataset.target || 0);
+      const start = performance.now();
+      const duration = 900;
+      const tick = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        node.textContent = String(Math.round(target * eased));
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  </script>
+</body>
+</html>

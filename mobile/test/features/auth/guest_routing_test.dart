@@ -34,7 +34,6 @@ void main() {
         '/blocked-players',
         '/teams',
         '/notifications',
-        '/ranking',
         '/premium',
         '/football-preferences',
         '/report-problem',
@@ -60,9 +59,7 @@ void main() {
     },
   );
 
-  testWidgets('legacy Friends and Online routes return guests safely to Home', (
-    tester,
-  ) async {
+  testWidgets('retired routes return guests safely to Home', (tester) async {
     final (_, router) = await pumpGuestRouter(tester);
     for (final path in [
       '/friends',
@@ -70,6 +67,7 @@ void main() {
       '/online',
       '/online/match/legacy-match',
       '/room/legacy-room',
+      '/ranking',
     ]) {
       router.go(path);
       await tester.pumpAndSettle();

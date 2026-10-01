@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/services/feedback_service.dart';
+import '../../../core/services/game_streak_service.dart';
 import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
@@ -10,9 +15,11 @@ import '../../../shared/presentation/v10_portrait.dart';
 import '../../auth/domain/guest_capability_policy.dart';
 import '../../auth/presentation/auth_gate.dart';
 import '../../auth/presentation/capability_provider.dart';
+import '../../party/presentation/party_catalog_provider.dart';
 import '../../party/presentation/party_game_controller.dart';
 import '../../party/presentation/party_setup_flow.dart';
 import '../../tournament/presentation/tournament_controller.dart';
+import 'streak_milestone_celebration.dart';
 
 final class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -20,12 +27,17 @@ final class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-final class _HomeScreenState extends ConsumerState<HomeScreen> {
+final class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
+  var _streakCheckStarted = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      unawaited(_recordTodayAndCelebrate());
       ref.read(partyGameControllerProvider.notifier).restore();
       // Do not load a previous account's tournament on the guest Home.
       if (ref
@@ -34,6 +46,65 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
         ref.read(tournamentControllerProvider.notifier).restore();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _streakCheckStarted = false;
+    } else if (state == AppLifecycleState.resumed) {
+      unawaited(_recordTodayAndCelebrate());
+    }
+  }
+
+  Future<void> _recordTodayAndCelebrate() async {
+    if (_streakCheckStarted) return;
+    _streakCheckStarted = true;
+    final streak = ref.read(gameStreakProvider.notifier);
+    await streak.recordToday();
+    if (!mounted) return;
+    final milestone = await streak.claimPendingMilestone();
+    if (!mounted || milestone == null) return;
+
+    final current = ref.read(gameStreakProvider).value;
+    await ref.read(feedbackServiceProvider).play(FeedbackCue.reward);
+    if (!mounted) return;
+    await showGeneralDialog<void>(
+      context: context,
+      useRootNavigator: true,
+      barrierDismissible: false,
+      barrierLabel: 'إنجاز سلسلة الأيام',
+      barrierColor: Colors.transparent,
+      transitionDuration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : AppMotion.emphasized,
+      pageBuilder: (dialogContext, _, _) => StreakMilestoneCelebration(
+        days: milestone,
+        emoji: current?.safeEmoji ?? defaultGameStreakEmoji,
+        onContinue: () =>
+            Navigator.of(dialogContext, rootNavigator: true).pop(),
+      ),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: AppMotion.enterCurve,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.94, end: 1).animate(curved),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -70,116 +141,117 @@ final class _HomeScreenState extends ConsumerState<HomeScreen> {
     final gutter = AhdashV10Metrics.of(context).gutter;
     return Scaffold(
       backgroundColor: AppColors.paper0,
-      body: SafeArea(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 430),
-              child: ListView(
-                key: const ValueKey('home-scroll'),
-                padding: EdgeInsets.fromLTRB(
-                  gutter,
-                  12,
-                  gutter,
-                  AhdashSizing.floatingDockContentInset,
-                ),
-                children: [
-                  _HomeHeader(policy: policy, onOpen: _open),
-                  const SizedBox(height: 14),
-                  _PartyHero(
-                    canStart: party.restored,
-                    resumeLabel: resumeLabel,
-                    onStart: () => _requestNewGame(hasPartyResume),
-                    onResume: resumeAction,
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.paper0, Color(0xFFF8F2E7), AppColors.paper0],
+            stops: [0, .58, 1],
+          ),
+        ),
+        child: SafeArea(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 430),
+                child: ListView(
+                  key: const ValueKey('home-scroll'),
+                  padding: EdgeInsets.fromLTRB(
+                    gutter,
+                    12,
+                    gutter,
+                    AhdashSizing.floatingDockContentInset,
                   ),
-                  const SizedBox(height: 12),
-                  _PremiumDiscovery(
-                    guest: !policy.hasAccount,
-                    onTap: () => _open('/premium'),
-                  ),
-                  const SizedBox(height: 22),
-                  const _PlayModesHeader(),
-                  const SizedBox(height: 12),
-                  _ModeTile(
-                    title: 'أنشئ بطولة',
-                    subtitle: 'نظّم الفرق واحسم البطل',
-                    visual: _ModeVisual.tournament,
-                    status: policy.allows(AppCapability.tournaments)
-                        ? null
-                        : 'يتطلب حساب',
-                    onTap: () => _open('/tournaments/create'),
-                  ),
-                  const SizedBox(height: 12),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _ModeTile(
-                            title: 'العب لحالك',
-                            subtitle: 'تحدٍ فردي من ١١ سؤالًا',
-                            visual: _ModeVisual.solo,
-                            compact: true,
-                            status: 'خيارات محدودة',
-                            onTap: () => _open('/solo'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _ModeTile(
-                            title: 'تحدي فريق',
-                            subtitle: 'فريقك ودعواتك وتحدياتك',
-                            visual: _ModeVisual.team,
-                            compact: true,
-                            status: policy.allows(AppCapability.teamChallenge)
-                                ? null
-                                : 'يتطلب حساب',
-                            onTap: () => _open('/teams'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _ModeTile(
-                    title: 'ألعاب محفوظة',
-                    subtitle: 'أرشيف الألعاب على هذا الجهاز',
-                    visual: _ModeVisual.saved,
-                    status: policy.allows(AppCapability.savedGames)
-                        ? null
-                        : 'يتطلب حساب',
-                    onTap: () => _open('/party/games'),
-                  ),
-                  const SizedBox(height: 20),
-                  const Divider(height: 1, color: AppColors.hairline),
-                  const SizedBox(height: 12),
-                  const _SectionTitle('استكشف'),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _DiscoverLink(
-                          'الترتيب',
-                          AhdashIcons.chart,
-                          () => _open('/ranking'),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _DiscoverLink(
-                          'طريقة اللعب',
-                          AhdashIcons.help,
-                          () => _open('/how-to-play'),
-                        ),
-                      ),
+                  children: [
+                    _HomeHeader(policy: policy, onOpen: _open),
+                    if (MediaQuery.sizeOf(context).height >= 500) ...[
+                      const SizedBox(height: 14),
+                      const _HomeStreakCard(),
+                      const SizedBox(height: 12),
                     ],
-                  ),
-                  if (!policy.hasAccount) ...[
+                    _PartyHero(
+                      canStart: party.restored,
+                      resumeLabel: resumeLabel,
+                      onStart: () => _requestNewGame(hasPartyResume),
+                      onResume: resumeAction,
+                    ),
                     const SizedBox(height: 12),
-                    _GuestAccountNudge(onTap: () => context.push('/auth')),
+                    _PremiumDiscovery(
+                      guest: !policy.hasAccount,
+                      onTap: () => _open('/premium'),
+                    ),
+                    const SizedBox(height: 22),
+                    const _PlayModesHeader(),
+                    const SizedBox(height: 12),
+                    _ModeTile(
+                      title: 'أنشئ بطولة',
+                      subtitle: 'نظّم الفرق واحسم البطل',
+                      visual: _ModeVisual.tournament,
+                      status: policy.allows(AppCapability.tournaments)
+                          ? null
+                          : 'يتطلب حساب',
+                      onTap: () => _open('/tournaments/create'),
+                    ),
+                    const SizedBox(height: 12),
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _ModeTile(
+                              title: 'العب لحالك',
+                              subtitle: 'تحدٍ فردي من ١١ سؤالًا',
+                              visual: _ModeVisual.solo,
+                              compact: true,
+                              status: 'خيارات محدودة',
+                              onTap: () => _open('/solo'),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _ModeTile(
+                              title: 'تحدي فريق',
+                              subtitle: 'فريقك ودعواتك وتحدياتك',
+                              visual: _ModeVisual.team,
+                              compact: true,
+                              status: policy.allows(AppCapability.teamChallenge)
+                                  ? null
+                                  : 'يتطلب حساب',
+                              onTap: () => _open('/teams'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _ModeTile(
+                      title: 'ألعاب محفوظة',
+                      subtitle: 'أرشيف الألعاب على هذا الجهاز',
+                      visual: _ModeVisual.saved,
+                      status: policy.allows(AppCapability.savedGames)
+                          ? null
+                          : 'يتطلب حساب',
+                      onTap: () => _open('/party/games'),
+                    ),
+                    const SizedBox(height: 20),
+                    const Divider(height: 1, color: AppColors.hairline),
+                    const SizedBox(height: 12),
+                    const _SectionTitle('استكشف'),
+                    const SizedBox(height: 10),
+                    _DiscoverLink(
+                      'طريقة اللعب',
+                      AhdashIcons.help,
+                      () => _open('/how-to-play'),
+                      subtitle: 'القواعد والمساعدات وخطوات الجولة',
+                    ),
+                    if (!policy.hasAccount) ...[
+                      const SizedBox(height: 12),
+                      _GuestAccountNudge(onTap: () => context.push('/auth')),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
@@ -225,167 +297,165 @@ final class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).width <= 360;
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      padding: EdgeInsets.all(compact ? 12 : 14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-          colors: [
-            Colors.white.withValues(alpha: .82),
-            AppColors.paper1.withValues(alpha: .82),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.hairline.withValues(alpha: .86)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10191714),
-            blurRadius: 18,
-            offset: Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          PositionedDirectional(
-            top: -54,
-            start: -42,
-            child: Container(
-              width: 124,
-              height: 124,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: .09),
-                shape: BoxShape.circle,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(26),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: EdgeInsets.all(compact ? 12 : 14),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: .54),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(color: Colors.white.withValues(alpha: .76)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x10191714),
+                blurRadius: 18,
+                offset: Offset(0, 7),
               ),
-            ),
+            ],
           ),
-          Column(
+          child: Stack(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: AhdashBrandLogo(
-                        width: compact ? 130 : 144,
-                        height: 42,
-                      ),
-                    ),
+              PositionedDirectional(
+                top: -54,
+                start: -42,
+                child: Container(
+                  width: 124,
+                  height: 124,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: .09),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(width: 8),
+                ),
+              ),
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: AhdashBrandLogo(
+                            width: compact ? 130 : 144,
+                            height: 42,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.paper0.withValues(alpha: .82),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: AppColors.hairline.withValues(alpha: .78),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _HomeHeaderAction(
+                              tooltip: policy.hasAccount
+                                  ? 'حسابي'
+                                  : 'تسجيل الدخول إلى حسابك',
+                              onPressed: () => onOpen('/profile'),
+                              icon: AhdashIcons.profile,
+                            ),
+                            _HomeHeaderAction(
+                              key: const ValueKey('home-notifications-action'),
+                              tooltip: 'الإشعارات',
+                              onPressed: () => onOpen('/notifications'),
+                              icon: AhdashIcons.notifications,
+                              emphasized: true,
+                            ),
+                            _HomeHeaderAction(
+                              tooltip: 'الإعدادات',
+                              onPressed: () => onOpen('/settings'),
+                              icon: AhdashIcons.settings,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.paper0.withValues(alpha: .82),
-                      borderRadius: BorderRadius.circular(999),
+                      color: Colors.white.withValues(alpha: .32),
+                      borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: AppColors.hairline.withValues(alpha: .78),
+                        color: Colors.white.withValues(alpha: .68),
                       ),
                     ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        _HomeHeaderAction(
-                          tooltip: policy.hasAccount
-                              ? 'حسابي'
-                              : 'تسجيل الدخول إلى حسابك',
-                          onPressed: () => onOpen('/profile'),
-                          icon: AhdashIcons.profile,
+                        Container(
+                          width: 34,
+                          height: 34,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: .2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: ExcludeSemantics(
+                            child: Image.asset(
+                              'assets/visuals/home_welcome_wave_emoji.png',
+                              key: const ValueKey('home-welcome-emoji'),
+                              width: 19,
+                              height: 19,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
                         ),
-                        _HomeHeaderAction(
-                          key: const ValueKey('home-notifications-action'),
-                          tooltip: 'الإشعارات',
-                          onPressed: () => onOpen('/notifications'),
-                          icon: AhdashIcons.notifications,
-                          emphasized: true,
-                        ),
-                        _HomeHeaderAction(
-                          tooltip: 'الإعدادات',
-                          onPressed: () => onOpen('/settings'),
-                          icon: AhdashIcons.settings,
+                        const SizedBox(width: 9),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                policy.hasAccount
+                                    ? 'حيّاك، ${policy.user!.username}'
+                                    : 'حيّاك كضيف',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  height: 1.2,
+                                  color: AppColors.ink,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                policy.hasAccount
+                                    ? 'جهّز جماعتك وابدأ اللعب'
+                                    : 'اللعب المحلي جاهز لك',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  height: 1.25,
+                                  color: AppColors.inkMuted,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.paper0.withValues(alpha: .78),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                    color: AppColors.hairline.withValues(alpha: .72),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: .2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: ExcludeSemantics(
-                        child: Image.asset(
-                          'assets/visuals/home_welcome_wave_emoji.png',
-                          key: const ValueKey('home-welcome-emoji'),
-                          width: 19,
-                          height: 19,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.high,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 9),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            policy.hasAccount
-                                ? 'حيّاك، ${policy.user!.username}'
-                                : 'حيّاك كضيف',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              height: 1.2,
-                              color: AppColors.ink,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            policy.hasAccount
-                                ? 'جهّز جماعتك وابدأ اللعب'
-                                : 'اللعب المحلي جاهز لك',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 10.5,
-                              height: 1.25,
-                              color: AppColors.inkMuted,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -422,6 +492,195 @@ final class _HomeHeaderAction extends StatelessWidget {
     ),
     icon: Icon(icon, size: emphasized ? 20 : 19),
   );
+}
+
+final class _HomeStreakCard extends ConsumerWidget {
+  const _HomeStreakCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streak =
+        ref.watch(gameStreakProvider).value ?? const GameStreakState();
+    final premium = ref.watch(partyEntitlementProvider).value ?? false;
+    final hasStreak = streak.days > 0;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('home-streak-card'),
+        borderRadius: BorderRadius.circular(22),
+        onTap: () => _openEmojiPicker(context, ref, premium, streak),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: .62),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppColors.ink.withValues(alpha: .1)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0E191714),
+                blurRadius: 14,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                key: const ValueKey('home-streak-emoji'),
+                width: 46,
+                height: 46,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.ink,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.ink, width: 1.1),
+                ),
+                child: Text(
+                  premium ? streak.safeEmoji : defaultGameStreakEmoji,
+                  textDirection: TextDirection.ltr,
+                  style: const TextStyle(fontSize: 25, height: 1),
+                ),
+              ),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hasStreak ? 'سلسلتك مستمرة' : 'ابدأ سلسلتك اليومية',
+                      style: const TextStyle(
+                        color: AppColors.ink,
+                        fontSize: 14,
+                        height: 1.2,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      hasStreak
+                          ? '${streak.days} ${streak.days == 1 ? 'يوم' : 'أيام'} متتالية • ادخل والعب كل يوم'
+                          : 'ادخل اللعبة اليوم لتحصل على أول شعلة',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.inkMuted,
+                        fontSize: 11,
+                        height: 1.35,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                premium ? AhdashIcons.settings : AhdashIcons.lock,
+                size: 17,
+                color: premium ? AppColors.ink : AppColors.inkMuted,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openEmojiPicker(
+    BuildContext context,
+    WidgetRef ref,
+    bool premium,
+    GameStreakState streak,
+  ) async {
+    if (!premium) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('اختيار الإيموجي متاح للمشتركين فقط.')),
+      );
+      return;
+    }
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      backgroundColor: AppColors.paper0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheetContext) => Directionality(
+        textDirection: TextDirection.rtl,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'اختر إيموجي سلسلتك',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.ink,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'إيموجيات أصلية تظهر بمظهر iPhone على أجهزة Apple.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.inkMuted, fontSize: 12),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (final emoji in gameStreakEmojiOptions)
+                      Semantics(
+                        button: true,
+                        selected: emoji == streak.safeEmoji,
+                        label: 'إيموجي $emoji',
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            ref
+                                .read(gameStreakProvider.notifier)
+                                .setEmoji(emoji, premium: premium);
+                            Navigator.pop(sheetContext);
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 160),
+                            width: 52,
+                            height: 52,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: emoji == streak.safeEmoji
+                                  ? AppColors.primary.withValues(alpha: .22)
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: emoji == streak.safeEmoji
+                                    ? AppColors.ink
+                                    : AppColors.ink.withValues(alpha: .12),
+                                width: emoji == streak.safeEmoji ? 1.6 : 1,
+                              ),
+                            ),
+                            child: Text(
+                              emoji,
+                              textDirection: TextDirection.ltr,
+                              style: const TextStyle(fontSize: 28, height: 1),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 final class _PartyHero extends StatelessWidget {
@@ -696,61 +955,33 @@ final class _PremiumDiscovery extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     button: true,
     label: 'أحدعش Premium، فئات حصرية وبدون إعلانات',
-    child: Material(
-      key: const ValueKey('home-premium-discovery'),
-      color: Colors.transparent,
-      elevation: 2,
-      shadowColor: AppColors.ink.withValues(alpha: .22),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: AlignmentDirectional.topStart,
-            end: AlignmentDirectional.bottomEnd,
-            colors: [Color(0xFF1D211F), Color(0xFF101311)],
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Material(
+          key: const ValueKey('home-premium-discovery'),
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF9B7A3B), width: .8),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            children: [
-              PositionedDirectional(
-                top: -70,
-                end: -46,
-                child: Container(
-                  width: 142,
-                  height: 142,
-                  decoration: BoxDecoration(
-                    color: AppColors.gold.withValues(alpha: .045),
-                    shape: BoxShape.circle,
-                  ),
-                ),
+          clipBehavior: Clip.antiAlias,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: .48),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.gold.withValues(alpha: .62),
+                width: 1.1,
               ),
-              PositionedDirectional(
-                top: 0,
-                start: 30,
-                end: 30,
-                child: Container(
-                  height: 1,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0x00FFC857),
-                        Color(0x99FFC857),
-                        Color(0x00FFC857),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
+            ),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(20),
+              child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
-                  vertical: 12,
+                  vertical: 11,
                 ),
                 child: Row(
                   children: [
@@ -758,23 +989,14 @@ final class _PremiumDiscovery extends StatelessWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF272821),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: AppColors.gold.withValues(alpha: .48),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: .24),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                        color: AppColors.gold.withValues(alpha: .18),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.ink, width: 1.1),
                       ),
                       alignment: Alignment.center,
                       child: const Icon(
                         Icons.workspace_premium_rounded,
-                        color: AppColors.gold,
+                        color: AppColors.coffee,
                         size: 23,
                       ),
                     ),
@@ -792,7 +1014,7 @@ final class _PremiumDiscovery extends StatelessWidget {
                                       TextSpan(
                                         text: 'أحدعش ',
                                         style: TextStyle(
-                                          color: AppColors.paper0,
+                                          color: AppColors.ink,
                                           fontSize: 15,
                                           fontWeight: FontWeight.w900,
                                         ),
@@ -800,9 +1022,9 @@ final class _PremiumDiscovery extends StatelessWidget {
                                       TextSpan(
                                         text: 'PREMIUM',
                                         style: TextStyle(
-                                          color: AppColors.gold,
+                                          color: AppColors.coffee,
                                           fontSize: 11,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w900,
                                           letterSpacing: .75,
                                         ),
                                       ),
@@ -824,7 +1046,7 @@ final class _PremiumDiscovery extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11,
                               height: 1.25,
-                              color: Color(0xFFBFB6A8),
+                              color: AppColors.inkMuted,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -836,23 +1058,21 @@ final class _PremiumDiscovery extends StatelessWidget {
                       width: 34,
                       height: 34,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: .045),
+                        color: AppColors.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.gold.withValues(alpha: .34),
-                        ),
+                        border: Border.all(color: AppColors.ink, width: 1.1),
                       ),
                       alignment: Alignment.center,
                       child: const Icon(
                         Icons.arrow_forward_rounded,
                         size: 17,
-                        color: AppColors.gold,
+                        color: AppColors.ink,
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -868,14 +1088,14 @@ final class _PremiumGuestLabel extends StatelessWidget {
     decoration: BoxDecoration(
       color: Colors.white.withValues(alpha: .055),
       borderRadius: BorderRadius.circular(999),
-      border: Border.all(color: Colors.white.withValues(alpha: .1)),
+      border: Border.all(color: AppColors.ink.withValues(alpha: .2)),
     ),
     child: const Padding(
       padding: EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       child: Text(
         'بعد تسجيل الدخول',
         style: TextStyle(
-          color: Color(0xFFC9C0B3),
+          color: AppColors.inkMuted,
           fontSize: 9,
           height: 1.2,
           fontWeight: FontWeight.w600,
@@ -969,11 +1189,11 @@ final class _ModeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = switch (visual) {
-      _ModeVisual.tournament => const [Color(0xFFFFF8E9), Color(0xFFF8E7B9)],
-      _ModeVisual.solo => const [Color(0xFFF8F4EC), Color(0xFFEDE5D7)],
-      _ModeVisual.team => const [Color(0xFFF1FAF3), Color(0xFFDDEFE4)],
-      _ModeVisual.saved => const [Color(0xFFF6EEE2), Color(0xFFE5D3B8)],
+    final surfaceColor = switch (visual) {
+      _ModeVisual.tournament => const Color(0xFFFFF8E9),
+      _ModeVisual.solo => const Color(0xFFF8F4EC),
+      _ModeVisual.team => const Color(0xFFF1FAF3),
+      _ModeVisual.saved => const Color(0xFFF6EEE2),
     };
     final accentColor = switch (visual) {
       _ModeVisual.tournament => AppColors.gold,
@@ -983,7 +1203,7 @@ final class _ModeTile extends StatelessWidget {
     };
     final borderColor = switch (visual) {
       _ModeVisual.tournament => const Color(0xFFDAB15B),
-      _ModeVisual.solo => AppColors.hairline,
+      _ModeVisual.solo => AppColors.ink.withValues(alpha: .18),
       _ModeVisual.team => const Color(0xFFAFCFBA),
       _ModeVisual.saved => const Color(0xFFC6AA84),
     };
@@ -1030,9 +1250,9 @@ final class _ModeTile extends StatelessWidget {
       width: 32,
       height: 32,
       decoration: BoxDecoration(
-        color: AppColors.paper0.withValues(alpha: .84),
+        color: Colors.white.withValues(alpha: .7),
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.ink.withValues(alpha: .1)),
+        border: Border.all(color: AppColors.ink.withValues(alpha: .22)),
       ),
       alignment: Alignment.center,
       child: const Icon(
@@ -1094,19 +1314,15 @@ final class _ModeTile extends StatelessWidget {
       label: status == 'يتطلب حساب' ? '$title، يتطلب حسابًا' : null,
       child: Material(
         color: Colors.transparent,
-        elevation: visual == _ModeVisual.tournament ? 1.5 : .7,
-        shadowColor: AppColors.ink.withValues(alpha: .18),
+        elevation: 0,
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         clipBehavior: Clip.antiAlias,
         child: Ink(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: AlignmentDirectional.topStart,
-              end: AlignmentDirectional.bottomEnd,
-              colors: gradient,
-            ),
+            color: surfaceColor.withValues(alpha: .82),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: borderColor),
+            border: Border.all(color: borderColor, width: 1.1),
           ),
           child: InkWell(
             onTap: onTap,
@@ -1120,7 +1336,7 @@ final class _ModeTile extends StatelessWidget {
                     width: compact ? 112 : 142,
                     height: compact ? 112 : 142,
                     decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: .08),
+                      color: accentColor.withValues(alpha: .055),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1219,43 +1435,80 @@ final class _SectionTitle extends StatelessWidget {
 }
 
 final class _DiscoverLink extends StatelessWidget {
-  const _DiscoverLink(this.label, this.icon, this.onPressed);
+  const _DiscoverLink(this.label, this.icon, this.onPressed, {this.subtitle});
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
+  final String? subtitle;
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
     label: label,
     child: Material(
-      color: AppColors.paper1,
+      color: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-        side: const BorderSide(color: AppColors.hairline),
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: AppColors.ink.withValues(alpha: .18)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(15),
-        child: SizedBox(
-          height: 58,
+        borderRadius: BorderRadius.circular(18),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 64),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsetsDirectional.fromSTEB(12, 9, 12, 9),
+            child: Row(
               children: [
-                Icon(icon, size: 18, color: AppColors.inkSoft),
-                const SizedBox(height: 5),
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.inkSoft,
-                    fontSize: 11.5,
-                    height: 1.15,
-                    fontWeight: FontWeight.w700,
+                Container(
+                  width: 38,
+                  height: 38,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.ink, width: 1.1),
                   ),
+                  child: Icon(icon, size: 19, color: AppColors.ink),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.ink,
+                          fontSize: 13,
+                          height: 1.2,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      if (subtitle case final value?) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.inkMuted,
+                            fontSize: 10.5,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 14,
+                  color: AppColors.inkMuted,
                 ),
               ],
             ),
@@ -1276,15 +1529,15 @@ final class _GuestAccountNudge extends StatelessWidget {
     button: true,
     label: 'سجّل الدخول لحفظ تقدمك وفتح مزايا الحساب',
     child: Material(
-      color: const Color(0xFFF1ECE2),
+      color: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(color: AppColors.hairline),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: AppColors.ink.withValues(alpha: .18)),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -1293,8 +1546,9 @@ final class _GuestAccountNudge extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: .17),
+                  color: AppColors.primary,
                   shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.ink, width: 1.1),
                 ),
                 alignment: Alignment.center,
                 child: const Icon(
@@ -1336,9 +1590,9 @@ final class _GuestAccountNudge extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppColors.paper0,
+                  color: Colors.white.withValues(alpha: .7),
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.hairline),
+                  border: Border.all(color: AppColors.ink, width: 1.1),
                 ),
                 alignment: Alignment.center,
                 child: const Icon(

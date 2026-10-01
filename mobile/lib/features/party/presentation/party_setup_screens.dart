@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,44 +122,52 @@ final class _PartyCategorySelectionScreenState
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.paper1,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.hairline),
-                      ),
-                      child: SizedBox(
-                        height: context.v9Metrics.inputHeight,
-                        child: TextField(
-                          key: const ValueKey('party-category-search'),
-                          controller: _search,
-                          onChanged: (_) => setState(() {}),
-                          decoration: InputDecoration(
-                            suffixIcon: _search.text.isEmpty
-                                ? const Icon(Icons.search_rounded, size: 19)
-                                : IconButton(
-                                    tooltip: 'مسح البحث',
-                                    onPressed: () {
-                                      _search.clear();
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.close_rounded),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: BackdropFilter(
+                        filter: ui.ImageFilter.blur(sigmaX: 9, sigmaY: 9),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: .45),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: .78),
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: context.v9Metrics.inputHeight,
+                            child: TextField(
+                              key: const ValueKey('party-category-search'),
+                              controller: _search,
+                              onChanged: (_) => setState(() {}),
+                              decoration: InputDecoration(
+                                suffixIcon: _search.text.isEmpty
+                                    ? const Icon(Icons.search_rounded, size: 19)
+                                    : IconButton(
+                                        tooltip: 'مسح البحث',
+                                        onPressed: () {
+                                          _search.clear();
+                                          setState(() {});
+                                        },
+                                        icon: const Icon(Icons.close_rounded),
+                                      ),
+                                hintText: largeText
+                                    ? 'ابحث عن فئة...'
+                                    : 'ابحث عن دوري، بطولة أو فئة...',
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(18),
                                   ),
-                            hintText: largeText
-                                ? 'ابحث عن فئة...'
-                                : 'ابحث عن دوري، بطولة أو فئة...',
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
-                              borderSide: BorderSide(
-                                color: AppColors.ink,
-                                width: 1.35,
+                                  borderSide: BorderSide(
+                                    color: AppColors.ink,
+                                    width: 1.35,
+                                  ),
+                                ),
+                                isDense: true,
                               ),
                             ),
-                            isDense: true,
                           ),
                         ),
                       ),
@@ -345,14 +354,18 @@ final class _CategorySelectionStatus extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(14, 11, 14, 12),
             decoration: BoxDecoration(
-              color: AppColors.ink,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFF34322E)),
+              gradient: const LinearGradient(
+                begin: AlignmentDirectional.topStart,
+                end: AlignmentDirectional.bottomEnd,
+                colors: [Color(0xFF25231F), AppColors.ink],
+              ),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: const Color(0xFF3F3B35)),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x1F191714),
-                  offset: Offset(0, 2),
-                  blurRadius: 0,
+                  color: Color(0x24191714),
+                  offset: Offset(0, 3),
+                  blurRadius: 8,
                 ),
               ],
             ),
@@ -626,24 +639,30 @@ final class _CategoryFavoritesFilter extends StatelessWidget {
       selected: selected,
       label: selected ? 'فلتر المفضلة مفعّل' : 'عرض الفئات المفضلة',
       child: Material(
-        color: selected ? AppColors.ink : AppColors.paper1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: selected ? AppColors.ink : AppColors.hairline,
-          ),
-        ),
+        color: selected ? AppColors.primary : Colors.transparent,
+        shape: const CircleBorder(),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           key: const ValueKey('party-category-favorites-filter'),
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(999),
           child: SizedBox.square(
             dimension: context.v9Metrics.inputHeight,
-            child: Icon(
-              selected ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-              size: 20,
-              color: selected ? AppColors.primary : AppColors.ink,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selected ? AppColors.ink : AppColors.hairline,
+                  width: selected ? 1.25 : 1,
+                ),
+              ),
+              child: Icon(
+                selected
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
+                size: 20,
+                color: AppColors.ink,
+              ),
             ),
           ),
         ),
@@ -752,32 +771,32 @@ final class _CategoryTile extends StatelessWidget {
         duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
         child: Material(
           color: Colors.transparent,
-          elevation: selected ? 1.5 : .6,
-          shadowColor: AppColors.ink.withValues(alpha: .18),
+          elevation: selected ? 1 : .2,
+          shadowColor: AppColors.ink.withValues(alpha: .14),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(22),
           ),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             onTap: onTap,
             onLongPress: onInfo,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(22),
             child: AnimatedContainer(
               duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: const Color(0xFFF4EBDD),
-                borderRadius: BorderRadius.circular(18),
+                color: Colors.white.withValues(alpha: .56),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: selected
                       ? AppColors.ink
                       : locked
                       ? AppColors.gold
-                      : const Color(0xFFD3C6B2),
+                      : AppColors.ink.withValues(alpha: .18),
                   width: selected
-                      ? 1.6
+                      ? 1.8
                       : locked
-                      ? 1.4
+                      ? 1.25
                       : 1,
                 ),
               ),
@@ -852,8 +871,8 @@ final class _CategoryTile extends StatelessWidget {
                                 color: selectedColor ?? const Color(0xFF1E874B),
                                 borderRadius: BorderRadius.circular(9),
                                 border: Border.all(
-                                  color: AppColors.paper0,
-                                  width: 1.2,
+                                  color: AppColors.ink,
+                                  width: 1.1,
                                 ),
                               ),
                               child: Text(
@@ -916,16 +935,17 @@ final class _CategoryTile extends StatelessWidget {
                     height: 46,
                     decoration: BoxDecoration(
                       color: selected
-                          ? const Color(0xFFEAF3EC)
+                          ? const Color(0xFFEAF3EC).withValues(alpha: .78)
                           : locked
-                          ? const Color(0xFFFFF4D8)
-                          : const Color(0xFFF4EBDD),
+                          ? const Color(0xFFFFF4D8).withValues(alpha: .76)
+                          : Colors.white.withValues(alpha: .38),
                       border: Border(
+                        top: const BorderSide(color: Colors.white54),
                         bottom: BorderSide(
                           color: selected
                               ? selectedColor ?? const Color(0xFF1E874B)
-                              : Colors.transparent,
-                          width: 4,
+                              : AppColors.ink.withValues(alpha: .08),
+                          width: selected ? 3 : 1,
                         ),
                       ),
                     ),
@@ -996,9 +1016,10 @@ final class _CategoryImageAction extends StatelessWidget {
     constraints: const BoxConstraints.tightFor(width: 32, height: 32),
     padding: EdgeInsets.zero,
     style: IconButton.styleFrom(
-      backgroundColor: AppColors.paper0.withValues(alpha: .92),
+      backgroundColor: Colors.white.withValues(alpha: .8),
       foregroundColor: selected ? const Color(0xFFE43D74) : AppColors.ink,
-      side: BorderSide(color: AppColors.ink.withValues(alpha: .12)),
+      side: BorderSide(color: AppColors.ink, width: 1.05),
+      shape: const CircleBorder(),
     ),
     icon: Icon(icon, size: 17),
   );
@@ -1523,6 +1544,7 @@ final class _PartyTeamSetupScreenState
   Widget build(BuildContext context) {
     final state = ref.watch(partyGameControllerProvider);
     final teamError = PartySetupValidation.teamError(state.teams);
+    final compactLayout = MediaQuery.sizeOf(context).width < 380;
     final firstTeam = _TeamStage(
       color: Color(state.teams[0].colorValue),
       child: _TeamLineEditor(
@@ -1549,9 +1571,16 @@ final class _PartyTeamSetupScreenState
             height: 42,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFFF4EBDD),
+              color: Colors.white.withValues(alpha: .58),
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFD3C6B2)),
+              border: Border.all(color: AppColors.ink.withValues(alpha: .16)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x14191714),
+                  offset: Offset(0, 2),
+                  blurRadius: 8,
+                ),
+              ],
             ),
             child: const Text(
               'VS',
@@ -1610,12 +1639,12 @@ final class _PartyTeamSetupScreenState
           ],
           if (MediaQuery.viewInsetsOf(context).bottom == 0) ...[
             const _TeamSetupHero(),
-            const SizedBox(height: 12),
+            SizedBox(height: compactLayout ? 8 : 12),
           ],
           firstTeam,
           SizedBox(height: 44, child: versus),
           secondTeam,
-          const SizedBox(height: 12),
+          SizedBox(height: compactLayout ? 8 : 12),
           _OptionalSplitterTile(
             key: const ValueKey('party-use-splitter'),
             onPressed: teamError == null ? _continueWithSplitter : null,
@@ -1682,18 +1711,32 @@ final class _PartySetupVisualHero extends StatelessWidget {
     if (MediaQuery.viewInsetsOf(context).bottom > 0) {
       return const SizedBox.shrink();
     }
-    final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final compactArtwork =
+        MediaQuery.sizeOf(context).width < 380 || textScale > 1.15;
     return Container(
-      constraints: const BoxConstraints(minHeight: 120),
-      padding: const EdgeInsets.all(16),
+      constraints: BoxConstraints(minHeight: compactArtwork ? 112 : 128),
+      padding: EdgeInsets.fromLTRB(
+        compactArtwork ? 12 : 16,
+        compactArtwork ? 10 : 14,
+        compactArtwork ? 12 : 14,
+        compactArtwork ? 10 : 14,
+      ),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Color(0xFF214B3D), Color(0xFF122D26)],
+          begin: AlignmentDirectional.topEnd,
+          end: AlignmentDirectional.bottomStart,
+          colors: [Color(0xFF294A3E), Color(0xFF111F1A)],
         ),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.paper3.withValues(alpha: .2)),
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: AppColors.paper3.withValues(alpha: .24)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x26191714),
+            offset: Offset(0, 4),
+            blurRadius: 12,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -1702,6 +1745,26 @@ final class _PartySetupVisualHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.groups_rounded,
+                      color: AppColors.primary,
+                      size: 15,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      'مواجهة الفريقين',
+                      style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: .9),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
                 Text(
                   title,
                   style: const TextStyle(
@@ -1746,12 +1809,20 @@ final class _PartySetupVisualHero extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Image.asset(
-            image,
-            width: largeText ? 62 : 102,
-            height: largeText ? 70 : 100,
-            fit: BoxFit.contain,
-            excludeFromSemantics: true,
+          Container(
+            width: compactArtwork ? 76 : 104,
+            height: compactArtwork ? 66 : 100,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: .18),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: .18)),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              image,
+              fit: BoxFit.cover,
+              excludeFromSemantics: true,
+            ),
           ),
         ],
       ),
@@ -1777,18 +1848,25 @@ final class _OptionalSplitterTile extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 12, 10),
           decoration: BoxDecoration(
-            color: const Color(0xFFF0F6F1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF93B7A4)),
+            color: Colors.white.withValues(alpha: .52),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFF6D9D82)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x14191714),
+                offset: Offset(0, 2),
+                blurRadius: 8,
+              ),
+            ],
           ),
           child: const Row(
             children: [
               SizedBox.square(
-                dimension: 36,
+                dimension: 38,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Color(0xFF173F34),
-                    borderRadius: BorderRadius.all(Radius.circular(11)),
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.shuffle_rounded, color: AppColors.primary),
                 ),
@@ -1834,25 +1912,35 @@ final class _TeamStage extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final spacious = constraints.maxWidth >= 390;
-      return Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFF4EBDD),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.55), width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.09),
-              offset: const Offset(0, 3),
-              blurRadius: 0,
+      final radius = BorderRadius.circular(24);
+      return ClipRRect(
+        borderRadius: radius,
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: .56),
+              borderRadius: radius,
+              border: Border.all(
+                color: color.withValues(alpha: 0.58),
+                width: 1.35,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.12),
+                  offset: const Offset(0, 4),
+                  blurRadius: 12,
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacious ? 16 : 14,
-            vertical: 11,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: spacious ? 16 : 14,
+                vertical: spacious ? 12 : 8,
+              ),
+              child: Center(child: child),
+            ),
           ),
-          child: Center(child: child),
         ),
       );
     },
@@ -1889,12 +1977,20 @@ final class _TeamLineEditor extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
+                width: 38,
+                height: 38,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: Color(team.colorValue),
-                  borderRadius: BorderRadius.circular(11),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.ink, width: 1.1),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1F191714),
+                      offset: Offset(0, 2),
+                      blurRadius: 5,
+                    ),
+                  ],
                 ),
                 child: Text(
                   index == 0 ? 'أ' : 'ب',
@@ -1945,6 +2041,31 @@ final class _TeamLineEditor extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'اسم الفريق ${index + 1}',
                 counterText: '',
+                filled: true,
+                fillColor: Colors.white.withValues(alpha: .48),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: AppColors.ink.withValues(alpha: .14),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(
+                    color: AppColors.ink.withValues(alpha: .14),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: const BorderSide(
+                    color: AppColors.ink,
+                    width: 1.35,
+                  ),
+                ),
               ),
             ),
           ),
@@ -2952,55 +3073,66 @@ final class _HelperSelectionStatus extends StatelessWidget {
         onSelected: onSelected,
       ),
       SizedBox(height: compact ? 6 : 8),
-      Row(
-        children: [
-          Expanded(
-            child: Text(
-              remaining == 0
-                  ? 'اكتملت اختيارات هذا الفريق'
-                  : 'متبقي $remaining من ${PartyGameRules.helpersPerTeam}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: remaining == 0
-                    ? context.ahdashColors.success
-                    : context.ahdashColors.textMuted,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          for (
-            var index = 0;
-            index < PartyGameRules.helpersPerTeam;
-            index++
-          ) ...[
-            AnimatedContainer(
-              duration: MediaQuery.disableAnimationsOf(context)
-                  ? Duration.zero
-                  : PartyV2Motion.page,
-              width: index < teams[selectedIndex].selectedHelpers.length
-                  ? 18
-                  : 7,
-              height: 7,
-              decoration: BoxDecoration(
-                color: index < teams[selectedIndex].selectedHelpers.length
-                    ? AppColors.primary
-                    : AppColors.paper3,
-                borderRadius: BorderRadius.circular(99),
-                border: Border.all(
-                  color: index < teams[selectedIndex].selectedHelpers.length
-                      ? AppColors.ink
-                      : AppColors.hairline,
-                  width: 0.8,
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: compact ? 5 : 7,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .4),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.white.withValues(alpha: .76)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                remaining == 0
+                    ? 'اكتملت اختيارات هذا الفريق'
+                    : 'متبقي $remaining من ${PartyGameRules.helpersPerTeam}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: remaining == 0
+                      ? context.ahdashColors.success
+                      : context.ahdashColors.textMuted,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),
-            if (index < PartyGameRules.helpersPerTeam - 1)
-              const SizedBox(width: 4),
+            const SizedBox(width: 10),
+            for (
+              var index = 0;
+              index < PartyGameRules.helpersPerTeam;
+              index++
+            ) ...[
+              AnimatedContainer(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : PartyV2Motion.page,
+                width: index < teams[selectedIndex].selectedHelpers.length
+                    ? 20
+                    : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: index < teams[selectedIndex].selectedHelpers.length
+                      ? AppColors.primary
+                      : AppColors.paper3,
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(
+                    color: index < teams[selectedIndex].selectedHelpers.length
+                        ? AppColors.ink
+                        : AppColors.hairline,
+                    width: 0.8,
+                  ),
+                ),
+              ),
+              if (index < PartyGameRules.helpersPerTeam - 1)
+                const SizedBox(width: 4),
+            ],
           ],
-        ],
+        ),
       ),
     ],
   );
@@ -3016,30 +3148,43 @@ final class _HelperTeamSwitcher extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   @override
-  Widget build(BuildContext context) => Container(
-    key: const ValueKey('party-helper-team-switcher'),
-    padding: const EdgeInsets.all(4),
-    decoration: BoxDecoration(
-      color: AppColors.paper1,
-      borderRadius: BorderRadius.circular(19),
-      border: Border.all(color: AppColors.hairline),
-    ),
-    child: IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (var index = 0; index < teams.length; index++) ...[
-            if (index > 0) const SizedBox(width: 5),
-            Expanded(
-              child: _HelperTeamTab(
-                team: teams[index],
-                index: index,
-                selected: index == selectedIndex,
-                onPressed: () => onSelected(index),
-              ),
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(23),
+    child: BackdropFilter(
+      filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: Container(
+        key: const ValueKey('party-helper-team-switcher'),
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .48),
+          borderRadius: BorderRadius.circular(23),
+          border: Border.all(color: Colors.white.withValues(alpha: .82)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x12191714),
+              offset: Offset(0, 2),
+              blurRadius: 9,
             ),
           ],
-        ],
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var index = 0; index < teams.length; index++) ...[
+                if (index > 0) const SizedBox(width: 5),
+                Expanded(
+                  child: _HelperTeamTab(
+                    team: teams[index],
+                    index: index,
+                    selected: index == selectedIndex,
+                    onPressed: () => onSelected(index),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     ),
   );
@@ -3068,14 +3213,17 @@ final class _HelperTeamTab extends StatelessWidget {
       child: Tooltip(
         message: team.name,
         child: Material(
-          color: selected ? AppColors.ink : Colors.transparent,
-          borderRadius: BorderRadius.circular(15),
+          color: selected ? const Color(0xFF25231F) : Colors.transparent,
+          borderRadius: BorderRadius.circular(19),
+          elevation: selected ? 1 : 0,
+          shadowColor: AppColors.ink.withValues(alpha: .2),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             key: ValueKey('party-helper-team-$index'),
             onTap: onPressed,
+            borderRadius: BorderRadius.circular(19),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -3164,7 +3312,7 @@ final class _V10HelperCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final compactPortrait = MediaQuery.sizeOf(context).height < 820;
     final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.1;
-    const selectedTone = Color(0xFF7EB900);
+    const selectedTone = AppColors.primary;
     final reducedMotion = MediaQuery.disableAnimationsOf(context);
     return Semantics(
       button: true,
@@ -3176,9 +3324,14 @@ final class _V10HelperCard extends StatelessWidget {
         duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
         child: Material(
           color: Colors.transparent,
+          elevation: selected ? 1 : 0,
+          shadowColor: AppColors.ink.withValues(alpha: .16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
           child: InkWell(
             onTap: enabled ? onTap : null,
-            borderRadius: BorderRadius.circular(17),
+            borderRadius: BorderRadius.circular(22),
             child: AnimatedContainer(
               duration: reducedMotion ? Duration.zero : PartyV2Motion.page,
               constraints: BoxConstraints(
@@ -3191,21 +3344,23 @@ final class _V10HelperCard extends StatelessWidget {
               padding: const EdgeInsetsDirectional.fromSTEB(14, 8, 12, 8),
               decoration: BoxDecoration(
                 color: !enabled
-                    ? AppColors.paper2.withValues(alpha: 0.55)
+                    ? AppColors.paper2.withValues(alpha: 0.42)
                     : selected
-                    ? const Color(0xFFEAF3EC)
-                    : const Color(0xFFF4EBDD),
-                borderRadius: BorderRadius.circular(17),
+                    ? const Color(0xFFEAF3EC).withValues(alpha: .84)
+                    : Colors.white.withValues(alpha: .5),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
-                  color: selected ? AppColors.ink : const Color(0xFFD3C6B2),
-                  width: selected ? 1.5 : 1,
+                  color: selected
+                      ? AppColors.ink
+                      : AppColors.ink.withValues(alpha: .16),
+                  width: selected ? 1.45 : 1,
                 ),
                 boxShadow: selected
                     ? const [
                         BoxShadow(
-                          color: Color(0x22191714),
+                          color: Color(0x1F191714),
                           offset: Offset(0, 2),
-                          blurRadius: 0,
+                          blurRadius: 8,
                         ),
                       ]
                     : null,
@@ -3217,10 +3372,14 @@ final class _V10HelperCard extends StatelessWidget {
                     height: compactPortrait ? 48 : 54,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.ink : AppColors.paper0,
-                      borderRadius: BorderRadius.circular(14),
+                      color: selected
+                          ? AppColors.ink
+                          : Colors.white.withValues(alpha: .72),
+                      shape: BoxShape.circle,
                       border: Border.all(
-                        color: selected ? AppColors.ink : AppColors.hairline,
+                        color: selected
+                            ? AppColors.ink
+                            : AppColors.ink.withValues(alpha: .14),
                       ),
                     ),
                     child: AhdashPictogramView(
@@ -3277,9 +3436,12 @@ final class _V10HelperCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: selected ? selectedTone : Colors.transparent,
-                      borderRadius: BorderRadius.circular(9),
+                      borderRadius: BorderRadius.circular(99),
                       border: Border.all(
-                        color: selected ? selectedTone : AppColors.hairline,
+                        color: selected
+                            ? AppColors.ink
+                            : AppColors.ink.withValues(alpha: .16),
+                        width: selected ? 1 : .8,
                       ),
                     ),
                     child: Text(

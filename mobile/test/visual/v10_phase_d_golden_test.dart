@@ -156,6 +156,7 @@ void registerVisualTests({VisualTestVariant? variant}) {
         }
         expect(tester.takeException(), isNull);
         if (const {
+          _PhaseDVisual.howTo,
           _PhaseDVisual.savedGames,
           _PhaseDVisual.matchSetup,
           _PhaseDVisual.solo,

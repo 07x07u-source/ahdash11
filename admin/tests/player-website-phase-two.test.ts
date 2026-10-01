@@ -6,16 +6,20 @@ function source(path: string) {
 }
 
 describe("player website Phase 2 product boundaries", () => {
-  it("lets guests enter local Party and Solo while private routes remain account-guarded", () => {
+  it("requires a registered player before opening Party or Solo", () => {
     const playPage = source("src/app/(website)/play/page.tsx");
-    expect(playPage).not.toContain("requirePlayerPage(");
+    expect(playPage).toContain("requirePlayerPage(");
+    expect(playPage).toContain("/account/register");
     expect(playPage).toContain("PlayExperience");
     for (const page of [
       "src/app/(website)/championships/create/page.tsx",
       "src/app/(website)/championships/join/page.tsx",
       "src/app/(website)/account/page.tsx",
       "src/app/(website)/account/[feature]/page.tsx",
-    ]) expect(source(page)).toContain("requirePlayerPage(");
+    ]) {
+      expect(source(page)).toContain("requirePlayerPage(");
+      if (page.includes("championships/")) expect(source(page)).toContain("/account/register");
+    }
     const playerContext = source("src/lib/auth/player.ts");
     expect(playerContext).toContain("user.is_anonymous === true");
     expect(playerContext).toContain("provider === \"anonymous\"");

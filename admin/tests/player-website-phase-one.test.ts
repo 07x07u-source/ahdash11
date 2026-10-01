@@ -90,8 +90,8 @@ describe("player website Phase 1 foundation", () => {
     const homepage = source("src/app/(website)/page.tsx");
     expect(homepage).toContain("لعبة Party كروية سعودية");
     expect(homepage).toContain("36 سؤالاً");
-    expect(homepage).toContain("Party وSolo المحليان متاحان على الكمبيوتر");
-    expect(homepage).toContain("ابدأ Party كضيف");
+    expect(homepage).toContain("Party وSolo المحليان متاحان من الموقع");
+    expect(homepage).toContain("ابدأ اللعب بحسابك");
     expect(homepage).not.toContain("يدعم الجوال");
     expect(homepage).not.toContain("ستة أنماط لعب");
   });

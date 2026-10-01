@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/services/app_services.dart';
 import '../../../core/services/feedback_service.dart';
+import '../../../core/services/game_streak_service.dart';
 import '../../../core/theme/ahdash_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
@@ -45,6 +46,7 @@ final class _PartyBoardScreenState extends ConsumerState<PartyBoardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(ref.read(gameStreakProvider.notifier).recordToday());
       final session = ref.read(partyGameControllerProvider).session;
       if (session == null) return;
       unawaited(
@@ -109,6 +111,12 @@ final class _PartyBoardScreenState extends ConsumerState<PartyBoardScreen> {
     final undoButton = IconButton(
       constraints: const BoxConstraints.tightFor(width: 48, height: 48),
       tooltip: 'تراجع عن آخر احتساب',
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: .48),
+        foregroundColor: AppColors.ink,
+        side: BorderSide(color: AppColors.ink.withValues(alpha: .16)),
+        shape: const CircleBorder(),
+      ),
       onPressed: session.scoreEvents.isEmpty
           ? null
           : () =>
@@ -118,6 +126,12 @@ final class _PartyBoardScreenState extends ConsumerState<PartyBoardScreen> {
     final closeButton = IconButton(
       constraints: const BoxConstraints.tightFor(width: 48, height: 48),
       tooltip: 'حفظ وخروج',
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: .48),
+        foregroundColor: AppColors.ink,
+        side: BorderSide(color: AppColors.ink.withValues(alpha: .16)),
+        shape: const CircleBorder(),
+      ),
       onPressed: () => _confirmExit(context),
       icon: const Icon(AhdashIcons.close, size: 20),
     );
@@ -447,22 +461,30 @@ final class _BoardProgressRail extends StatelessWidget {
     return Semantics(
       label: 'تقدم الجولة، تبقى $remaining من ${questions.length} سؤالًا',
       child: Container(
-        height: 44,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 11),
         decoration: BoxDecoration(
-          color: const Color(0xFFF4EBDD),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.hairline),
+          color: Colors.white.withValues(alpha: .5),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white.withValues(alpha: .82)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14191714),
+              offset: Offset(0, 2),
+              blurRadius: 8,
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: 30,
+              height: 30,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppColors.ink,
-                borderRadius: BorderRadius.circular(9),
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary, width: 1),
               ),
               child: const Icon(
                 Icons.sports_soccer_rounded,
@@ -481,9 +503,9 @@ final class _BoardProgressRail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(99),
                 child: LinearProgressIndicator(
                   value: progress,
-                  minHeight: 6,
+                  minHeight: 7,
                   color: AppColors.primary,
-                  backgroundColor: AppColors.paper3,
+                  backgroundColor: AppColors.ink.withValues(alpha: .1),
                 ),
               ),
             ),
@@ -518,6 +540,18 @@ final class _PortraitBoardHelperAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) => OutlinedButton.icon(
     onPressed: used ? null : onPressed,
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size.fromHeight(56),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      backgroundColor: Colors.white.withValues(alpha: .46),
+      foregroundColor: AppColors.ink,
+      side: BorderSide(
+        color: used
+            ? AppColors.ink.withValues(alpha: .1)
+            : AppColors.ink.withValues(alpha: .25),
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
     icon: AhdashPictogramView(
       pictogram: partyHelperPictogram(definition.id, definition.iconKey),
       size: 18,
@@ -565,14 +599,9 @@ final class _BoardColumn extends StatelessWidget {
           clipBehavior: portrait ? Clip.antiAlias : Clip.none,
           decoration: BoxDecoration(
             color: portrait ? AppColors.ink : context.ahdashColors.surface,
-            borderRadius: portrait ? BorderRadius.circular(11) : null,
+            borderRadius: portrait ? BorderRadius.circular(15) : null,
             border: portrait
-                ? Border(
-                    bottom: BorderSide(
-                      color: Color(category.colorValue),
-                      width: 4,
-                    ),
-                  )
+                ? Border.all(color: Colors.white.withValues(alpha: .16))
                 : Border(
                     top: BorderSide(
                       color: Color(category.colorValue),
@@ -580,6 +609,15 @@ final class _BoardColumn extends StatelessWidget {
                     ),
                     bottom: BorderSide(color: context.ahdashColors.border),
                   ),
+            boxShadow: portrait
+                ? const [
+                    BoxShadow(
+                      color: Color(0x1F191714),
+                      offset: Offset(0, 2),
+                      blurRadius: 7,
+                    ),
+                  ]
+                : null,
           ),
           child: portrait
               ? Tooltip(
@@ -607,6 +645,15 @@ final class _BoardColumn extends StatelessWidget {
                             colors: [Color(0x42191714), Color(0xC2191714)],
                             stops: [0, 1],
                           ),
+                        ),
+                      ),
+                      PositionedDirectional(
+                        start: 0,
+                        end: 0,
+                        bottom: 0,
+                        child: ColoredBox(
+                          color: Color(category.colorValue),
+                          child: const SizedBox(height: 4),
                         ),
                       ),
                       Center(
@@ -754,6 +801,7 @@ final class _PointTile extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: question.used || !enabled ? null : onTap,
+          borderRadius: BorderRadius.circular(13),
           child: AnimatedScale(
             scale: selected ? 0.965 : 1,
             duration: MediaQuery.disableAnimationsOf(context)
@@ -773,8 +821,8 @@ final class _PointTile extends StatelessWidget {
                       ? AppColors.primary
                       : question.used
                       ? AppColors.paper2
-                      : AppColors.paper0,
-                  borderRadius: BorderRadius.circular(AppRadius.small),
+                      : Colors.white.withValues(alpha: .52),
+                  borderRadius: BorderRadius.circular(13),
                   border: Border.all(
                     color: selected
                         ? AppColors.ink
@@ -786,9 +834,9 @@ final class _PointTile extends StatelessWidget {
                   boxShadow: !question.used && !selected
                       ? const [
                           BoxShadow(
-                            color: Color(0x14191714),
+                            color: Color(0x12191714),
                             offset: Offset(0, 2),
-                            blurRadius: 0,
+                            blurRadius: 6,
                           ),
                         ]
                       : null,
@@ -1270,7 +1318,11 @@ final class _PartyRoundBar extends StatelessWidget {
     height: 37,
     padding: const EdgeInsets.symmetric(horizontal: 20),
     decoration: const BoxDecoration(
-      color: AppColors.ink,
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFF25231F), AppColors.ink],
+      ),
       border: Border(bottom: BorderSide(color: AppColors.inkSoft)),
     ),
     child: Row(
@@ -1447,6 +1499,16 @@ final class _PortraitQuestionLayout extends StatelessWidget {
                     if (onSteal != null)
                       OutlinedButton.icon(
                         onPressed: onSteal,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white.withValues(alpha: .5),
+                          foregroundColor: AppColors.ink,
+                          side: BorderSide(
+                            color: AppColors.ink.withValues(alpha: .24),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
                         icon: const Icon(AhdashIcons.pass, size: 18),
                         label: const Text('فرصة خطف'),
                       ),
@@ -1499,8 +1561,20 @@ final class _QuestionMetaStrip extends StatelessWidget {
     height: 64,
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
     decoration: BoxDecoration(
-      color: AppColors.ink,
-      borderRadius: BorderRadius.circular(17),
+      gradient: const LinearGradient(
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+        colors: [Color(0xFF25231F), AppColors.ink],
+      ),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: Colors.white.withValues(alpha: .14)),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x24191714),
+          offset: Offset(0, 3),
+          blurRadius: 9,
+        ),
+      ],
     ),
     child: Row(
       children: [
@@ -1631,14 +1705,18 @@ final class _PortraitQuestionCard extends StatelessWidget {
     constraints: const BoxConstraints(minHeight: 176),
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
-      color: AppColors.paper1,
-      borderRadius: BorderRadius.circular(22),
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Color(0xFFFFFCF7), Color(0xFFF0E9DC)],
+      ),
+      borderRadius: BorderRadius.circular(26),
       border: Border.all(color: AppColors.ink, width: 1.25),
       boxShadow: const [
         BoxShadow(
           color: Color(0x1F191714),
-          offset: Offset(0, 3),
-          blurRadius: 0,
+          offset: Offset(0, 4),
+          blurRadius: 10,
         ),
       ],
     ),
@@ -2810,7 +2888,7 @@ final class _PartyRevealScreenState extends ConsumerState<PartyRevealScreen> {
     }
     await ref
         .read(feedbackServiceProvider)
-        .play(team == null ? FeedbackCue.tap : FeedbackCue.correct);
+        .play(team == null ? FeedbackCue.wrong : FeedbackCue.correct);
     if (!mounted) return;
     final finished =
         ref.read(partyGameControllerProvider).session?.isComplete ?? false;
@@ -2854,14 +2932,18 @@ final class _PortraitRevealLayout extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEAF3EC),
-                    borderRadius: BorderRadius.circular(22),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0xFFF3FBF4), Color(0xFFE3F2E8)],
+                    ),
+                    borderRadius: BorderRadius.circular(26),
                     border: Border.all(color: AppColors.ink, width: 1.25),
                     boxShadow: const [
                       BoxShadow(
                         color: Color(0x21191714),
-                        offset: Offset(0, 3),
-                        blurRadius: 0,
+                        offset: Offset(0, 4),
+                        blurRadius: 10,
                       ),
                     ],
                   ),
@@ -3019,14 +3101,16 @@ final class _PortraitAwardButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         backgroundColor: selected
             ? color.withValues(alpha: 0.13)
-            : AppColors.paper0,
+            : Colors.white.withValues(alpha: .5),
         foregroundColor: color,
         side: BorderSide(
-          color: selected ? AppColors.ink : AppColors.hairline,
+          color: selected ? AppColors.ink : color.withValues(alpha: .25),
           width: selected ? 1.5 : 1,
         ),
+        elevation: selected ? 1 : 0,
+        shadowColor: AppColors.ink.withValues(alpha: .16),
         padding: const EdgeInsets.symmetric(horizontal: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -3070,7 +3154,13 @@ final class _PortraitAwardButton extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: selected ? color : AppColors.paper2,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(
+                      color: selected
+                          ? AppColors.ink
+                          : AppColors.ink.withValues(alpha: .1),
+                      width: selected ? 1 : .8,
+                    ),
                   ),
                   child: Text(
                     '+${_arabicDigits(points!)}',
@@ -3621,9 +3711,16 @@ final class _ResultRoundStats extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 7),
       decoration: BoxDecoration(
-        color: const Color(0xFFF0F6F1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFB3CDBF)),
+        color: Colors.white.withValues(alpha: .5),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: .8)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14191714),
+            offset: Offset(0, 3),
+            blurRadius: 10,
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -3722,8 +3819,15 @@ final class _ResultArtworkHero extends StatelessWidget {
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       color: const Color(0xFF173F34),
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: accent.withValues(alpha: .5)),
+      borderRadius: BorderRadius.circular(28),
+      border: Border.all(color: accent.withValues(alpha: .62), width: 1.1),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x29191714),
+          offset: Offset(0, 5),
+          blurRadius: 14,
+        ),
+      ],
     ),
     child: Stack(
       children: [
@@ -3815,15 +3919,43 @@ final class _PortraitResultRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Expanded(
-        child: Text(
-          winner ? '${team.name} (البطل)' : team.name,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: winner ? AppColors.ink : const Color(0xFF756E63),
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-          ),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: winner
+                    ? AppColors.primary.withValues(alpha: .78)
+                    : Colors.white.withValues(alpha: .58),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: winner
+                      ? AppColors.ink
+                      : AppColors.ink.withValues(alpha: .14),
+                ),
+              ),
+              child: Icon(
+                winner ? Icons.emoji_events_rounded : Icons.circle,
+                size: winner ? 14 : 6,
+                color: winner ? AppColors.ink : Color(team.colorValue),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                winner ? '${team.name} (البطل)' : team.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: winner ? AppColors.ink : const Color(0xFF756E63),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       Stack(
@@ -3958,7 +4090,11 @@ final class _ScoreRibbon extends StatelessWidget {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: const BoxDecoration(
-          color: AppColors.ink,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF25231F), AppColors.ink],
+          ),
           border: Border(bottom: BorderSide(color: AppColors.inkSoft)),
         ),
         child: Row(
@@ -3975,8 +4111,15 @@ final class _ScoreRibbon extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.inkSoft),
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(color: AppColors.ink, width: 1.1),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x24191714),
+                    offset: Offset(0, 2),
+                    blurRadius: 6,
+                  ),
+                ],
               ),
               child: Text(
                 'دور ${session.teams[session.turnTeamIndex].name}',

@@ -13,6 +13,7 @@ import '../../features/game/presentation/game_setup_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/match/presentation/question_screen.dart';
 import '../../features/match/presentation/results_screen.dart';
+import '../../features/match/presentation/solo_home_screen.dart';
 import '../../features/match/presentation/solo_setup_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/onboarding/presentation/launch_screen.dart';
@@ -28,7 +29,6 @@ import '../../features/play/presentation/play_screen.dart';
 import '../../features/premium/presentation/premium_screen.dart';
 import '../../features/premium/presentation/premium_voucher_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
-import '../../features/ranking/presentation/ranking_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/social/presentation/blocked_players_screen.dart';
 import '../../features/social/presentation/social_hub_screen.dart';
@@ -37,6 +37,7 @@ import '../../features/social/presentation/social_team_screen.dart';
 import '../../features/social/presentation/team_challenge_screen.dart';
 import '../../features/support/presentation/report_problem_screen.dart';
 import '../../features/tournament/presentation/tournament_controller.dart';
+import '../../features/tournament/presentation/tournament_dashboard_screen.dart';
 import '../../features/tournament/presentation/tournament_flow.dart';
 import '../../features/tournament/presentation/tournament_join_screen.dart';
 import '../../features/tournament/presentation/tournament_registrations_screen.dart';
@@ -165,7 +166,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/play', builder: (_, _) => const PlayScreen()),
           GoRoute(
             path: '/tournaments',
-            builder: (_, _) => const TournamentHubScreen(),
+            builder: (_, _) => const TournamentDashboardScreen(),
           ),
           GoRoute(path: '/teams', builder: (_, _) => const SocialHubScreen()),
           GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
@@ -297,6 +298,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/categories', builder: (_, _) => const CategoriesScreen()),
       GoRoute(
         path: '/solo',
+        builder: (_, state) => SoloHomeScreen(
+          initialCategoryId: state.uri.queryParameters['categoryId'],
+        ),
+      ),
+      GoRoute(
+        path: '/solo/setup',
         builder: (_, state) => SoloSetupScreen(
           gameType:
               GameTypeCopy.fromSlug(
@@ -313,7 +320,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/online', redirect: (_, _) => '/home'),
       GoRoute(path: '/online/match/:matchId', redirect: (_, _) => '/home'),
       GoRoute(path: '/room/:roomId', redirect: (_, _) => '/home'),
-      GoRoute(path: '/ranking', builder: (_, _) => const RankingScreen()),
+      // The retired leaderboard route remains a safe compatibility tombstone.
+      GoRoute(path: '/ranking', redirect: (_, _) => '/home'),
       GoRoute(path: '/store', builder: (_, _) => const PremiumScreen()),
       GoRoute(path: '/premium', builder: (_, _) => const PremiumScreen()),
       GoRoute(

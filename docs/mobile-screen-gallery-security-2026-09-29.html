@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>أحدعش — معرض الشاشات والميزات الجديدة</title>
+  <style>
+    :root{--paper:#fbf7ef;--paper2:#f2e8d8;--ink:#191714;--muted:#786e61;--line:#d8c8b3;--lime:#b6ff3b;--green:#16754e;--gold:#e2a629}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#fffdf8,var(--paper) 48%,var(--paper2));color:var(--ink);font-family:Tahoma,"Segoe UI",sans-serif}
+    header{max-width:1280px;margin:auto;padding:42px 24px 28px;border-bottom:1px solid #e3d5c3;display:flex;gap:20px;align-items:end;justify-content:space-between}h1{margin:0;font-size:clamp(28px,4vw,50px);letter-spacing:-1px}header p{margin:10px 0 0;color:var(--muted);line-height:1.7;font-size:14px}.mark{width:58px;height:58px;flex:none;border-radius:19px;background:var(--ink);display:grid;place-items:center;color:var(--lime);font-size:23px;font-weight:900;box-shadow:0 10px 24px #19171422}
+    .tools{max-width:1280px;margin:18px auto 0;padding:0 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}.tools input{flex:1 1 300px;border:1px solid var(--line);border-radius:999px;background:#fffdf8;padding:13px 18px;font-size:14px;outline:0}.tools input:focus{border-color:var(--ink);box-shadow:0 0 0 3px #b6ff3b55}.count{color:var(--muted);font-size:12px;font-weight:800}
+    .section{max-width:1280px;margin:34px auto;padding:0 24px}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:14px}.section h2{margin:0;font-size:23px}.sectionHead span{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:16px}.card{background:#fffdf8;border:1px solid var(--line);border-radius:22px;padding:10px;box-shadow:0 8px 20px #1917140d;transition:.18s transform,.18s box-shadow}.card:hover{transform:translateY(-3px);box-shadow:0 14px 28px #19171418}.thumb{aspect-ratio:390/844;background:#efe4d2;border-radius:16px;overflow:hidden;display:grid;place-items:center}.thumb img{width:100%;height:100%;object-fit:cover;display:block}.meta{padding:10px 4px 3px}.meta strong{display:block;font-size:14px}.meta small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.hidden{display:none!important}
+    .featureGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.feature{background:#fffdf8;border:1px solid var(--line);border-radius:22px;padding:18px;min-height:170px;box-shadow:0 8px 20px #1917140d}.featureIcon{width:48px;height:48px;border-radius:16px;background:var(--ink);color:var(--lime);display:grid;place-items:center;font-size:26px;margin-bottom:12px}.feature h3{margin:0 0 7px;font-size:17px}.feature p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{padding:6px 9px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:20px;line-height:1}.audit{background:var(--ink);color:#fffdf8;border-radius:25px;padding:22px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px}.audit h2{margin:0 0 8px;color:var(--lime)}.audit p{margin:0;color:#e7dfd2;line-height:1.8;font-size:13px}.audit ul{margin:0;padding:0 20px 0 0;color:#e7dfd2;line-height:2;font-size:13px}.ok{color:var(--lime)}.warn{color:#ffd166}footer{max-width:1280px;margin:45px auto 0;padding:22px 24px 35px;color:var(--muted);font-size:12px;border-top:1px solid #e3d5c3}
+    @media(max-width:720px){header{padding-top:28px;align-items:start}.audit{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:7px}.meta strong{font-size:12px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div><h1>أحدعش — معرض الشاشات</h1><p>لقطات أحدث نسخة من التطبيق، مع توثيق الاستريك اليومي، الإيموجي للمشتركين، وصوت نتيجة الإجابة.</p></div>
+    <div class="mark">١١</div>
+  </header>
+
+  <div class="tools"><input id="search" type="search" placeholder="ابحث عن شاشة أو ميزة…"><span id="count" class="count"></span></div>
+
+  <main>
+    <section class="section">
+      <div class="audit">
+        <div><h2>نتيجة الفحص الأمني</h2><p>تم فحص ملفات التطبيق، لوحة التحكم، Supabase Functions، إعدادات RLS، الأسرار المتتبعة، وروابط المصادقة. لم يظهر مفتاح service role متتبعًا في Git، ومفتاح الهاتف الموجود هو anon/public key فقط.</p></div>
+        <ul><li><span class="ok">✓</span> لا توجد مفاتيح خاصة أو ملفات p8/pem متتبعة</li><li><span class="ok">✓</span> Edge Functions الحساسة محمية بـ JWT أو حارس سرّي داخلي</li><li><span class="ok">✓</span> اختبارات لوحة التحكم (86 اختبارًا) وملف Codemagic بصيغة YAML سليمة</li><li><span class="warn">عالي</span> تبعية <code>sharp</code> في لوحة التحكم لديها تنبيه npm audit عالي الخطورة؛ يلزم تحديثها إلى الإصدار الآمن بعد اختبار التوافق</li><li><span class="warn">متوسط</span> بعض استجابات Supabase قد تعيد رسالة الخطأ الخام؛ يُفضّل إخفاء تفاصيل قاعدة البيانات في الإنتاج</li><li><span class="warn">تحصين</span> قيمة <code>ALLOWED_ORIGINS</code> الافتراضية هي <code>*</code>؛ اضبط النطاقات الفعلية في بيئة الإنتاج</li><li><span class="warn">تحصين</span> تأكيد البريد معطّل في إعدادات Supabase؛ فعّله إذا كان التسجيل العام يحتاج منع الحسابات الوهمية</li><li><span class="warn">تنبيه محلي</span> متغير service role موجود فارغًا في <code>admin/.env.local</code> المحلي؛ يُفضّل حذفه لتقليل خطر تعبئته بالخطأ</li></ul>
+      </div>
+    </section>
+
+    <section class="section" data-group="features">
+      <div class="sectionHead"><h2>الميزات الجديدة</h2><span>الصوت والاستريك والتخصيص</span></div>
+      <div class="featureGrid">
+        <article class="feature" data-search="استريك سلسلة استمرار شعلة"><div class="featureIcon">🔥</div><h3>سلسلة اللعب اليومية</h3><p>تزيد مرة واحدة عند دخول اللعبة في اليوم، تستمر في اليوم التالي، وتعود إلى 1 بعد تفويت يوم. الحالة محفوظة محليًا.</p></article>
+        <article class="feature" data-search="premium emoji ايموجي مشتركين"><div class="featureIcon">✨</div><h3>إيموجي الاستريك للمشتركين</h3><p>غير المشترك يستخدم 🔥. المشترك يفتح بطاقة الاستريك ويختار إيموجي Unicode أصليًا ليظهر بمظهر iPhone على أجهزة Apple.</p><div class="chips"><span class="chip">🔥</span><span class="chip">⚡️</span><span class="chip">🏆</span><span class="chip">🚀</span><span class="chip">💎</span><span class="chip">👑</span></div></article>
+        <article class="feature" data-search="صوت صحيح خطأ audio feedback"><div class="featureIcon">🔊</div><h3>صوت نتيجة الإجابة</h3><p>الإجابة الصحيحة تستخدم صوت نجاح واهتزازًا متوسطًا، والخاطئة تستخدم تنبيهًا مختلفًا واهتزازًا خفيفًا. الإعداد يحترم كتم المؤثرات.</p></article>
+        <article class="feature" data-search="حماية اشتراك premium gate"><div class="featureIcon">🔒</div><h3>حماية اختيار الإيموجي</h3><p>القفل موجود في الواجهة وفي الخدمة نفسها، لذلك لا يمكن لمسار آخر اختيار إيموجي مخصص بدون حالة Premium.</p></article>
+      </div>
+    </section>
+
+    <section class="section" data-group="screens"><div class="sectionHead"><h2>كل الشاشات الجديدة</h2><span>لقطات 390×844 من اختبارات Golden</span></div><div id="gallery" class="grid"></div></section>
+  </main>
+
+  <footer>المصدر: mobile/test/visual/goldens — افتح هذا الملف من داخل المستودع لرؤية اللقطات المحلية. صوت الإجابة ميزة سلوكية ولا يظهر في الصورة.</footer>
+  <script>
+    const screens=[
+      ['طريقة اللعب — 1','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_1_390x844.png'],
+      ['طريقة اللعب — 2','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_2_390x844.png'],
+      ['طريقة اللعب — 3','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_3_390x844.png'],
+      ['طريقة اللعب — 4','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_4_390x844.png'],
+      ['طريقة اللعب — 5','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_5_390x844.png'],
+      ['طريقة اللعب — 6','طريقة اللعب','../mobile/test/visual/goldens/how_to_play_six/how_to_play_6_390x844.png'],
+      ['البداية — الرئيسية','الدخول','../mobile/test/visual/goldens/v10_entry_refinement/main_dock_home_390x844.png'],
+      ['إنشاء حساب','الدخول','../mobile/test/visual/goldens/v10_phase_a/create_390x844.png'],
+      ['إنشاء حساب — لوحة المفاتيح','الدخول','../mobile/test/visual/goldens/v10_phase_a/createKeyboard_390x844.png'],
+      ['الرئيسية مع بطاقة الاستريك','الاستريك','../mobile/test/visual/goldens/v10_phase_a/home_390x844.png'],
+      ['شاشة الانطلاق','الدخول','../mobile/test/visual/goldens/v10_phase_a/launch_390x844.png'],
+      ['مقدمة التعريف','التعريف','../mobile/test/visual/goldens/v10_phase_a/onboarding_390x844.png'],
+      ['التعريف — اختيار الفئات','التعريف','../mobile/test/visual/goldens/v10_phase_a/onboarding1_390x844.png'],
+      ['التعريف — تكوين الفرق','التعريف','../mobile/test/visual/goldens/v10_phase_a/onboarding2_390x844.png'],
+      ['التعريف — الإجابة','التعريف','../mobile/test/visual/goldens/v10_phase_a/onboarding3_390x844.png'],
+      ['التعريف — الفوز','التعريف','../mobile/test/visual/goldens/v10_phase_a/onboarding4_390x844.png'],
+      ['تسجيل الدخول','الدخول','../mobile/test/visual/goldens/v10_phase_a/signIn_390x844.png'],
+      ['تسجيل الدخول — لوحة المفاتيح','الدخول','../mobile/test/visual/goldens/v10_phase_a/signInKeyboard_390x844.png'],
+      ['اختيار الفئات','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/06_categories_390x844.png'],
+      ['البحث عن فئة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/06_search_keyboard_390x844.png'],
+      ['تفاصيل الفئة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/07_detail_390x844.png'],
+      ['تكوين الفرق','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/08_teams_390x844.png'],
+      ['تكوين الفرق — لوحة المفاتيح','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/08_teams_keyboard_390x844.png'],
+      ['تقسيم اللاعبين','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/09_splitter_390x844.png'],
+      ['تقسيم اللاعبين — لوحة المفاتيح','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/09_splitter_keyboard_390x844.png'],
+      ['اختيار المساعدات','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/10_helpers_390x844.png'],
+      ['جاهزية الجولة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/11_ready_390x844.png'],
+      ['لوحة اللعب','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/12_board_390x844.png'],
+      ['شاشة السؤال','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/13_text_390x844.png'],
+      ['سؤال بصورة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/14_image_390x844.png'],
+      ['كشف الإجابة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/15_reveal_390x844.png'],
+      ['نتيجة الجولة','اللعب الجماعي','../mobile/test/visual/goldens/v10_phase_b/16_result_390x844.png'],
+      ['لوحة البطولات','البطولات','../mobile/test/visual/goldens/v10_phase_c/hub_390x844.png'],
+      ['إنشاء بطولة','البطولات','../mobile/test/visual/goldens/v10_phase_c/create_390x844.png'],
+      ['إنشاء بطولة — لوحة المفاتيح','البطولات','../mobile/test/visual/goldens/v10_phase_c/create_keyboard_390x844.png'],
+      ['فرق البطولة','البطولات','../mobile/test/visual/goldens/v10_phase_c/teams_390x844.png'],
+      ['القرعة','البطولات','../mobile/test/visual/goldens/v10_phase_c/draw_390x844.png'],
+      ['مسار البطولة','البطولات','../mobile/test/visual/goldens/v10_phase_c/bracket_390x844.png'],
+      ['مباراة بطولة','البطولات','../mobile/test/visual/goldens/v10_phase_c/match_390x844.png'],
+      ['نصف النهائي','البطولات','../mobile/test/visual/goldens/v10_phase_c/semifinal_390x844.png'],
+      ['النهائي','البطولات','../mobile/test/visual/goldens/v10_phase_c/finalMatch_390x844.png'],
+      ['بطل البطولة','البطولات','../mobile/test/visual/goldens/v10_phase_c/champion_390x844.png'],
+      ['اللعب الفردي','اللعب الفردي','../mobile/test/visual/goldens/v10_phase_d/solo_390x844.png'],
+      ['إعداد اللعب الفردي','اللعب الفردي','../mobile/test/visual/goldens/v10_phase_d/matchSetup_390x844.png'],
+      ['تحدي الفريق','التحديات','../mobile/test/visual/goldens/v10_phase_d/teamChallenge_390x844.png'],
+      ['نتيجة تحدي الفريق','التحديات','../mobile/test/visual/goldens/v10_phase_d/teamChallengeResult_390x844.png'],
+      ['تحدي غير متاح','التحديات','../mobile/test/visual/goldens/v10_phase_d/teamChallengeUnavailable_390x844.png'],
+      ['الأصدقاء','المجتمع','../mobile/test/visual/goldens/v10_phase_d/friends_390x844.png'],
+      ['الأصدقاء — البحث','المجتمع','../mobile/test/visual/goldens/v10_phase_d/friendsKeyboard_390x844.png'],
+      ['تفاصيل الفريق','المجتمع','../mobile/test/visual/goldens/v10_phase_d/teamDetail_390x844.png'],
+      ['اللاعبون المحظورون','المجتمع','../mobile/test/visual/goldens/v10_phase_d/blocked_390x844.png'],
+      ['الألعاب المحفوظة','الدعم','../mobile/test/visual/goldens/v10_phase_d/savedGames_390x844.png'],
+      ['طريقة اللعب المختصرة','الدعم','../mobile/test/visual/goldens/v10_phase_d/howTo_390x844.png'],
+      ['الترتيب','المجتمع','../mobile/test/visual/goldens/v10_phase_d/ranking_390x844.png'],
+      ['الإعدادات','الحساب','../mobile/test/visual/goldens/v10_phase_e/settings_390x844.png'],
+      ['الملف الشخصي','الحساب','../mobile/test/visual/goldens/v10_phase_e/profile_390x844.png'],
+      ['الإشعارات','الحساب','../mobile/test/visual/goldens/v10_phase_e/notifications_390x844.png'],
+      ['Premium','الاشتراك','../mobile/test/visual/goldens/v10_phase_e/premium_390x844.png'],
+      ['Premium — تحميل','الاشتراك','../mobile/test/visual/goldens/v10_phase_e/premiumLoading_390x844.png'],
+      ['التفضيلات الكروية','الحساب','../mobile/test/visual/goldens/v10_phase_e/football_390x844.png'],
+      ['التفضيلات الكروية — البحث','الحساب','../mobile/test/visual/goldens/v10_phase_e/footballKeyboard_390x844.png'],
+      ['الإبلاغ عن مشكلة','الدعم','../mobile/test/visual/goldens/v10_phase_e/report_390x844.png'],
+      ['الإبلاغ — لوحة المفاتيح','الدعم','../mobile/test/visual/goldens/v10_phase_e/reportKeyboard_390x844.png'],
+      ['الرئيسية الفردية','اللعب الفردي','../mobile/test/visual/goldens/v10_phase_f/solo_home_390x844.png'],
+      ['لوحة البطولات الجديدة','البطولات','../mobile/test/visual/goldens/v10_phase_f/tournament_dashboard_390x844.png']
+    ];
+    const gallery=document.getElementById('gallery'),count=document.getElementById('count'),search=document.getElementById('search');
+    function render(){gallery.innerHTML='';const query=search.value.trim().toLowerCase();let visible=0;for(const [title,group,src] of screens){if(query&&!(`${title} ${group}`.toLowerCase().includes(query)))continue;visible++;const card=document.createElement('article');card.className='card';card.dataset.search=`${title} ${group}`;card.innerHTML=`<div class="thumb"><img loading="lazy" src="${src}" alt="${title}"></div><div class="meta"><strong>${title}</strong><small>${group} · 390×844</small></div>`;gallery.append(card)}count.textContent=`${visible} شاشة`;}
+    search.addEventListener('input',render);render();
+  </script>
+</body>
+</html>

@@ -27,6 +27,12 @@ final pendingTournamentRegistrationsProvider =
           .pendingRegistrations(tournamentId);
     });
 
+final myTournamentEntriesProvider = FutureProvider<List<MyTournamentEntry>>((
+  ref,
+) {
+  return ref.watch(tournamentRegistrationRepositoryProvider).mine();
+});
+
 final class AvailableTournament {
   const AvailableTournament({
     required this.id,
@@ -85,6 +91,30 @@ final class TournamentRegistrationRequest {
       .toList(growable: false);
 }
 
+final class MyTournamentEntry {
+  const MyTournamentEntry({
+    required this.id,
+    required this.name,
+    required this.tournamentStatus,
+    required this.registrationStatus,
+    required this.teamName,
+    required this.capacity,
+    required this.createdAt,
+  });
+
+  final String id;
+  final String name;
+  final String tournamentStatus;
+  final String? registrationStatus;
+  final String? teamName;
+  final int capacity;
+  final DateTime? createdAt;
+
+  bool get isPending => registrationStatus == 'pending';
+  bool get isRejected => registrationStatus == 'rejected';
+  bool get isCompleted => tournamentStatus == 'completed';
+}
+
 final class TournamentRegistrationRepository {
   const TournamentRegistrationRepository(this._client);
 
@@ -137,6 +167,62 @@ final class TournamentRegistrationRepository {
         .order('created_at');
     return rows
         .map((row) => TournamentRegistrationRequest.fromJson(row))
+        .toList(growable: false);
+  }
+
+  Future<List<MyTournamentEntry>> mine() async {
+    final user = _client?.auth.currentUser;
+    if (_client == null || user == null) return const [];
+
+    final metadata = <String, ({String? teamName, String? status})>{};
+    final registrationRows = await _requiredClient
+        .from('tournament_registrations')
+        .select('tournament_id,team_name,status')
+        .eq('requested_by', user.id)
+        .order('created_at', ascending: false)
+        .limit(30);
+    for (final row in registrationRows) {
+      final id = row['tournament_id'] as String?;
+      if (id == null || id.isEmpty) continue;
+      metadata[id] = (
+        teamName: row['team_name'] as String?,
+        status: row['status'] as String?,
+      );
+    }
+
+    final playerRows = await _requiredClient
+        .from('tournament_players')
+        .select('tournament_id,display_name')
+        .eq('user_id', user.id)
+        .limit(30);
+    for (final row in playerRows) {
+      final id = row['tournament_id'] as String?;
+      if (id == null || id.isEmpty) continue;
+      metadata.putIfAbsent(
+        id,
+        () => (teamName: row['display_name'] as String?, status: 'approved'),
+      );
+    }
+    if (metadata.isEmpty) return const [];
+
+    final tournaments = await _requiredClient
+        .from('tournaments')
+        .select('id,name,status,capacity,created_at')
+        .inFilter('id', metadata.keys.toList(growable: false));
+    return tournaments
+        .map((row) {
+          final id = '${row['id']}';
+          final involvement = metadata[id];
+          return MyTournamentEntry(
+            id: id,
+            name: '${row['name'] ?? 'بطولة أحدعش'}',
+            tournamentStatus: '${row['status'] ?? 'registration'}',
+            registrationStatus: involvement?.status,
+            teamName: involvement?.teamName,
+            capacity: (row['capacity'] as num?)?.toInt() ?? 8,
+            createdAt: DateTime.tryParse('${row['created_at']}'),
+          );
+        })
         .toList(growable: false);
   }
 

@@ -27,6 +27,10 @@ void main() {
       SystemSoundType.alert,
     );
     expect(
+      AppFeedbackService.planFor(FeedbackCue.correct, settings).soundType,
+      SystemSoundType.click,
+    );
+    expect(
       AppFeedbackService.planFor(FeedbackCue.wrong, settings).haptic,
       HapticCue.light,
     );

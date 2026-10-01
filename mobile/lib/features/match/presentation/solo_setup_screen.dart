@@ -46,7 +46,7 @@ final class _SoloSetupScreenState extends ConsumerState<SoloSetupScreen> {
   Widget build(BuildContext context) => AhdashV10Page(
     title: 'التحدي الفردي',
     subtitle: '${widget.gameType.titleAr} · جولة مصممة على مزاجك',
-    onBack: () => context.canPop() ? context.pop() : context.go('/play'),
+    onBack: () => context.canPop() ? context.pop() : context.go('/solo'),
     child: ref
         .watch(categoriesProvider)
         .when(

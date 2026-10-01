@@ -45,7 +45,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
 
       <section className="site-container site-section-space">
         <div className="games-format-strip">
-          <div><span><UsersRound size={18} /></span><h2>اختَر إطار الجولة</h2><p>كلا المسارين محليان ويعملان للضيف على المتصفح نفسه.</p></div>
+          <div><span><UsersRound size={18} /></span><h2>اختَر إطار الجولة</h2><p>استكشف المسار أولاً، ثم سجّل حسابك لفتح الجولة ومزامنة تقدمك.</p></div>
           <div className="games-format-list">
             {availableFormats.map((format) => (
               <Link href={`/games?format=${format.slug}`} key={format.slug} className={selectedFormat === format.slug ? "is-active" : ""} aria-current={selectedFormat === format.slug ? "page" : undefined}>
@@ -61,7 +61,7 @@ export default async function GamesPage({ searchParams }: { searchParams: Promis
             <h2>{classic.title}</h2>
             <p>{soloSelected ? "تحدّ فردي كلاسيكي باختيار الفئات والصعوبة وعدد الأسئلة." : "Party محلي بفريقين وأسئلة نصية أو مصورة ومساعدات تغيّر قرار الجولة."} يستخدم الموقع الفئات والأسئلة المنشورة عبر عقود Supabase نفسها المستخدمة في التطبيق.</p>
             <ul>{soloSelected ? <><li><Check size={16} />فئات وصعوبة وعدد تختاره</li><li><Check size={16} />15 ثانية مع مكافأة سرعة</li><li><Check size={16} />نتيجة وأفضل رقم محلي</li></> : <><li><Check size={16} />ست فئات × ستة أسئلة</li><li><Check size={16} />ثلاث مساعدات لكل فريق</li><li><Check size={16} />كشف الإجابة، خطف ونقاط</li></>}</ul>
-            <Link href={`/play?mode=classic&format=${selectedFormat}`} className="site-action">ابدأ كضيف <ArrowLeft size={17} /></Link>
+            <Link href={`/play?mode=classic&format=${selectedFormat}`} className="site-action">افتح اللعب <ArrowLeft size={17} /></Link>
           </article>
 
           <aside className="game-phase-note">

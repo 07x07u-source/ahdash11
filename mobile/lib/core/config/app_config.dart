@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const defaultPrivacyPolicyUrl = 'https://ahdash11.com/legal/privacy';
+const defaultTermsUrl = 'https://ahdash11.com/legal/terms';
+
 enum AppEnvironment { development, staging, production }
 
 final appConfigProvider = Provider<AppConfig>(
@@ -19,8 +22,8 @@ final class AppConfig {
     required this.revenueCatAndroidKey,
     required this.revenueCatIosKey,
     this.revenueCatEntitlementId = 'premium',
-    this.privacyPolicyUrl = '',
-    this.termsUrl = '',
+    this.privacyPolicyUrl = defaultPrivacyPolicyUrl,
+    this.termsUrl = defaultTermsUrl,
     this.adMobRewardedAndroidId = '',
     this.adMobRewardedIosId = '',
     this.adMobInterstitialAndroidId = '',
@@ -37,6 +40,8 @@ final class AppConfig {
       'APP_ENV',
       defaultValue: 'development',
     );
+    const privacyPolicyUrl = String.fromEnvironment('PRIVACY_POLICY_URL');
+    const termsUrl = String.fromEnvironment('TERMS_URL');
     return AppConfig(
       environment: AppEnvironment.values.firstWhere(
         (value) => value.name == environmentName,
@@ -54,8 +59,10 @@ final class AppConfig {
         'REVENUECAT_ENTITLEMENT_ID',
         defaultValue: 'premium',
       ),
-      privacyPolicyUrl: const String.fromEnvironment('PRIVACY_POLICY_URL'),
-      termsUrl: const String.fromEnvironment('TERMS_URL'),
+      privacyPolicyUrl: privacyPolicyUrl.trim().isEmpty
+          ? defaultPrivacyPolicyUrl
+          : privacyPolicyUrl,
+      termsUrl: termsUrl.trim().isEmpty ? defaultTermsUrl : termsUrl,
       adMobRewardedAndroidId: const String.fromEnvironment(
         'ADMOB_REWARDED_ANDROID_ID',
       ),

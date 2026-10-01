@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/services/feedback_service.dart';
+import '../../../core/services/game_streak_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_game_theme.dart';
 import '../../../core/theme/app_theme.dart';
@@ -33,6 +34,12 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
   var _lastWarningSecond = -1;
   var _nextScheduled = false;
   AhdashGame? _game;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(ref.read(gameStreakProvider.notifier).recordToday());
+  }
 
   @override
   void didChangeDependencies() {
@@ -179,6 +186,16 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                 duration: MediaQuery.disableAnimationsOf(context)
                     ? Duration.zero
                     : AppMotion.standard,
+                switchInCurve: AppMotion.enterCurve,
+                switchOutCurve: AppMotion.exitCurve,
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SizeTransition(
+                    sizeFactor: animation,
+                    axisAlignment: -1,
+                    child: child,
+                  ),
+                ),
                 child: revealed
                     ? Padding(
                         key: ValueKey('feedback-${match.currentIndex}'),
@@ -221,11 +238,23 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(flex: 4, child: prompt),
+                          Expanded(
+                            flex: 4,
+                            child: _QuestionTransition(
+                              questionId: question.id,
+                              child: prompt,
+                            ),
+                          ),
                           const SizedBox(height: AppSpacing.sm),
                           const EditorialRule(),
                           const SizedBox(height: AppSpacing.sm),
-                          Expanded(flex: 6, child: answers),
+                          Expanded(
+                            flex: 6,
+                            child: _QuestionTransition(
+                              questionId: '${question.id}-answers',
+                              child: answers,
+                            ),
+                          ),
                         ],
                       )
                     : Row(
@@ -233,14 +262,20 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                         children: [
                           Expanded(
                             flex: question.text.length < 72 ? 7 : 6,
-                            child: prompt,
+                            child: _QuestionTransition(
+                              questionId: question.id,
+                              child: prompt,
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.lg),
                           const EditorialRule(vertical: true),
                           const SizedBox(width: AppSpacing.lg),
                           Expanded(
                             flex: question.text.length < 72 ? 5 : 6,
-                            child: answers,
+                            child: _QuestionTransition(
+                              questionId: '${question.id}-answers',
+                              child: answers,
+                            ),
                           ),
                         ],
                       ),
@@ -316,6 +351,37 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
       ref.read(soloMatchControllerProvider.notifier).reset();
       if (mounted) context.go('/home');
     }
+  }
+}
+
+final class _QuestionTransition extends StatelessWidget {
+  const _QuestionTransition({required this.questionId, required this.child});
+
+  final String questionId;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final reducedMotion = MediaQuery.disableAnimationsOf(context);
+    return AnimatedSwitcher(
+      duration: reducedMotion ? Duration.zero : AppMotion.emphasized,
+      switchInCurve: AppMotion.enterCurve,
+      switchOutCurve: AppMotion.exitCurve,
+      transitionBuilder: (child, animation) {
+        final offset =
+            Tween<Offset>(
+              begin: const Offset(0.035, 0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(parent: animation, curve: AppMotion.enterCurve),
+            );
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(position: offset, child: child),
+        );
+      },
+      child: KeyedSubtree(key: ValueKey(questionId), child: child),
+    );
   }
 }
 
@@ -518,23 +584,45 @@ final class _QuestionRoundMeta extends StatelessWidget {
               style: TextStyle(color: colors.textMuted, fontSize: 11),
             ),
             const Spacer(),
-            Text(
-              '$seconds ث',
-              textDirection: TextDirection.ltr,
-              style: TextStyle(
-                color: urgent ? signal : colors.textPrimary,
-                fontWeight: FontWeight.w900,
+            Semantics(
+              liveRegion: urgent,
+              label: 'الوقت المتبقي $seconds ثواني',
+              child: AnimatedSwitcher(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : AppMotion.micro,
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: animation,
+                  child: FadeTransition(opacity: animation, child: child),
+                ),
+                child: Text(
+                  '$seconds ث',
+                  key: ValueKey(seconds),
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    color: urgent ? signal : colors.textPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 5),
-        ClipRect(
-          child: LinearProgressIndicator(
-            minHeight: 3,
-            value: progress,
-            backgroundColor: colors.border,
-            valueColor: AlwaysStoppedAnimation(signal),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(end: progress),
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : const Duration(milliseconds: 120),
+            curve: AppMotion.curve,
+            builder: (context, value, _) => LinearProgressIndicator(
+              minHeight: urgent ? 4 : 3,
+              value: value,
+              backgroundColor: colors.border,
+              valueColor: AlwaysStoppedAnimation(signal),
+            ),
           ),
         ),
       ],
@@ -557,35 +645,47 @@ final class _EditorialFeedback extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.ahdashColors;
     final signal = correct ? colors.success : colors.error;
-    return DecoratedBox(
+    return TweenAnimationBuilder<double>(
       key: ValueKey(correct ? 'feedback-correct' : 'feedback-wrong'),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: signal, width: 2)),
+      tween: Tween(begin: 0.94, end: 1),
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : AppMotion.reveal,
+      curve: AppMotion.springCurve,
+      builder: (context, scale, child) => Transform.scale(
+        alignment: AlignmentDirectional.centerStart,
+        scale: scale,
+        child: child,
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 7),
-        child: Row(
-          children: [
-            Icon(
-              correct ? Icons.check_circle_outline : Icons.cancel_rounded,
-              color: signal,
-              size: 18,
-            ),
-            const SizedBox(width: 7),
-            Text(
-              correct ? 'إجابة صحيحة' : 'الإجابة غير صحيحة',
-              style: TextStyle(color: signal, fontWeight: FontWeight.w900),
-            ),
-            const Spacer(),
-            Text(
-              correct
-                  ? 'أساس $basePoints • سرعة +$speedBonus'
-                  : '+${basePoints + speedBonus} نقطة',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: colors.textSecondary, fontSize: 11),
-            ),
-          ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: signal, width: 2)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 7),
+          child: Row(
+            children: [
+              Icon(
+                correct ? Icons.check_circle_outline : Icons.cancel_rounded,
+                color: signal,
+                size: 18,
+              ),
+              const SizedBox(width: 7),
+              Text(
+                correct ? 'إجابة صحيحة' : 'الإجابة غير صحيحة',
+                style: TextStyle(color: signal, fontWeight: FontWeight.w900),
+              ),
+              const Spacer(),
+              Text(
+                correct
+                    ? 'أساس $basePoints • سرعة +$speedBonus'
+                    : '+${basePoints + speedBonus} نقطة',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: colors.textSecondary, fontSize: 11),
+              ),
+            ],
+          ),
         ),
       ),
     );

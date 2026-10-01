@@ -67,11 +67,6 @@ final class AuthGateScreen extends StatelessWidget {
         'دعواتك وتنبيهات حسابك تخصك. سجّل دخولك لعرضها.',
         AhdashIcons.notifications,
       ),
-      AppCapability.ranking => (
-        'الترتيب',
-        'سجّل دخولك لعرض الترتيب المتاح وبيانات حسابك، عندما تكون متوفرة.',
-        AhdashIcons.chart,
-      ),
       AppCapability.footballPreferences => (
         'تفضيلاتك الكروية',
         'اختياراتك الكروية تُحفظ في ملف حسابك وتظهر وفق إعدادات خصوصيتك.',
@@ -88,8 +83,14 @@ final class AuthGateScreen extends StatelessWidget {
         AhdashIcons.profile,
       ),
     };
+    final headline = switch (capability) {
+      AppCapability.tournaments => 'سجّل دخولك\nوابدأ بطولتك',
+      AppCapability.premium => 'سجّل دخولك\nوافتح مزاياك',
+      AppCapability.notifications => 'سجّل دخولك\nوشوف تنبيهاتك',
+      _ => 'سجّل دخولك\nوكمل من هنا',
+    };
     return AhdashV10Page(
-      title: label,
+      title: 'حسابك',
       subtitle: 'ميزة مرتبطة بحسابك',
       onBack: () => context.canPop() ? context.pop() : context.go('/home'),
       scrollable: true,
@@ -97,12 +98,14 @@ final class AuthGateScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _GuestIdentityHero(label: label, icon: icon),
-          const SizedBox(height: 22),
-          const Text(
-            'سجّل دخولك\nوكمل التحدّي',
+          const SizedBox(height: 14),
+          _GuestGateContext(label: label),
+          const SizedBox(height: 16),
+          Text(
+            headline,
             style: TextStyle(
-              fontSize: 29,
-              height: 1.18,
+              fontSize: MediaQuery.sizeOf(context).width < 390 ? 27 : 30,
+              height: 1.16,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -115,10 +118,13 @@ final class AuthGateScreen extends StatelessWidget {
               color: AppColors.inkSoft,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          const _GuestGateBenefits(),
+          const SizedBox(height: 18),
           AhdashV10PrimaryButton(
             key: const ValueKey('gate-sign-in'),
             label: 'تسجيل الدخول',
+            icon: Icons.arrow_back_rounded,
             onPressed: () =>
                 context.push(GuestCapabilityPolicy.authLocation(target)),
           ),
@@ -128,30 +134,171 @@ final class AuthGateScreen extends StatelessWidget {
             onPressed: () => context.push(
               GuestCapabilityPolicy.authLocation(target, create: true),
             ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text('إنشاء حساب'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+              foregroundColor: AppColors.ink,
+              side: const BorderSide(color: AppColors.inkSoft),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
+            child: const Text('إنشاء حساب'),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'لعبتك المحلية تبقى على هذا الجهاز. تسجيل الدخول لا يبدأ لعبة جديدة.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.5,
-              color: AppColors.inkMuted,
-            ),
-          ),
-          TextButton(
+          const SizedBox(height: 12),
+          const _GuestLocalNote(),
+          const SizedBox(height: 4),
+          TextButton.icon(
             onPressed: () =>
                 context.canPop() ? context.pop() : context.go('/home'),
-            child: const Text('العودة'),
+            icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+            label: const Text('العودة للعب'),
           ),
         ],
       ),
     );
   }
+}
+
+final class _GuestGateContext extends StatelessWidget {
+  const _GuestGateContext({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      Container(
+        width: 34,
+        height: 34,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(11),
+        ),
+        child: const Icon(Icons.lock_open_rounded, size: 17),
+      ),
+      const SizedBox(width: 9),
+      Expanded(
+        child: Text(
+          'أنت على وشك فتح: $label',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 12,
+            height: 1.35,
+            fontWeight: FontWeight.w800,
+            color: AppColors.inkSoft,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+final class _GuestGateBenefits extends StatelessWidget {
+  const _GuestGateBenefits();
+
+  @override
+  Widget build(BuildContext context) => AhdashV10Panel(
+    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 4),
+    backgroundColor: AppColors.paper1.withValues(alpha: .68),
+    child: const Column(
+      children: [
+        _GuestBenefitRow(
+          icon: Icons.person_outline_rounded,
+          title: 'حساب واحد',
+          detail: 'تصل لميزاتك الخاصة من مكان واحد',
+        ),
+        Divider(height: 1, color: AppColors.hairline),
+        _GuestBenefitRow(
+          icon: Icons.undo_rounded,
+          title: 'نكمل من حيث توقفت',
+          detail: 'نرجعك للوجهة المطلوبة بعد الدخول',
+        ),
+        Divider(height: 1, color: AppColors.hairline),
+        _GuestBenefitRow(
+          icon: Icons.sports_soccer_rounded,
+          title: 'اللعبة المحلية باقية',
+          detail: 'تسجيل الدخول لا يبدأ لعبة جديدة',
+        ),
+      ],
+    ),
+  );
+}
+
+final class _GuestBenefitRow extends StatelessWidget {
+  const _GuestBenefitRow({
+    required this.icon,
+    required this.title,
+    required this.detail,
+  });
+
+  final IconData icon;
+  final String title;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: Row(
+      children: [
+        Icon(icon, size: 19, color: AppColors.inkSoft),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                detail,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 10, color: AppColors.inkMuted),
+              ),
+            ],
+          ),
+        ),
+        const Icon(Icons.check_rounded, size: 17, color: AppColors.inkSoft),
+      ],
+    ),
+  );
+}
+
+final class _GuestLocalNote extends StatelessWidget {
+  const _GuestLocalNote();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsetsDirectional.fromSTEB(12, 9, 12, 9),
+    decoration: BoxDecoration(
+      color: AppColors.primary.withValues(alpha: .14),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: AppColors.primary.withValues(alpha: .46)),
+    ),
+    child: const Row(
+      children: [
+        Icon(Icons.offline_bolt_rounded, size: 18),
+        SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            'لعبتك المحلية تبقى على هذا الجهاز، وتقدر ترجع لها في أي وقت.',
+            style: TextStyle(
+              fontSize: 11,
+              height: 1.45,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 final class _GuestIdentityHero extends StatelessWidget {
@@ -162,10 +309,23 @@ final class _GuestIdentityHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 194,
+    key: const ValueKey('guest-identity-hero'),
+    height: 220,
     decoration: BoxDecoration(
-      color: AppColors.ink,
-      borderRadius: BorderRadius.circular(24),
+      gradient: const LinearGradient(
+        begin: AlignmentDirectional.topStart,
+        end: AlignmentDirectional.bottomEnd,
+        colors: [Color(0xFF24231F), AppColors.ink],
+      ),
+      borderRadius: BorderRadius.circular(26),
+      border: Border.all(color: AppColors.inkSoft.withValues(alpha: .45)),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x28191714),
+          blurRadius: 22,
+          offset: Offset(0, 9),
+        ),
+      ],
     ),
     clipBehavior: Clip.antiAlias,
     child: Stack(
@@ -174,7 +334,7 @@ final class _GuestIdentityHero extends StatelessWidget {
         const PositionedDirectional(
           top: 10,
           bottom: 10,
-          end: 10,
+          end: 8,
           width: 164,
           child: CustomPaint(painter: _GuestIdentityPainter()),
         ),
@@ -186,17 +346,38 @@ final class _GuestIdentityHero extends StatelessWidget {
           child: ColoredBox(color: AppColors.primary),
         ),
         PositionedDirectional(
-          top: 20,
-          bottom: 18,
-          start: 20,
+          top: 18,
+          bottom: 16,
+          start: 18,
           end: 170,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const AhdashBrandLogo(
                 width: 118,
-                height: 36,
+                height: 34,
                 onDarkSurface: true,
+              ),
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsetsDirectional.fromSTEB(8, 4, 8, 4),
+                decoration: BoxDecoration(
+                  color: AppColors.paper0.withValues(alpha: .1),
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(
+                    color: AppColors.paper0.withValues(alpha: .16),
+                  ),
+                ),
+                child: const Text(
+                  'حساب اللاعب / GUEST',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    color: AppColors.paper3,
+                    fontSize: 8,
+                    letterSpacing: .4,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               const Spacer(),
               Container(
@@ -215,7 +396,7 @@ final class _GuestIdentityHero extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: AppColors.paper0,
-                  fontSize: 21,
+                  fontSize: 20,
                   fontWeight: FontWeight.w900,
                 ),
               ),

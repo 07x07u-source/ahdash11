@@ -41,8 +41,12 @@ file_size_limit = "50MiB"
 
 [auth]
 enabled = true
-site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["com.ahdash.eleven://login-callback", "http://localhost:3000/auth/callback"]
+site_url = "https://ahdash11.com"
+additional_redirect_urls = [
+  "com.ahdash.eleven://login-callback",
+  "http://localhost:3000/auth/callback",
+  "https://ahdash11.com/auth/callback",
+]
 jwt_expiry = 3600
 enable_signup = true
 enable_anonymous_sign_ins = true

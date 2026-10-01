@@ -14,6 +14,37 @@ void main() {
     expect(screen.minimumDisplayDuration, Duration.zero);
   });
 
+  testWidgets('launch motion runs without rendering exceptions', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appPreferencesProvider.overrideWithBuild(
+            (ref, notifier) async => const AppPreferences(
+              onboardingCompleted: false,
+              reducedMotion: false,
+            ),
+          ),
+          authControllerProvider.overrideWithBuild(
+            (ref, notifier) async => null,
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          locale: const Locale('ar'),
+          home: const LaunchScreen(autoNavigate: false),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pump(const Duration(milliseconds: 540));
+    await tester.pump(const Duration(milliseconds: 900));
+
+    expect(tester.takeException(), isNull);
+  });
+
   for (final scenario
       in <
         ({

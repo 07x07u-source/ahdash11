@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="معرض لقطات واجهات تطبيق أحدعش، مبني من مخرجات Flutter Golden الحقيقية."
+    />
+    <title>أحدعش — معرض شاشات التطبيق</title>
+    <style>
+      @font-face {
+        font-family: Thmanyah;
+        src: url('../mobile/assets/fonts/thmanyah/thmanyahsans-Regular.otf') format('opentype');
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: Thmanyah;
+        src: url('../mobile/assets/fonts/thmanyah/thmanyahsans-Bold.otf') format('opentype');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: Thmanyah;
+        src: url('../mobile/assets/fonts/thmanyah/thmanyahsans-Black.otf') format('opentype');
+        font-weight: 900;
+      }
+
+      :root {
+        --paper: #f7f1e7;
+        --paper-strong: #fffdf8;
+        --ink: #191714;
+        --muted: #706a60;
+        --line: #e2d9cb;
+        --lime: #b6ff3b;
+        --lime-soft: #e7ffc0;
+        --coffee: #a37c50;
+        --shadow: 0 22px 50px rgba(25, 23, 20, 0.11);
+        --radius: 24px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 100% 0%, rgba(182, 255, 59, .17), transparent 30rem),
+          linear-gradient(180deg, #f8f3e9 0%, var(--paper) 58%, #f4eee4 100%);
+        font-family: Thmanyah, Tahoma, Arial, sans-serif;
+      }
+
+      button, input, select { font: inherit; }
+      button { cursor: pointer; }
+
+      .shell {
+        width: min(1440px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        margin: 28px 0 20px;
+        padding: clamp(26px, 4vw, 54px);
+        border: 1px solid rgba(25, 23, 20, .08);
+        border-radius: 32px;
+        color: var(--paper-strong);
+        background:
+          linear-gradient(120deg, rgba(25,23,20,.98), rgba(44,42,37,.98)),
+          var(--ink);
+        box-shadow: var(--shadow);
+        isolation: isolate;
+      }
+
+      .hero::before,
+      .hero::after {
+        position: absolute;
+        z-index: -1;
+        content: '';
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .hero::before {
+        width: 480px;
+        height: 480px;
+        top: -280px;
+        left: -60px;
+        background: radial-gradient(circle, rgba(182,255,59,.28), transparent 67%);
+      }
+      .hero::after {
+        width: 320px;
+        height: 320px;
+        right: -140px;
+        bottom: -210px;
+        border: 1px solid rgba(182,255,59,.3);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+      }
+      .brand img {
+        width: auto;
+        height: 38px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+      }
+      .brand span {
+        padding: 5px 9px;
+        color: var(--lime);
+        border: 1px solid rgba(182,255,59,.32);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      h1, h2, h3, p { margin: 0; }
+      .hero h1 {
+        max-width: 720px;
+        font-size: clamp(30px, 5vw, 64px);
+        line-height: 1.05;
+        letter-spacing: -.04em;
+      }
+      .hero p {
+        max-width: 660px;
+        margin-top: 14px;
+        color: #ded8cf;
+        font-size: clamp(15px, 2vw, 19px);
+        line-height: 1.65;
+      }
+      .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 25px;
+      }
+      .hero-meta span {
+        padding: 8px 12px;
+        color: var(--paper-strong);
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .hero-meta strong { color: var(--lime); }
+
+      .toolbar {
+        position: sticky;
+        z-index: 5;
+        top: 12px;
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto auto;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 22px;
+        padding: 11px;
+        background: rgba(255,253,248,.88);
+        border: 1px solid rgba(25,23,20,.09);
+        border-radius: 18px;
+        box-shadow: 0 12px 28px rgba(25,23,20,.08);
+        backdrop-filter: blur(18px);
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 44px;
+        padding: 0 13px;
+        color: var(--muted);
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+      }
+      .search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(182,255,59,.25); }
+      .search input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        color: var(--ink);
+        background: transparent;
+      }
+      .toolbar select,
+      .toolbar button {
+        min-height: 44px;
+        padding: 0 14px;
+        color: var(--ink);
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+      }
+      .toolbar button:hover,
+      .toolbar select:focus { border-color: var(--ink); }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 230px minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+      .nav {
+        position: sticky;
+        top: 90px;
+        padding: 17px;
+        background: rgba(255,253,248,.66);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+      }
+      .nav h2 { margin-bottom: 12px; font-size: 16px; }
+      .nav button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 9px 10px;
+        text-align: start;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 10px;
+        transition: .18s ease;
+      }
+      .nav button:hover,
+      .nav button.active { color: var(--ink); background: var(--lime-soft); }
+      .nav button small { color: var(--coffee); font-size: 11px; }
+
+      .group { scroll-margin-top: 100px; margin-bottom: 34px; }
+      .group.hidden { display: none; }
+      .group-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 13px;
+      }
+      .group-head h2 { font-size: clamp(21px, 3vw, 30px); letter-spacing: -.02em; }
+      .group-head p { color: var(--muted); font-size: 13px; }
+      .count { color: var(--coffee); font-size: 12px; white-space: nowrap; }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+      .shot {
+        overflow: hidden;
+        background: var(--paper-strong);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 10px 24px rgba(25,23,20,.06);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+      }
+      .shot:hover { transform: translateY(-4px); border-color: rgba(25,23,20,.26); box-shadow: var(--shadow); }
+      .shot button { display: block; width: 100%; padding: 0; text-align: inherit; border: 0; background: transparent; }
+      .shot figure { margin: 0; }
+      .shot-media {
+        display: grid;
+        place-items: center;
+        min-height: 208px;
+        padding: 12px;
+        background:
+          linear-gradient(145deg, rgba(255,255,255,.72), rgba(239,232,220,.5)),
+          repeating-linear-gradient(135deg, transparent 0 14px, rgba(25,23,20,.025) 14px 15px);
+      }
+      .shot.landscape .shot-media { min-height: 150px; }
+      .shot img {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        height: 245px;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 12px 22px rgba(25,23,20,.16);
+      }
+      .shot.landscape img { width: 100%; height: auto; max-height: 195px; }
+      .shot-meta { padding: 12px 14px 14px; }
+      .shot-meta h3 { font-size: 14px; line-height: 1.35; }
+      .shot-meta p { margin-top: 4px; color: var(--muted); font-size: 11px; }
+      .badge {
+        display: inline-flex;
+        margin-bottom: 7px;
+        padding: 4px 8px;
+        color: var(--ink);
+        background: var(--lime);
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .empty {
+        display: none;
+        padding: 50px 20px;
+        text-align: center;
+        color: var(--muted);
+        background: rgba(255,253,248,.7);
+        border: 1px dashed var(--line);
+        border-radius: 20px;
+      }
+      .empty.visible { display: block; }
+
+      .lightbox[hidden] { display: none; }
+      .lightbox {
+        position: fixed;
+        z-index: 30;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 30px;
+        background: rgba(14, 13, 12, .86);
+        backdrop-filter: blur(10px);
+      }
+      .lightbox-inner { position: relative; max-width: min(1100px, 96vw); max-height: 94vh; }
+      .lightbox img { display: block; max-width: 100%; max-height: 85vh; border-radius: 12px; box-shadow: 0 22px 70px rgba(0,0,0,.35); }
+      .lightbox-caption { margin-top: 10px; color: #fff; text-align: center; font-size: 14px; }
+      .lightbox-close {
+        position: absolute;
+        top: -17px;
+        left: -17px;
+        width: 40px;
+        height: 40px;
+        color: var(--ink);
+        background: var(--lime);
+        border: 0;
+        border-radius: 50%;
+        font-size: 22px;
+        font-weight: 900;
+      }
+
+      footer {
+        margin: 28px 0 40px;
+        padding-top: 16px;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .layout { grid-template-columns: 1fr; }
+        .nav { position: static; display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 10px; }
+        .nav h2 { display: none; }
+        .nav button { flex: 0 0 auto; width: auto; white-space: nowrap; }
+      }
+      @media (max-width: 650px) {
+        .shell { width: min(100% - 22px, 1440px); }
+        .hero { margin-top: 11px; border-radius: 24px; }
+        .toolbar { position: static; grid-template-columns: 1fr 1fr; }
+        .search { grid-column: 1 / -1; }
+        .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .shot { border-radius: 18px; }
+        .shot-media { min-height: 172px; padding: 8px; }
+        .shot img { height: 195px; }
+        .shot.landscape .shot-media { min-height: 114px; }
+        .shot.landscape img { max-height: 135px; }
+        .shot-meta { padding: 9px 10px 11px; }
+        .shot-meta h3 { font-size: 12px; }
+        .shot-meta p { font-size: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="brand">
+          <img src="../mobile/assets/branding/logo-wordmark.png" alt="أحدعش" />
+          <span>Mobile UI Atlas</span>
+        </div>
+        <h1>كل شاشات اللعبة، في لوحة واحدة.</h1>
+        <p>
+          معرض بصري قابل للبحث والمراجعة يضم لقطات Flutter Golden الحقيقية من
+          رحلات أحدعش: من الدخول والتعلم، إلى اللعب والبطولات والملف الشخصي.
+        </p>
+        <div class="hero-meta">
+          <span><strong id="total-count">0</strong> لقطة</span>
+          <span>RTL · Arabic first</span>
+          <span>Portrait + landscape</span>
+          <span>Light + dark</span>
+        </div>
+      </header>
+
+      <div class="toolbar" aria-label="أدوات معرض الشاشات">
+        <label class="search">
+          <span aria-hidden="true">⌕</span>
+          <input id="search" type="search" placeholder="ابحث عن شاشة أو رحلة…" autocomplete="off" />
+        </label>
+        <select id="orientation" aria-label="تصفية الاتجاه">
+          <option value="all">كل الاتجاهات</option>
+          <option value="portrait">عمودي</option>
+          <option value="landscape">أفقي</option>
+        </select>
+        <button id="reset" type="button">إظهار الكل</button>
+      </div>
+
+      <div class="layout">
+        <nav class="nav" id="nav" aria-label="أقسام المعرض">
+          <h2>الرحلات</h2>
+        </nav>
+        <main id="gallery-root">
+          <div class="empty" id="empty">لا توجد لقطة تطابق البحث الحالي.</div>
+        </main>
+      </div>
+
+      <footer>
+        مصدر الصور: <code>mobile/test/visual/goldens</code> — هذه اللقطات هي مخرجات اختبارات Flutter المرئية داخل المشروع.
+      </footer>
+    </div>
+
+    <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="معاينة اللقطة">
+      <div class="lightbox-inner">
+        <button class="lightbox-close" id="lightbox-close" type="button" aria-label="إغلاق">×</button>
+        <img id="lightbox-image" alt="" />
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+      </div>
+    </div>
+
+    <script>
+      const root = '../mobile/test/visual/goldens/';
+
+      const portraitPairs = (folder, base, title) => [
+        { folder, file: `${base}_360x800.png`, title, viewport: '360 × 800', orientation: 'portrait' },
+        { folder, file: `${base}_390x844.png`, title, viewport: '390 × 844', orientation: 'portrait' },
+      ];
+
+      const portraitPairList = (folder, entries) => entries.flatMap(([base, title]) => portraitPairs(folder, base, title));
+
+      const singlePortrait = (folder, file, title, viewport = '390 × 844') => [
+        { folder, file, title, viewport, orientation: 'portrait' },
+      ];
+
+      const tournamentShots = (base, title) =>
+        ['800x360', '844x390', '915x412', '1280x720', '1366x768'].flatMap((viewport) =>
+          ['light', 'dark'].map((theme) => ({
+            folder: 'tournament',
+            file: `${base}_${viewport}_${theme}.png`,
+            title: `${title} — ${theme === 'light' ? 'فاتح' : 'داكن'}`,
+            viewport: viewport.replace('x', ' × '),
+            orientation: 'landscape',
+          })),
+        );
+
+      const groups = [
+        {
+          id: 'entry',
+          label: 'البداية والدخول',
+          description: 'الانطلاق، التعريف بالتطبيق، تسجيل الدخول والحساب.',
+          folder: 'v10_phase_a',
+          items: portraitPairList('v10_phase_a', [
+            ['launch', 'شاشة الانطلاق'],
+            ['onboarding', 'التعريف بالتطبيق'],
+            ['onboarding1', 'التعريف — الخطوة الأولى'],
+            ['onboarding2', 'التعريف — الخطوة الثانية'],
+            ['onboarding3', 'التعريف — الخطوة الثالثة'],
+            ['onboarding4', 'التعريف — الخطوة الرابعة'],
+            ['signIn', 'تسجيل الدخول'],
+            ['signInKeyboard', 'تسجيل الدخول مع لوحة المفاتيح'],
+            ['create', 'إنشاء الحساب'],
+            ['createKeyboard', 'إنشاء الحساب مع لوحة المفاتيح'],
+            ['home', 'الرئيسية'],
+          ]),
+        },
+        {
+          id: 'auth-repair',
+          label: 'تجربة الدخول المحدثة',
+          description: 'حالات الدخول والحساب على المقاسات المدمجة.',
+          folder: 'auth_ux_repair',
+          items: [
+            ...singlePortrait('auth_ux_repair', '03_sign_in_compact_360x800.png', 'تسجيل الدخول — مدمج', '360 × 800'),
+            ...singlePortrait('auth_ux_repair', '03_sign_in_primary_390x844.png', 'تسجيل الدخول — أساسي'),
+            ...singlePortrait('auth_ux_repair', '03_sign_in_keyboard_390x844.png', 'تسجيل الدخول — لوحة المفاتيح'),
+            ...singlePortrait('auth_ux_repair', '04_create_account_compact_360x800.png', 'إنشاء الحساب — مدمج', '360 × 800'),
+            ...singlePortrait('auth_ux_repair', '04_create_account_primary_390x844.png', 'إنشاء الحساب — أساسي'),
+            ...singlePortrait('auth_ux_repair', '04_create_account_keyboard_390x844.png', 'إنشاء الحساب — لوحة المفاتيح'),
+          ],
+        },
+        {
+          id: 'categories',
+          label: 'الأقسام والإعداد',
+          description: 'اختيار القسم، التفاصيل، الفرق والمساعدات قبل الجولة.',
+          folder: 'v10_phase_b',
+          items: [
+            ...portraitPairList('v10_phase_b', [
+              ['06_categories', 'الأقسام'],
+              ['07_detail', 'تفاصيل القسم'],
+              ['08_teams', 'اختيار الفرق'],
+              ['08_teams_keyboard', 'اختيار الفرق — لوحة المفاتيح'],
+              ['09_splitter', 'توزيع الفرق'],
+              ['10_helpers', 'المساعدات'],
+              ['11_ready', 'جاهز للعب'],
+              ['12_board', 'لوحة الجولة'],
+              ['13_text', 'سؤال نصي'],
+              ['14_image', 'سؤال بصري'],
+              ['15_reveal', 'كشف الإجابة'],
+              ['16_result', 'نتيجة الجولة'],
+            ]),
+            ...singlePortrait('v10_phase_b', '06_search_keyboard_390x844.png', 'البحث في الأقسام — لوحة المفاتيح'),
+            ...singlePortrait('v10_phase_b', '09_splitter_keyboard_390x844.png', 'توزيع الفرق — لوحة المفاتيح'),
+          ],
+        },
+        {
+          id: 'tournament',
+          label: 'البطولات',
+          description: 'مركز البطولة، التسجيل، القرعة، الجدول والمباراة النهائية.',
+          folder: 'tournament',
+          items: [
+            ...tournamentShots('hub', 'مركز البطولة'),
+            ...tournamentShots('create', 'إنشاء بطولة'),
+            ...tournamentShots('teams', 'فرق البطولة'),
+            ...tournamentShots('draw', 'قرعة البطولة'),
+            ...tournamentShots('bracket', 'جدول البطولة'),
+            ...tournamentShots('semifinal', 'نصف النهائي'),
+            ...tournamentShots('finalMatch', 'المباراة النهائية'),
+            ...tournamentShots('match', 'مباراة البطولة'),
+            ...tournamentShots('champion', 'تتويج البطل'),
+          ],
+        },
+        {
+          id: 'tournament-mobile',
+          label: 'البطولات — الهاتف',
+          description: 'نسخ الهاتف الخفيفة لمسار البطولة.',
+          folder: 'v10_phase_c',
+          items: portraitPairList('v10_phase_c', [
+            ['hub', 'مركز البطولة'],
+            ['create', 'إنشاء بطولة'],
+            ['teams', 'فرق البطولة'],
+            ['draw', 'قرعة البطولة'],
+            ['bracket', 'جدول البطولة'],
+            ['semifinal', 'نصف النهائي'],
+            ['finalMatch', 'المباراة النهائية'],
+            ['match', 'مباراة البطولة'],
+            ['champion', 'تتويج البطل'],
+          ]),
+        },
+        {
+          id: 'solo-social',
+          label: 'اللعب الفردي والمجتمع',
+          description: 'اللعب لحالك، الأصدقاء، التحديات، الألعاب المحفوظة والترتيب.',
+          folder: 'v10_phase_d',
+          items: portraitPairList('v10_phase_d', [
+            ['solo', 'اللعب لحالك'],
+            ['matchSetup', 'إعداد المباراة'],
+            ['friends', 'الأصدقاء'],
+            ['friendsKeyboard', 'الأصدقاء — لوحة المفاتيح'],
+            ['teamChallenge', 'تحدي الفريق'],
+            ['teamChallengeUnavailable', 'التحدي غير متاح'],
+            ['teamChallengeResult', 'نتيجة التحدي'],
+            ['teamDetail', 'تفاصيل الفريق'],
+            ['savedGames', 'الألعاب المحفوظة'],
+            ['ranking', 'الترتيب'],
+            ['blocked', 'اللاعبون المحظورون'],
+            ['howTo', 'طريقة اللعب'],
+          ]),
+        },
+        {
+          id: 'account',
+          label: 'الحساب والامتيازات',
+          description: 'الملف الشخصي، الإشعارات، الاشتراك، كرة القدم والدعم.',
+          folder: 'v10_phase_e',
+          items: portraitPairList('v10_phase_e', [
+            ['profile', 'الملف الشخصي'],
+            ['notifications', 'الإشعارات'],
+            ['premium', 'العضوية المميزة'],
+            ['premiumLoading', 'العضوية — تحميل'],
+            ['football', 'تفضيلات كرة القدم'],
+            ['footballKeyboard', 'تفضيلات كرة القدم — لوحة المفاتيح'],
+            ['settings', 'الإعدادات'],
+            ['report', 'الإبلاغ عن مشكلة'],
+            ['reportKeyboard', 'الإبلاغ — لوحة المفاتيح'],
+          ]),
+        },
+        {
+          id: 'home-refinement',
+          label: 'الرئيسية المحسنة',
+          description: 'لقطات الرئيسية بثلاثة مقاسات هاتف.',
+          folder: 'v10_entry_refinement',
+          items: [
+            { folder: 'v10_entry_refinement', file: 'main_dock_home_360x800.png', title: 'الرئيسية — 360', viewport: '360 × 800', orientation: 'portrait' },
+            { folder: 'v10_entry_refinement', file: 'main_dock_home_390x844.png', title: 'الرئيسية — 390', viewport: '390 × 844', orientation: 'portrait' },
+            { folder: 'v10_entry_refinement', file: 'main_dock_home_430x932.png', title: 'الرئيسية — 430', viewport: '430 × 932', orientation: 'portrait' },
+          ],
+        },
+        {
+          id: 'new-surfaces',
+          label: 'الأسطح الجديدة',
+          description: 'لقطات أحدث شاشة البطولات والواجهة الرئيسية للعب الفردي.',
+          folder: 'v10_phase_f',
+          items: portraitPairList('v10_phase_f', [
+            ['tournament_dashboard', 'لوحة البطولات الجديدة'],
+            ['solo_home', 'الرئيسية الجديدة للعب لحالك'],
+          ]),
+        },
+      ];
+
+      const nav = document.getElementById('nav');
+      const galleryRoot = document.getElementById('gallery-root');
+      const search = document.getElementById('search');
+      const orientation = document.getElementById('orientation');
+      const empty = document.getElementById('empty');
+      const totalCount = document.getElementById('total-count');
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImage = document.getElementById('lightbox-image');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      const lightboxClose = document.getElementById('lightbox-close');
+      const allShots = groups.flatMap((group) => group.items);
+      totalCount.textContent = allShots.length.toLocaleString('ar');
+
+      const shotText = (shot) => `${shot.title} ${shot.viewport} ${shot.orientation}`.toLocaleLowerCase('ar');
+
+      function renderNav() {
+        nav.innerHTML = '<h2>الرحلات</h2>';
+        groups.forEach((group) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.dataset.target = group.id;
+          button.innerHTML = `<span>${group.label}</span><small>${group.items.length}</small>`;
+          button.addEventListener('click', () => document.getElementById(group.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+          nav.appendChild(button);
+        });
+      }
+
+      function card(shot) {
+        const article = document.createElement('article');
+        article.className = `shot ${shot.orientation}`;
+        article.dataset.text = shotText(shot);
+        const preview = `${root}${shot.folder}/${shot.file}`;
+        article.innerHTML = `
+          <button type="button" aria-label="فتح ${shot.title} ${shot.viewport}">
+            <figure>
+              <div class="shot-media">
+                <img loading="lazy" src="${preview}" alt="${shot.title} — ${shot.viewport}" />
+              </div>
+              <figcaption class="shot-meta">
+                <span class="badge">${shot.orientation === 'portrait' ? 'هاتف' : 'أفقي'}</span>
+                <h3>${shot.title}</h3>
+                <p>${shot.viewport}</p>
+              </figcaption>
+            </figure>
+          </button>
+        `;
+        article.querySelector('button').addEventListener('click', () => openLightbox(preview, `${shot.title} — ${shot.viewport}`));
+        return article;
+      }
+
+      function render() {
+        galleryRoot.querySelectorAll('.group').forEach((element) => element.remove());
+        const query = search.value.trim().toLocaleLowerCase('ar');
+        const selectedOrientation = orientation.value;
+        let visibleCount = 0;
+
+        groups.forEach((group) => {
+          const visible = group.items.filter((shot) =>
+            (!query || shotText(shot).includes(query)) &&
+            (selectedOrientation === 'all' || shot.orientation === selectedOrientation),
+          );
+          const section = document.createElement('section');
+          section.className = `group ${visible.length ? '' : 'hidden'}`;
+          section.id = group.id;
+          section.innerHTML = `
+            <div class="group-head">
+              <div><h2>${group.label}</h2><p>${group.description}</p></div>
+              <span class="count">${visible.length} / ${group.items.length}</span>
+            </div>
+            <div class="gallery"></div>
+          `;
+          const gallery = section.querySelector('.gallery');
+          visible.forEach((shot) => gallery.appendChild(card(shot)));
+          galleryRoot.appendChild(section);
+          visibleCount += visible.length;
+        });
+        empty.classList.toggle('visible', visibleCount === 0);
+      }
+
+      function openLightbox(src, caption) {
+        lightboxImage.src = src;
+        lightboxImage.alt = caption;
+        lightboxCaption.textContent = caption;
+        lightbox.hidden = false;
+        lightboxClose.focus();
+      }
+      function closeLightbox() {
+        lightbox.hidden = true;
+        lightboxImage.removeAttribute('src');
+      }
+
+      search.addEventListener('input', render);
+      orientation.addEventListener('change', render);
+      document.getElementById('reset').addEventListener('click', () => {
+        search.value = '';
+        orientation.value = 'all';
+        render();
+      });
+      lightboxClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (event) => { if (event.target === lightbox) closeLightbox(); });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !lightbox.hidden) closeLightbox(); });
+
+      renderNav();
+      render();
+    </script>
+  </body>
+</html>

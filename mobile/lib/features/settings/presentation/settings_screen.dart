@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +37,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       title: 'الإعدادات',
       child: ListView(
         key: const ValueKey('settings-scroll'),
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.only(bottom: 24),
         children: [
           _identityCard(
             username: user?.username ?? 'ضيف',
@@ -43,11 +45,11 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             premium: premium,
             onTap: () => context.push('/profile'),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 24),
           _sectionLabel('تجربة اللعب', Icons.tune_rounded),
           const SizedBox(height: 8),
           _devicePreferencesCard(preferences),
-          const SizedBox(height: 16),
+          const SizedBox(height: 22),
           _section('حسابك وتفضيلاتك', Icons.person_outline_rounded, [
             _settingsRow(
               icon: Icons.person_outline_rounded,
@@ -71,11 +73,11 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               last: true,
             ),
           ]),
-          const SizedBox(height: 14),
+          const SizedBox(height: 22),
           _sectionLabel('Premium', Icons.workspace_premium_outlined),
           const SizedBox(height: 8),
           _premiumRow(active: premium, onTap: () => context.push('/premium')),
-          const SizedBox(height: 16),
+          const SizedBox(height: 22),
           _section('الدعم والخصوصية', Icons.shield_outlined, [
             _settingsRow(
               icon: Icons.campaign_outlined,
@@ -101,7 +103,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               last: true,
             ),
           ]),
-          const SizedBox(height: 14),
+          const SizedBox(height: 22),
           _sectionLabel('الجلسة', Icons.logout_rounded),
           const SizedBox(height: 8),
           SizedBox(
@@ -115,14 +117,13 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 foregroundColor: hasAccount
                     ? const Color(0xFFC83443)
                     : AppColors.ink,
-                backgroundColor: AppColors.paper1,
+                backgroundColor: Colors.transparent,
                 side: BorderSide(
-                  color: hasAccount
-                      ? const Color(0xFFC83443).withValues(alpha: .28)
-                      : AppColors.hairline,
+                  color: hasAccount ? const Color(0xFFC83443) : AppColors.ink,
+                  width: 1.2,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(17),
+                  borderRadius: BorderRadius.circular(18),
                 ),
               ),
               child: Row(
@@ -172,16 +173,14 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: .12),
+                color: AppColors.primary,
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: .32),
-                ),
+                border: Border.all(color: AppColors.ink, width: 1.1),
               ),
               child: Text(
                 hasAccount ? 'مساحتك الشخصية' : 'وضع الضيف',
                 style: const TextStyle(
-                  color: AppColors.primary,
+                  color: AppColors.ink,
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                 ),
@@ -193,6 +192,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.gold,
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: AppColors.ink, width: 1.1),
                 ),
                 child: const Text(
                   'Premium',
@@ -212,8 +212,8 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            color: AppColors.paper0,
-            fontSize: 22,
+            color: AppColors.ink,
+            fontSize: 24,
             height: 1.12,
             fontWeight: FontWeight.w900,
           ),
@@ -221,8 +221,8 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ],
     );
     final artwork = SizedBox(
-      width: largeText ? 138 : 122,
-      height: largeText ? 106 : 102,
+      width: largeText ? 128 : 112,
+      height: largeText ? 100 : 94,
       child: ExcludeSemantics(
         child: Image.asset(
           'assets/visuals/settings_identity_art_v2.png',
@@ -236,33 +236,31 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Material(
       key: const ValueKey('settings-identity-card'),
       color: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      clipBehavior: Clip.antiAlias,
-      child: Ink(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: AlignmentDirectional.topStart,
-            end: AlignmentDirectional.bottomEnd,
-            colors: [Color(0xFF244A39), Color(0xFF172A21), Color(0xFF111713)],
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsetsDirectional.only(
+            start: 4,
+            end: 2,
+            top: 4,
+            bottom: 18,
           ),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: largeText
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [copy, const SizedBox(height: 8), artwork],
-                  )
-                : Row(
-                    children: [
-                      Expanded(child: copy),
-                      const SizedBox(width: 12),
-                      artwork,
-                    ],
-                  ),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: AppColors.hairline)),
           ),
+          child: largeText
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [copy, const SizedBox(height: 8), artwork],
+                )
+              : Row(
+                  children: [
+                    Expanded(child: copy),
+                    const SizedBox(width: 14),
+                    artwork,
+                  ],
+                ),
         ),
       ),
     );
@@ -308,82 +306,77 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ),
     ];
-    return Material(
+    return Column(
       key: const ValueKey('settings-device-preferences'),
-      color: AppColors.paper1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: AppColors.hairline),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'تعديلات سريعة',
-                    style: TextStyle(
-                      color: AppColors.ink,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+            const Expanded(
+              child: Text(
+                'تعديلات سريعة',
+                style: TextStyle(
+                  color: AppColors.ink,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
                 ),
-                TextButton(
-                  onPressed: () => _group('local'),
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(44, 34),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                  child: const Text(
-                    'عرض التفاصيل',
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 7),
-            if (largeText)
-              Column(
-                children: [
-                  for (var index = 0; index < controls.length; index++) ...[
-                    controls[index],
-                    if (index != controls.length - 1) const SizedBox(height: 8),
-                  ],
-                ],
-              )
-            else
-              Row(
-                children: [
-                  for (var index = 0; index < controls.length; index++) ...[
-                    Expanded(child: controls[index]),
-                    if (index != controls.length - 1) const SizedBox(width: 8),
-                  ],
-                ],
               ),
-            const SizedBox(height: 9),
-            const Row(
-              children: [
-                Icon(
-                  Icons.cloud_done_outlined,
-                  size: 14,
-                  color: AppColors.palm,
-                ),
-                SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    'تحفظ هذه الخيارات تلقائيًا على جهازك.',
-                    style: TextStyle(color: AppColors.inkMuted, fontSize: 10),
-                  ),
-                ),
-              ],
+            ),
+            TextButton.icon(
+              onPressed: () => _group('local'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.ink,
+                minimumSize: const Size(44, 38),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+              ),
+              icon: const Icon(Icons.tune_rounded, size: 15),
+              label: const Text(
+                'عرض التفاصيل',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+              ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 4),
+        _glassRail(
+          child: largeText
+              ? Column(
+                  children: [
+                    for (var index = 0; index < controls.length; index++) ...[
+                      controls[index],
+                      if (index != controls.length - 1)
+                        const SizedBox(height: 6),
+                    ],
+                  ],
+                )
+              : Row(
+                  children: [
+                    for (var index = 0; index < controls.length; index++) ...[
+                      Expanded(child: controls[index]),
+                      if (index != controls.length - 1)
+                        const SizedBox(width: 10),
+                    ],
+                  ],
+                ),
+        ),
+        const SizedBox(height: 10),
+        const Row(
+          children: [
+            Icon(Icons.cloud_done_outlined, size: 15, color: AppColors.palm),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                'يُحفظ أي تعديل مباشرة على هذا الجهاز.',
+                style: TextStyle(
+                  color: AppColors.inkMuted,
+                  fontSize: 10,
+                  height: 1.35,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -404,67 +397,74 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: InkWell(
           key: ValueKey('settings-quick-$keyName'),
           onTap: busy ? null : onTap,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            constraints: const BoxConstraints(minHeight: 78),
-            padding: const EdgeInsets.all(10),
+            constraints: const BoxConstraints(minHeight: 82),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
             decoration: BoxDecoration(
-              color: enabled ? const Color(0xFFE9F5CF) : AppColors.paper0,
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: enabled ? AppColors.primary : AppColors.hairline,
+              color: Colors.transparent,
+              border: Border(
+                bottom: BorderSide(
+                  color: enabled ? AppColors.ink : AppColors.hairline,
+                  width: enabled ? 1.5 : 1,
+                ),
               ),
             ),
-            child: Row(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 34,
-                  height: 34,
+                  width: 38,
+                  height: 38,
                   decoration: BoxDecoration(
-                    color: enabled ? AppColors.ink : AppColors.paper2,
-                    borderRadius: BorderRadius.circular(11),
+                    color: enabled ? AppColors.primary : Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: enabled ? AppColors.ink : AppColors.hairline,
+                      width: enabled ? 1.3 : 1,
+                    ),
+                    boxShadow: enabled
+                        ? [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: .22),
+                              blurRadius: 10,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
                   ),
                   child: busy
                       ? const Padding(
-                          padding: EdgeInsets.all(9),
+                          padding: EdgeInsets.all(10),
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Icon(
                           icon,
-                          size: 17,
-                          color: enabled
-                              ? AppColors.primary
-                              : AppColors.inkMuted,
+                          size: 18,
+                          color: enabled ? AppColors.ink : AppColors.inkMuted,
                         ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        label,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.ink,
-                          fontSize: 11,
-                          height: 1.2,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        enabled ? 'مفعّل' : 'متوقف',
-                        style: TextStyle(
-                          color: enabled ? AppColors.palm : AppColors.inkMuted,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 7),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppColors.ink,
+                    fontSize: 11,
+                    height: 1.2,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  enabled ? 'مفعّل' : 'متوقف',
+                  style: TextStyle(
+                    color: enabled ? AppColors.palm : AppColors.inkMuted,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
@@ -475,20 +475,33 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  Widget _glassRail({required Widget child}) => ClipRRect(
+    borderRadius: BorderRadius.circular(22),
+    child: BackdropFilter(
+      filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .24),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: .72),
+            width: 1,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: child,
+        ),
+      ),
+    ),
+  );
+
   Widget _section(String title, IconData icon, List<Widget> rows) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       _sectionLabel(title, icon),
       const SizedBox(height: 8),
-      Material(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: AppColors.hairline),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(children: rows),
-      ),
+      Column(children: rows),
     ],
   );
 
@@ -501,7 +514,7 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           height: 24,
           decoration: BoxDecoration(
             color: AppColors.ink,
-            borderRadius: BorderRadius.circular(8),
+            shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 13, color: AppColors.primary),
         ),
@@ -531,22 +544,23 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }) => Column(
     children: [
       ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 58),
+        constraints: const BoxConstraints(minHeight: 66),
         child: InkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 9),
             child: Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 38,
+                  height: 38,
                   decoration: BoxDecoration(
-                    color: AppColors.paper1,
-                    borderRadius: BorderRadius.circular(11),
-                    border: Border.all(color: AppColors.hairline),
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.ink, width: 1.1),
                   ),
-                  child: Icon(icon, size: 18, color: AppColors.inkSoft),
+                  child: Icon(icon, size: 18, color: AppColors.ink),
                 ),
                 const SizedBox(width: 11),
                 Expanded(
@@ -591,109 +605,94 @@ final class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
       if (!last)
         const Padding(
-          padding: EdgeInsetsDirectional.only(start: 60),
+          padding: EdgeInsetsDirectional.only(start: 52),
           child: Divider(height: 1),
         ),
     ],
   );
 
-  Widget _premiumRow({
-    required bool active,
-    required VoidCallback onTap,
-  }) => Material(
-    key: const ValueKey('settings-premium-row'),
-    color: Colors.transparent,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-      side: BorderSide(color: active ? AppColors.primary : AppColors.gold),
-    ),
-    clipBehavior: Clip.antiAlias,
-    child: Ink(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: AlignmentDirectional.topStart,
-          end: AlignmentDirectional.bottomEnd,
-          colors: [Color(0xFF2A241A), Color(0xFF171613)],
-        ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: active ? AppColors.primary : AppColors.gold,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (active ? AppColors.primary : AppColors.gold)
-                          .withValues(alpha: .2),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  active
-                      ? Icons.verified_rounded
-                      : Icons.workspace_premium_rounded,
-                  color: AppColors.ink,
-                  size: 22,
-                ),
+  Widget _premiumRow({required bool active, required VoidCallback onTap}) =>
+      Material(
+        key: const ValueKey('settings-premium-row'),
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 4),
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: AppColors.hairline),
+                bottom: BorderSide(color: AppColors.hairline),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      active ? 'Premium مفعّل' : 'أحدعش Premium',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      active
-                          ? 'اشتراكك نشط — اضغط للإدارة'
-                          : 'فئات حصرية وتجربة لعب بلا إعلانات',
-                      style: const TextStyle(
-                        color: AppColors.paper3,
-                        fontSize: 10,
-                        height: 1.35,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: .08),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withValues(alpha: .1)),
-                ),
-                child: Text(
-                  active ? 'إدارة' : 'اكتشف',
-                  style: TextStyle(
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
                     color: active ? AppColors.primary : AppColors.gold,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.ink, width: 1.2),
+                  ),
+                  child: Icon(
+                    active
+                        ? Icons.verified_rounded
+                        : Icons.workspace_premium_rounded,
+                    color: AppColors.ink,
+                    size: 22,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        active ? 'Premium مفعّل' : 'أحدعش Premium',
+                        style: const TextStyle(
+                          color: AppColors.ink,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        active
+                            ? 'اشتراكك نشط — اضغط للإدارة'
+                            : 'فئات حصرية وتجربة لعب بلا إعلانات',
+                        style: const TextStyle(
+                          color: AppColors.inkMuted,
+                          fontSize: 10,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  active ? 'إدارة' : 'اكتشف',
+                  style: TextStyle(
+                    color: active ? AppColors.palm : AppColors.coffee,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    decoration: TextDecoration.underline,
+                    decorationThickness: 1.4,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.arrow_back_rounded,
+                  size: 18,
+                  color: AppColors.inkMuted,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 
   Future<void> _setLocalPreference(
     String key,
@@ -813,8 +812,9 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.ink,
-                borderRadius: BorderRadius.circular(14),
+                color: Colors.transparent,
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.ink, width: 1.2),
               ),
               child: Icon(
                 switch (widget.group) {
@@ -867,11 +867,9 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
               onPressed: () => Navigator.pop(context),
               style: IconButton.styleFrom(
                 minimumSize: const Size.square(44),
-                backgroundColor: AppColors.paper1,
-                side: const BorderSide(color: AppColors.hairline),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
+                backgroundColor: Colors.transparent,
+                side: const BorderSide(color: AppColors.ink, width: 1.1),
+                shape: const CircleBorder(),
               ),
               icon: const Icon(Icons.close_rounded, size: 20),
             ),
@@ -883,11 +881,17 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
             liveRegion: true,
             child: Container(
               margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(11),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE9F5CF),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primary),
+              padding: const EdgeInsetsDirectional.only(
+                start: 4,
+                end: 4,
+                top: 10,
+                bottom: 10,
+              ),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AppColors.primary, width: 1.2),
+                  bottom: BorderSide(color: AppColors.hairline),
+                ),
               ),
               child: Text(
                 _message!,
@@ -1095,46 +1099,43 @@ final class _SettingsGroupState extends ConsumerState<_SettingsGroup> {
     required bool value,
     required ValueChanged<bool>? onChanged,
   }) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Material(
-      color: value ? const Color(0xFFE9F5CF) : AppColors.paper1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: value ? AppColors.primary : AppColors.hairline),
+    padding: const EdgeInsets.only(bottom: 2),
+    child: Container(
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.hairline)),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: SwitchListTile(
-        value: value,
-        onChanged: onChanged,
-        secondary: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: value ? AppColors.ink : AppColors.paper0,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: value ? AppColors.ink : AppColors.hairline,
+      child: Material(
+        color: Colors.transparent,
+        child: SwitchListTile(
+          value: value,
+          onChanged: onChanged,
+          secondary: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: value ? AppColors.primary : Colors.transparent,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.ink, width: 1.1),
+            ),
+            child: Icon(icon, size: 18, color: AppColors.ink),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: const TextStyle(
+              color: AppColors.inkMuted,
+              fontSize: 10,
+              height: 1.35,
             ),
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: value ? AppColors.primary : AppColors.inkMuted,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 0,
+            vertical: 7,
           ),
         ),
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-            color: AppColors.inkMuted,
-            fontSize: 10,
-            height: 1.35,
-          ),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
     ),
   );
@@ -1209,11 +1210,12 @@ final class _SettingsNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: AppColors.paper1,
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(color: AppColors.hairline),
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    decoration: const BoxDecoration(
+      border: Border(
+        top: BorderSide(color: AppColors.hairline),
+        bottom: BorderSide(color: AppColors.hairline),
+      ),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,

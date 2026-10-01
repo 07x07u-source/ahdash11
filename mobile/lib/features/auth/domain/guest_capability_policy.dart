@@ -13,7 +13,6 @@ enum AppCapability {
   friends,
   teamChallenge,
   notifications,
-  ranking,
   footballPreferences,
   premium,
   reports,
@@ -60,7 +59,12 @@ final class GuestCapabilityPolicy {
     }.contains(path)) {
       return AppCapability.localParty;
     }
-    if (const {'/solo', '/solo/match', '/solo/result'}.contains(path)) {
+    if (const {
+      '/solo',
+      '/solo/setup',
+      '/solo/match',
+      '/solo/result',
+    }.contains(path)) {
       return AppCapability.localSolo;
     }
     if (RegExp(r'^/play/setup/[a-z-]+$').hasMatch(path)) {
@@ -77,7 +81,9 @@ final class GuestCapabilityPolicy {
       return AppCapability.teamChallenge;
     }
     if (path == '/notifications') return AppCapability.notifications;
-    if (path == '/ranking') return AppCapability.ranking;
+    // The public leaderboard was retired; let the router tombstone return
+    // legacy links to Home instead of showing an account gate.
+    if (path == '/ranking') return AppCapability.home;
     if (path == '/football-preferences') {
       return AppCapability.footballPreferences;
     }
@@ -120,6 +126,7 @@ final class GuestCapabilityPolicy {
       '/categories',
       '/play',
       '/solo',
+      '/solo/setup',
       '/solo/match',
       '/solo/result',
       '/tournaments',
@@ -135,7 +142,6 @@ final class GuestCapabilityPolicy {
       '/teams',
       '/teams/join',
       '/notifications',
-      '/ranking',
       '/football-preferences',
       '/premium',
       '/premium/voucher',
