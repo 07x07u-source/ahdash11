@@ -192,7 +192,7 @@ final class _QuestionScreenState extends ConsumerState<QuestionScreen> {
                   opacity: animation,
                   child: SizeTransition(
                     sizeFactor: animation,
-                    alignment: -1,
+alignment: Alignment(-1, 0),
                     child: child,
                   ),
                 ),
