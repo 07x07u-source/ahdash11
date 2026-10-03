@@ -25,7 +25,7 @@ function check(name, condition) {
 }
 
 const migrationFiles = (await readdir(migrations)).filter((name) => name.endsWith('.sql')).sort();
-check('repository contains the expected 27 migration files', migrationFiles.length === 27);
+check('repository contains the expected 29 migration files', migrationFiles.length === 29);
 check('gameplay migration retains documented hash', createHash('sha256').update(gameplay).digest('hex').toUpperCase() === 'C4968EA1824A3D9BBE942BABD3DE27F0F3267AF88DD834A4458861424267CCD1');
 check('tournament safety migration retains documented hash', createHash('sha256').update(tournament).digest('hex').toUpperCase() === 'E4422D46197D187B50F544A2828667B3492F96F3C55BE7786420CCB122559E14');
 check('voucher migration retains reviewed hash', createHash('sha256').update(vouchers).digest('hex').toUpperCase() === '0F292A2403902B38C240A26195645EB170C7E7A9DEF69F19E9FDE9D1812FCAFC');

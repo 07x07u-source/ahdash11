@@ -187,7 +187,7 @@ begin
     ('seed-v1:individual-awards:03', 'individual-awards', 'ما الجائزة الفردية التي تمنح لأفضل لاعب شاب في كأس العالم؟', 'medium', array['جائزة أفضل لاعب شاب','الحذاء الذهبي','الكرة الذهبية','القفاز الذهبي'], 1, 'تخصص FIFA جائزة لأفضل لاعب شاب في البطولة.', 'FIFA', 'https://www.fifa.com/tournaments/mens/worldcup'),
     ('seed-v1:individual-awards:04', 'individual-awards', 'من الجهة التي تمنح جائزة الكرة الذهبية؟', 'medium', array['فرانس فوتبول','الاتحاد الدولي للتاريخ والإحصاء','يويفا','الاتحاد الآسيوي'], 1, 'تنظم مجلة فرانس فوتبول جائزة الكرة الذهبية.', 'France Football', 'https://www.francefootball.fr/ballon-d-or/'),
     ('seed-v1:individual-awards:05', 'individual-awards', 'من اللاعب الأكثر فوزاً بالكرة الذهبية حتى نسخة 2023؟', 'hard', array['ليونيل ميسي','كريستيانو رونالدو','ميشيل بلاتيني','يوهان كرويف'], 1, 'رفع ليونيل ميسي رصيده إلى ثماني كرات ذهبية في 2023.', 'France Football', 'https://www.francefootball.fr/ballon-d-or/palmares/'),
-    ('seed-v1:individual-awards:06', 'individual-awards', 'من فاز بالحذاء الذهبي في كأس العالم 2022؟', 'hard', array['كيليان مبابي','ليونيل ميسي','جوليان ألفاريز','أوليفييه جيرو'], 1, 'أنهى كيليان مبابي البطولة هدافاً بثمانية أهداف.', 'FIFA', 'https://www.fifa.com/tournaments/mens/worldcup/qatar2022'),
+    ('seed-v1:individual-awards:06', 'individual-awards', 'من فاز بالحذاء الذهبي في كأس العالم 2022؟', 'hard', array['كيليان مبابي','ليونيل ميسي','جوليان ألفاريز','أوليفييه جيرو'], 1, 'أنهى كيليان مبابي البطولة هدافاً بثمانية أهداف.', 'FIFA', 'https://www.fifa.com/tournaments/mens/worldcup/qatar2022')
   on conflict (question_key) do nothing;
 
   create temporary table _default_seed_inserted (

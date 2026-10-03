@@ -1031,30 +1031,93 @@ final class _CategoryImageFallback extends StatelessWidget {
   final QuizCategory category;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: category.accentColor.withValues(alpha: 0.16),
-    child: PartyGameplayArtwork(
-      scene: PartyGameplayArtworkScene.category,
-      accent: category.accentColor,
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Padding(
-          padding: const EdgeInsetsDirectional.only(start: 18),
-          child: Text(
-            category.name.trim().isEmpty
-                ? '١١'
-                : category.name.trim().characters.first,
-            style: TextStyle(
-              color: context.ahdashColors.textPrimary,
-              fontSize: context.v9Metrics.compact ? 34 : 52,
-              fontWeight: FontWeight.w900,
-            ),
+  Widget build(BuildContext context) {
+    final compact = context.v9Metrics.compact;
+    final colors = context.ahdashColors;
+    return Semantics(
+      image: true,
+      label: 'هوية فئة ${category.name}',
+      child: ColoredBox(
+        color: category.accentColor.withValues(alpha: 0.13),
+        child: PartyGameplayArtwork(
+          scene: PartyGameplayArtworkScene.category,
+          accent: category.accentColor,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              PositionedDirectional(
+                top: compact ? 14 : 18,
+                end: compact ? 14 : 18,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.background.withValues(alpha: 0.86),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: colors.textPrimary.withValues(alpha: 0.16),
+                    ),
+                  ),
+                  child: Text(
+                    'فئة أسئلة',
+                    style: TextStyle(
+                      color: colors.textPrimary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: EdgeInsetsDirectional.only(start: compact ? 18 : 24),
+                  child: Container(
+                    width: compact ? 72 : 88,
+                    height: compact ? 72 : 88,
+                    decoration: BoxDecoration(
+                      color: colors.textPrimary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: category.accentColor, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colors.textPrimary.withValues(alpha: 0.18),
+                          blurRadius: 18,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      _categoryFallbackIcon(category.iconName),
+                      color: category.accentColor,
+                      size: compact ? 34 : 42,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
+
+IconData _categoryFallbackIcon(String iconKey) => switch (iconKey) {
+  'public' => Icons.public_rounded,
+  'trophy' => Icons.emoji_events_rounded,
+  'shield' => Icons.shield_rounded,
+  'stadium' => Icons.stadium_rounded,
+  'flag' => Icons.flag_rounded,
+  'medal' => Icons.military_tech_rounded,
+  'swap' => Icons.swap_horiz_rounded,
+  'shirt' => Icons.checkroom_rounded,
+  'eye' => Icons.visibility_rounded,
+  _ => Icons.sports_soccer_rounded,
+};
 
 void _showCategoryDetail(
   BuildContext context,
